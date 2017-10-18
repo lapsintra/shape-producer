@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from Artus.HenryPlotter.cutstring import *
+
+from cutstring import *
 import logging
 logger = logging.getLogger(__name__)
 """

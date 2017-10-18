@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+
 import ROOT
-from Artus.HenryPlotter.histogram import *
+from histogram import *
 import copy
 
 import logging

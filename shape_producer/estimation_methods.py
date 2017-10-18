@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+
 import os
 
-from Artus.HenryPlotter.histogram import *
-from Artus.HenryPlotter.cutstring import *
-from Artus.HenryPlotter.systematics import *
-from Artus.HenryPlotter.systematic_variations import *
+from histogram import *
+from cutstring import *
+from systematics import *
+from systematic_variations import *
 
 import logging
 logger = logging.getLogger(__name__)

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+
 import logging
 logger = logging.getLogger(__name__)
 
-from Artus.HenryPlotter.cutstring import Constant
-from Artus.HenryPlotter.datasets_helper import DatasetsHelperLight as DatasetsHelper
+from cutstring import Constant
+from datasets_helper import DatasetsHelperLight as DatasetsHelper
 
 import os
 """

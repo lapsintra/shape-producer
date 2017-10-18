@@ -32,6 +32,33 @@ class DataEstimation(EstimationMethod):
         return Cuts()
 
 
+# TODO: Does this work?
+class HttEstimation(EstimationMethod):
+    def __init__(self, era, directory, channel):
+        super(HttEstimation, self).__init__(
+            name="Htt",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_weights(self):
+        return Weights(
+            Weight("eventWeight", "eventWeight"), self.era.lumi_weight)
+
+    def get_files(self):
+        query = {
+            "process": "(^GluGluHToTauTau.*125.*|^VBFHToTauTau.*125.*)",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "powheg\-pythia8"
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
+
 class ZttEstimation(EstimationMethod):
     def __init__(self, era, directory, channel):
         super(ZttEstimation, self).__init__(

@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class DataEstimation(EstimationMethod):
     def __init__(self, era, directory, channel):
         super(DataEstimation, self).__init__(
-            name="data",
+            name="data_obs",
             folder="nominal",
             era=era,
             directory=directory,

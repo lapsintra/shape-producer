@@ -86,7 +86,8 @@ class Systematic(object):
             ERA=self._era.name,
             VARIABLE=self._category.variable.name,
             MASS=self._mass,
-            VARIATION=""if self._variation.name == "Nominal" else self._variation.name)
+            VARIATION=""
+            if self._variation.name == "Nominal" else self._variation.name)
 
     def summary(self):
         return [

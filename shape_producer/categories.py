@@ -21,7 +21,7 @@ class Category(object):
 
     @property
     def name(self):
-        return self._name
+        return "{}_{}".format(self._channel.name, self._name)
 
     @name.setter
     def name(self, name):

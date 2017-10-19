@@ -8,16 +8,14 @@ logger = logging.getLogger(__name__)
 
 
 class Channel(object):
+    # TODO: Make cuts and name as property of channel class
     pass
 
 
 class MT(Channel):
     def __init__(self):
         self._name = "mt"
-
-    @property
-    def cuts(self):
-        return Cuts(
+        self._cuts = Cuts(
             Cut("extraelec_veto<0.5", "extraelec_veto"),
             Cut("extramuon_veto<0.5", "extramuon_veto"),
             Cut("againstMuonTight3_2>0.5", "againstMuonTight"),
@@ -28,6 +26,10 @@ class MT(Channel):
             Cut("q_1*q_2<0", "os"), Cut("trg_singlemuon==1", "trg_singlemuon"))
 
     @property
+    def cuts(self):
+        return self._cuts
+
+    @property
     def name(self):
         return self._name
 
@@ -35,10 +37,7 @@ class MT(Channel):
 class ET(MT):
     def __init__(self):
         self._name = "et"
-
-    @property
-    def cuts(self):
-        return Cuts(
+        self._cuts = Cuts(
             Cut("extraelec_veto<0.5", "extraelec_veto"),
             Cut("againstMuonLoose3_2>0.5", "againstMuonTight"),
             Cut("dilepton_veto<0.5", "dilepton_veto"),
@@ -47,6 +46,10 @@ class ET(MT):
             Cut("iso_1<0.1", "ele_iso"),
             Cut("q_1*q_2<0", "os"),
             Cut("trg_singleelectron==1", "trg_singleelectron"))
+
+    @property
+    def cuts(self):
+        return self._cuts
 
     @property
     def name(self):

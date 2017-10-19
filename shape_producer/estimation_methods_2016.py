@@ -146,7 +146,7 @@ class WJetsEstimation(EstimationMethod):
 class TTEstimation(EstimationMethod):
     def __init__(self, era, directory, channel):
         super(TTEstimation, self).__init__(
-            name="TT",
+            name="tt",
             folder="nominal",
             era=era,
             directory=directory,

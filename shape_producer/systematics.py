@@ -20,6 +20,18 @@ class Systematic(object):
         self._variation = variation
         self._shape = None
 
+    def __deepcopy__(self, memo):
+        # some kind of workaround: the deepcopy method is overwritten, but anyway the one from the base class should be called
+        deepcopy_method = self.__deepcopy__
+        self.__deepcopy__ = None
+        cp = copy.deepcopy(self, memo)
+        self.__deepcopy__ = deepcopy_method
+
+        # manually copy also the associated process
+        cp.process = copy.deepcopy(self.process)
+
+        return cp
+
     @property
     def channel(self):
         return self._category.channel
@@ -27,6 +39,10 @@ class Systematic(object):
     @property
     def process(self):
         return self._process
+
+    @process.setter
+    def process(self, process):
+        self._process = process
 
     @property
     def era(self):
@@ -39,6 +55,10 @@ class Systematic(object):
     @property
     def category(self):
         return self._category
+
+    @category.setter
+    def category(self, category):
+        self._category = category
 
     @property
     def mass(self):
@@ -183,4 +203,14 @@ class Systematics(object):
                     new_systematic = copy.deepcopy(systematic)
                     new_systematic.variation = variation
                     new_systematics.append(new_systematic)
+        self._systematics += new_systematics
+
+    def add_extra_category(self, new_category, category_to_modify):
+        new_systematics = []
+        for systematic in self._systematics:
+            # consider only Nominal values for shifts
+            if systematic.category == category_to_modify:
+                new_systematic = copy.deepcopy(systematic)
+                new_systematic.category = new_category
+                new_systematics.append(new_systematic)
         self._systematics += new_systematics

@@ -6,10 +6,10 @@ logger = logging.getLogger(__name__)
 
 
 # this helper function can be used in case the systematic variation's name ends with "Down" and "Up"
-def create_systematic_variations(name, systematic_variation):
+def create_systematic_variations(name, property_name, systematic_variation):
     results = []
-    results.append(systematic_variation(name, name + "Down", "Down"))
-    results.append(systematic_variation(name, name + "Up", "Up"))
+    results.append(systematic_variation(name, property_name, "Down"))
+    results.append(systematic_variation(name, property_name, "Up"))
     return results
 
 
@@ -68,7 +68,7 @@ class DifferentPipeline(SystematicVariation):
 
     def shifted_root_objects(self, h_settings):
         for index in range(len(h_settings)):
-            h_settings[index]["folder"][2] = self._pipeline
+            h_settings[index]["folder"][2] = self._pipeline + self._direction
         return h_settings
 
 
@@ -81,8 +81,8 @@ class SquareAndRemoveWeight(SystematicVariation):
         for index in range(len(h_settings)):
             if self._direction == "Up":
                 h_settings[index]["weights"] = h_settings[index][
-                    "weights"]().square(self._name)
+                    "weights"]().square(self._weight_name)
             elif self._direction == "Down":
                 h_settings[index]["weights"] = h_settings[index][
-                    "weights"]().remove(self._name)
+                    "weights"]().remove(self._weight_name)
         return h_settings

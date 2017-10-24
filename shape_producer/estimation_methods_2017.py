@@ -152,6 +152,7 @@ class TTEstimation(EstimationMethod):
 
             # Data related scale-factors
             self.era.lumi_weight
+            )
 
     def get_files(self):
         query = {

@@ -246,6 +246,7 @@ class QCDEstimation(EstimationMethod):
             mc_campaign=None)
         self._bg_processes = [copy.deepcopy(p) for p in bg_processes]
         self._data_process = copy.deepcopy(data_process)
+        self._systematics = {}
 
     def create_root_objects(self, systematic):
         ss_category = copy.deepcopy(systematic.category)
@@ -253,29 +254,31 @@ class QCDEstimation(EstimationMethod):
         ss_category.cuts.get("ss").invert()
         ss_category.name = ss_category._name + "_ss"
 
-        self._root_objects = []
-        self._systematics = []
+        root_objects = []
+        self._systematics[systematic.name] = []
         for process in [self._data_process] + self._bg_processes:
-            self._systematics.append(
-                Systematic(
-                    category=ss_category,
-                    process=process,
-                    analysis=systematic.analysis,
-                    era=self.era,
-                    variation=systematic.variation,
-                    mass=125))
-            self._root_objects += self._systematics[-1].root_objects
+            s = Systematic(
+                category=ss_category,
+                process=process,
+                analysis=systematic.analysis,
+                era=self.era,
+                variation=systematic.variation,
+                mass=125)
+            self._systematics[systematic.name].append(s)
+            s.create_root_objects()
+            root_objects += s.root_objects
+        return root_objects
 
-    def do_estimation(self, systematic, root_objects_holder):
+    def do_estimation(self, systematic):
         # Create shapes
-        for s in self._systematics:
-            s.do_estimation(root_objects_holder)
+        for s in self._systematics[systematic.name]:
+            s.do_estimation()
 
         # Data shape
-        shape = self._systematics[0].shape
+        shape = self._systematics[systematic.name][0].shape
 
         # Subtract MC shapes from data shape
-        for s in self._systematics[1:]:
+        for s in self._systematics[systematic.name][1:]:
             shape.result.Add(s.shape.result, -1.0)
 
         # Test that not a single bin in TH1F shape.result is negative
@@ -285,9 +288,8 @@ class QCDEstimation(EstimationMethod):
             )
             raise Exception
 
-        # Rename root object accordingly and store to output file
+        # Rename root object accordingly
         shape.name = systematic.name
-        shape.save(root_objects_holder)
         return shape
 
     # Data-driven estimation, no associated files and weights

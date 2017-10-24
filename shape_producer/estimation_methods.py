@@ -19,7 +19,6 @@ class EstimationMethod(object):
         self._mc_campaign = mc_campaign
         self._channel = channel
         self._era = era
-        self._root_objects = None
 
     def get_path(self, systematic, folder):
         return systematic.category.channel.name + "_" + folder + "/ntuple"
@@ -48,7 +47,6 @@ class EstimationMethod(object):
 
     # function parsing the datasets helper to return the files
     # overwrite this function
-    # TODO: Replace by property?
     # TODO: Error handling for missing files!
     def get_files(self):
         raise NotImplementedError
@@ -92,32 +90,16 @@ class EstimationMethod(object):
                 elif callable(value):
                     setting[key] = value()
 
-        self._root_objects = []
+        root_objects = []
         for setting in root_object_settings:
-            self._root_objects.append(create_root_object(**setting))
-
-    @property
-    def root_objects(self):
-        if self._root_objects == None:
-            logger.fatal(
-                "Root objects for estimation method %s have not been created.",
-                self._name)
-            raise Exception
-        return self._root_objects
-
-    # TODO: Define what this should do, does this mirror sets?
-    # TODO: Make less magic
-    @root_objects.setter
-    def root_objects(self, root_object_holder):
-        for index in range(len(self._root_objects)):
-            self._root_objects[index] = root_object_holder.get(
-                self._root_objects[index].name)
+            root_objects.append(create_root_object(**setting))
+        return root_objects
 
     # doing nothing, shape is exactly the histogram as default
-    def do_estimation(self, systematic, root_objects):
-        if len(self.root_objects) != 1:
+    def do_estimation(self, systematic):
+        if len(systematic.root_objects) != 1:
             logger.fatal(
-                "There are %d histograms associated to %s with name %s, but not exactly 1.",
-                len(self.root_objects), self, self.name)
+                "There are %d histograms associated to the systematic with name %s, but not exactly 1.",
+                len(systematic.root_objects), systematic.name)
             raise Exception
-        return self.root_objects[0]
+        return systematic.root_objects[0]

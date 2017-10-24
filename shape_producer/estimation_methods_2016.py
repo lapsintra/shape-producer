@@ -144,6 +144,7 @@ class WJetsEstimation(EstimationMethod):
             "generator": "madgraph-pythia8"
         }
         files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
         return self.artus_file_names(files)
 
 

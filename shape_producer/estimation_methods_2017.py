@@ -50,11 +50,11 @@ class ZttEstimation(EstimationMethod):
     def get_cuts(self):
 
         ztt_genmatch_cut = Cut("1 == 1","ztt_genmatch")
-        if self.channel.get_name() in ["mt","et"]:
+        if self.channel.name in ["mt","et"]:
             ztt_genmatch_cut = Cut("gen_match_2==5", "ztt_genmatch")
-        elif self.channel.get_name() == "tt":
+        elif self.channel.name == "tt":
             ztt_genmatch_cut = Cut("(gen_match_1==5) && (gen_match_2==5)", "ztt_genmatch")
-        elif self.channel.get_name() == "tt":
+        elif self.channel.name == "tt":
             ztt_genmatch_cut = Cut("(gen_match_1==3) && (gen_match_2==4)", "ztt_genmatch")
         return Cuts(ztt_genmatch_cut)
 
@@ -83,11 +83,11 @@ class ZllEstimation(ZttEstimation):
 
     def get_cuts(self):
         zll_genmatch_cut = Cut("1 == 1","zll_genmatch_mt")
-        if self.channel.get_name() in ["mt","et"]:
+        if self.channel.name in ["mt","et"]:
             zll_genmatch_cut = Cut("gen_match_2!=5", "zll_genmatch")
-        elif self.channel.get_name() == "tt":
+        elif self.channel.name == "tt":
             zll_genmatch_cut = Cut("(gen_match_1!=5) || (gen_match_2!=5)", "zll_genmatch")
-        elif self.channel.get_name() == "em":
+        elif self.channel.name == "em":
             zll_genmatch_cut = Cut("(gen_match_1!=3) || (gen_match_2!=4)", "zll_genmatch")
         return Cuts(zll_genmatch_cut)
 
@@ -125,6 +125,7 @@ class WJetsEstimation(EstimationMethod):
             "generator": "madgraph-pythia8"
         }
         files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
         return self.artus_file_names(files)
 
 

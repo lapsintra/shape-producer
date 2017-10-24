@@ -246,7 +246,6 @@ class QCDEstimation(EstimationMethod):
             mc_campaign=None)
         self._bg_processes = [copy.deepcopy(p) for p in bg_processes]
         self._data_process = copy.deepcopy(data_process)
-        self._systematics = {}
 
     def create_root_objects(self, systematic):
         ss_category = copy.deepcopy(systematic.category)
@@ -255,7 +254,7 @@ class QCDEstimation(EstimationMethod):
         ss_category.name = ss_category._name + "_ss"
 
         root_objects = []
-        self._systematics[systematic.name] = []
+        systematic._qcd_systematics = []
         for process in [self._data_process] + self._bg_processes:
             s = Systematic(
                 category=ss_category,
@@ -264,21 +263,25 @@ class QCDEstimation(EstimationMethod):
                 era=self.era,
                 variation=systematic.variation,
                 mass=125)
-            self._systematics[systematic.name].append(s)
+            systematic._qcd_systematics.append(s)
             s.create_root_objects()
             root_objects += s.root_objects
         return root_objects
 
     def do_estimation(self, systematic):
+        if not hasattr(systematic, "_qcd_systematics"):
+            logger.fatal("Systematic %s does not have attribute _qcd_systematics needed for QCD estimation.", systematic.name)
+            raise Exception
+
         # Create shapes
-        for s in self._systematics[systematic.name]:
+        for s in systematic._qcd_systematics:
             s.do_estimation()
 
         # Data shape
-        shape = self._systematics[systematic.name][0].shape
+        shape = systematic._qcd_systematics[0].shape
 
         # Subtract MC shapes from data shape
-        for s in self._systematics[systematic.name][1:]:
+        for s in systematic._qcd_systematics[1:]:
             shape.result.Add(s.shape.result, -1.0)
 
         # Test that not a single bin in TH1F shape.result is negative

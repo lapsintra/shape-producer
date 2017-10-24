@@ -63,18 +63,22 @@ class Run2016(Era):
 
 class Run2017(Era):
     def __init__(self, database_path):
-        super(Run2017, self).__init__("Run2017", 17.83 * 1000.0, database_path)
+        super(Run2017, self).__init__("Run2017", 24.92 * 1000.0, database_path)
 
     def data_files(self, channel):
         query = {
             "data": True,
-            "campaign": "Run2017(B|C|D)",
+            "campaign": "Run2017(B|C|D|E)",
             "scenario": "PromptRecov(1|2|3)"
         }
         if channel.name == "mt":
             query["process"] = "SingleMuon"
         elif channel.name == "et":
             query["process"] = "SingleElectron"
+        if channel.name == "tt":
+            query["process"] = "Tau"
+        elif channel.name == "em":
+            query["process"] = "MuonEG"
         else:
             logger.critical("Channel %s is not implemented.", channel.name)
         files = self.datasets_helper.get_nicks_with_query(query)

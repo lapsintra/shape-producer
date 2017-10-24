@@ -18,12 +18,13 @@ class MT(Channel):
         self._cuts = Cuts(
             Cut("extraelec_veto<0.5", "extraelec_veto"),
             Cut("extramuon_veto<0.5", "extramuon_veto"),
-            Cut("againstMuonTight3_2>0.5", "againstMuonTight"),
             Cut("dilepton_veto<0.5", "dilepton_veto"),
-            Cut("againstElectronVLooseMVA6_2>0.5", "againstElectronVeto"),
+            Cut("againstMuonTight3_2>0.5", "againstMuonDiscriminator"),
+            Cut("againstElectronVLooseMVA6_2>0.5", "againstElectronDiscriminator"),
             Cut("byTightIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_iso"),
             Cut("iso_1<0.15", "muon_iso"),
-            Cut("q_1*q_2<0", "os"), Cut("trg_singlemuon==1", "trg_singlemuon"))
+            Cut("q_1*q_2<0", "os"),
+            Cut("trg_singlemuon==1", "trg_singlemuon"))
 
     @property
     def cuts(self):
@@ -34,18 +35,63 @@ class MT(Channel):
         return self._name
 
 
-class ET(MT):
+class ET(Channel):
     def __init__(self):
         self._name = "et"
         self._cuts = Cuts(
             Cut("extraelec_veto<0.5", "extraelec_veto"),
-            Cut("againstMuonLoose3_2>0.5", "againstMuonTight"),
+            Cut("extramuon_veto<0.5", "extramuon_veto"),
             Cut("dilepton_veto<0.5", "dilepton_veto"),
-            Cut("againstElectronTightMVA6_2>0.5", "againstElectronVeto"),
+            Cut("againstMuonLoose3_2>0.5", "againstMuonDiscriminator"),
+            Cut("againstElectronTightMVA6_2>0.5", "againstElectronDiscriminator"),
             Cut("byTightIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_iso"),
             Cut("iso_1<0.1", "ele_iso"),
             Cut("q_1*q_2<0", "os"),
             Cut("trg_singleelectron==1", "trg_singleelectron"))
+
+    @property
+    def cuts(self):
+        return self._cuts
+
+    @property
+    def name(self):
+        return self._name
+
+
+class TT(Channel):
+    def __init__(self):
+        self._name = "tt"
+        self._cuts = Cuts(
+            Cut("extraelec_veto<0.5", "extraelec_veto"),
+            Cut("extramuon_veto<0.5", "extramuon_veto"),
+            Cut("dilepton_veto<0.5", "dilepton_veto"),
+            Cut("againstMuonLoose3_2>0.5", "againstMuonDiscriminator"),
+            Cut("againstElectronVLooseMVA6_2>0.5", "againstElectronDiscriminator"),
+            Cut("byTightIsolationMVArun2v1DBoldDMwLT_1>0.5", "tau_1_iso"),
+            Cut("byTightIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_2_iso"),
+            Cut("q_1*q_2<0", "os"),
+            Cut("trg_doubletau==1", "trg_doubletau"))
+
+    @property
+    def cuts(self):
+        return self._cuts
+
+    @property
+    def name(self):
+        return self._name
+
+
+class EM(Channel):
+    def __init__(self):
+        self._name = "em"
+        self._cuts = Cuts(
+            Cut("extraelec_veto<0.5", "extraelec_veto"),
+            Cut("extramuon_veto<0.5", "extramuon_veto"),
+            Cut("dilepton_veto<0.5", "dilepton_veto"),
+            Cut("iso_1<0.1", "ele_iso"),
+            Cut("iso_1<0.15", "muon_iso"),
+            Cut("q_1*q_2<0", "os"),
+            Cut("trg_muonelectron==1", "trg_muonelectron"))
 
     @property
     def cuts(self):

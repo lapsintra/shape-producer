@@ -2,6 +2,7 @@
 
 import sys
 import logging
+import copy
 logger = logging.getLogger(__name__)
 """
 """
@@ -80,10 +81,16 @@ class Weights(object):
             if weightstring.name in self.names:
                 logger.fatal(
                     "Not possible to add the weightstring %s since its name is not unique.",
-                    cutstring)
+                    weightstring)
                 raise LookupError
             else:
                 self._weightstrings.append(weightstring)
+
+    def __add__(self, other):
+        new = copy.deepcopy(self)
+        for c in other._weightstrings:
+            new.add(c)
+        return new
 
     def extract(self):
         if len(self._weightstrings) > 0:

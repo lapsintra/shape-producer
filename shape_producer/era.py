@@ -75,7 +75,7 @@ class Run2017(Era):
             query["process"] = "SingleMuon"
         elif channel.name == "et":
             query["process"] = "SingleElectron"
-        if channel.name == "tt":
+        elif channel.name == "tt":
             query["process"] = "Tau"
         elif channel.name == "em":
             query["process"] = "MuonEG"

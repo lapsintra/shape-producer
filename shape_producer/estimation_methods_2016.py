@@ -114,7 +114,10 @@ class ZllEstimation(ZttEstimation):
 
     def get_weights(self):
         ztt_weights = super(ZllEstimation, self).get_weights()
-        return ztt_weights + Weights( Weight("(((decayMode_2 == 0)*1.0) + ((decayMode_2 == 1 || decayMode_2 == 2)*1.0) + ((decayMode_2 == 10)*1.0))", "decay_mode_reweight"))
+        return ztt_weights + Weights(
+            Weight(
+                "(((decayMode_2 == 0)*1.0) + ((decayMode_2 == 1 || decayMode_2 == 2)*1.0) + ((decayMode_2 == 10)*1.0))",
+                "decay_mode_reweight"))
 
 
 class WJetsEstimation(EstimationMethod):
@@ -254,29 +257,37 @@ class QCDEstimation(EstimationMethod):
         ss_category.cuts.get("ss").invert()
         ss_category.name = ss_category._name + "_ss"
 
-        self._root_objects = []
-        self._systematics = []
+        root_objects = []
+        systematic._qcd_systematics = []
         for process in [self._data_process] + self._bg_processes:
-            self._systematics.append(
-                Systematic(
-                    category=ss_category,
-                    process=process,
-                    analysis=systematic.analysis,
-                    era=self.era,
-                    variation=systematic.variation,
-                    mass=125))
-            self._root_objects += self._systematics[-1].root_objects
+            s = Systematic(
+                category=ss_category,
+                process=process,
+                analysis=systematic.analysis,
+                era=self.era,
+                variation=systematic.variation,
+                mass=125)
+            systematic._qcd_systematics.append(s)
+            s.create_root_objects()
+            root_objects += s.root_objects
+        return root_objects
 
-    def do_estimation(self, systematic, root_objects_holder):
+    def do_estimation(self, systematic):
+        if not hasattr(systematic, "_qcd_systematics"):
+            logger.fatal(
+                "Systematic %s does not have attribute _qcd_systematics needed for QCD estimation.",
+                systematic.name)
+            raise Exception
+
         # Create shapes
-        for s in self._systematics:
-            s.do_estimation(root_objects_holder)
+        for s in systematic._qcd_systematics:
+            s.do_estimation()
 
         # Data shape
-        shape = self._systematics[0].shape
+        shape = systematic._qcd_systematics[0].shape
 
         # Subtract MC shapes from data shape
-        for s in self._systematics[1:]:
+        for s in systematic._qcd_systematics[1:]:
             shape.result.Add(s.shape.result, -1.0)
 
         # Test that not a single bin in TH1F shape.result is negative
@@ -286,9 +297,8 @@ class QCDEstimation(EstimationMethod):
             )
             raise Exception
 
-        # Rename root object accordingly and store to output file
+        # Rename root object accordingly
         shape.name = systematic.name
-        shape.save(root_objects_holder)
         return shape
 
     # Data-driven estimation, no associated files and weights

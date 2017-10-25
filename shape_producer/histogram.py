@@ -257,9 +257,6 @@ class RootObjects(object):
                 h.update()
                 h.save(self._output_tree)
 
-    def remove_duplicates(self):
-        self._root_objects = list(set(self._root_objects))
-
     def produce_classic(self, num_threads):
         self.create_output_file()
         self._produced = True

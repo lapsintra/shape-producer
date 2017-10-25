@@ -34,18 +34,19 @@ class ZttEstimation(EstimationMethod):
         return Weights(
 
             # MC related weights
-            Weight("generatorWeight","generatorWeight"),
+            Weight("generatorWeight", "generatorWeight"),
             #Weight("numberGeneratedEventsWeight","numberGeneratedEventsWeight"), # to be used only for one inclusive sample
             #Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
-            Weight("(((genbosonmass >= 50.0 && (npartons == 0 || npartons >= 4))*5.75970078e-5) + ((genbosonmass >= 50.0 && npartons == 1)*1.36277241e-5) + ((genbosonmass >= 50.0 && npartons == 2)*7.42888435e-6) + ((genbosonmass >= 50.0 && npartons == 3)*1.62808443e-5) + ((genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight))", "z_stitching_weight"),
+            Weight(
+                "(((genbosonmass >= 50.0 && (npartons == 0 || npartons >= 4))*5.75970078e-5) + ((genbosonmass >= 50.0 && npartons == 1)*1.36277241e-5) + ((genbosonmass >= 50.0 && npartons == 2)*7.42888435e-6) + ((genbosonmass >= 50.0 && npartons == 3)*1.62808443e-5) + ((genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight))",
+                "z_stitching_weight"),
 
             # Weights for corrections
             #Weight("zPtReweightWeight", "zPtReweightWeight"),
             #Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))", "hadronic_tau_sf"),
 
             # Data related scale-factors
-            self.era.lumi_weight
-            )
+            self.era.lumi_weight)
 
     def get_cuts(self):
 
@@ -91,6 +92,7 @@ class ZllEstimation(ZttEstimation):
             zll_genmatch_cut = Cut("(gen_match_1!=3) || (gen_match_2!=4)", "zll_genmatch")
         return Cuts(zll_genmatch_cut)
 
+
 class WJetsEstimation(EstimationMethod):
     def __init__(self, era, directory, channel):
         super(WJetsEstimation, self).__init__(
@@ -105,17 +107,18 @@ class WJetsEstimation(EstimationMethod):
         return Weights(
 
             # MC related weights
-            Weight("generatorWeight","generatorWeight"),
+            Weight("generatorWeight", "generatorWeight"),
             #Weight("numberGeneratedEventsWeight","numberGeneratedEventsWeight"), # to be used only for one inclusive sample
             #Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
-            Weight("(((npartons == 0 || npartons >= 5)*2.36006270e-3) + ((npartons == 1)*2.34817764e-4) + ((npartons == 2)*1.31144867e-4) + ((npartons == 3)*1.39177532e-4) + ((npartons == 4)*6.46064804e-5))", "wj_stitching_weight"),
+            Weight(
+                "(((npartons == 0 || npartons >= 5)*2.36006270e-3) + ((npartons == 1)*2.34817764e-4) + ((npartons == 2)*1.31144867e-4) + ((npartons == 3)*1.39177532e-4) + ((npartons == 4)*6.46064804e-5))",
+                "wj_stitching_weight"),
 
             # Weights for corrections
             #Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))", "hadronic_tau_sf"),
 
             # Data related scale-factors
-            self.era.lumi_weight
-            )
+            self.era.lumi_weight)
 
     def get_files(self):
         query = {
@@ -143,9 +146,11 @@ class TTEstimation(EstimationMethod):
         return Weights(
 
             # MC related weights
-            Weight("generatorWeight","generatorWeight"),
-            Weight("numberGeneratedEventsWeight","numberGeneratedEventsWeight"), # to be used only for one inclusive sample
-            Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
+            Weight("generatorWeight", "generatorWeight"),
+            Weight("numberGeneratedEventsWeight", "numberGeneratedEventsWeight"
+                   ),  # to be used only for one inclusive sample
+            Weight("crossSectionPerEventWeight", "crossSectionPerEventWeight"
+                   ),  # to be used only for one inclusive sample
 
             # Weights for corrections
             Weight("topPtReweightWeight", "topPtReweightWeight"),

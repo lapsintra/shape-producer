@@ -19,7 +19,9 @@ class Systematic(object):
         self._mass = mass
         self._variation = variation
         self._shape = None
+        self._root_objects = None
 
+    # TODO: What does this magic?
     def __deepcopy__(self, memo):
         # some kind of workaround: the deepcopy method is overwritten, but anyway the one from the base class should be called
         deepcopy_method = self.__deepcopy__
@@ -72,21 +74,20 @@ class Systematic(object):
     def variation(self, variation):
         self._variation = variation
 
-    # function to return the histogram classes necessary for this systematic variation
     @property
     def root_objects(self):
-        self._process.estimation_method.create_root_objects(self)
-        return self._process.estimation_method.root_objects
+        if self._root_objects == None:
+            logger.fatal("ROOT objects of systematic %s are not created.",
+                         self.name)
+            raise Exception
+        return self._root_objects
 
-    @root_objects.setter
-    def root_objects(self, root_objects_holder):
-        self.process.estimation_method.root_objects = root_objects_holder
+    def create_root_objects(self):
+        self._root_objects = self._process.estimation_method.create_root_objects(
+            self)
 
-    def do_estimation(
-            self,
-            root_objects_holder):  # function doing the actual calculations.
-        self._shape = self._process.estimation_method.do_estimation(
-            self, root_objects_holder)
+    def do_estimation(self):
+        self._shape = self._process.estimation_method.do_estimation(self)
 
     @property
     def shape(self):
@@ -135,18 +136,28 @@ class Systematics(object):
     def produce(self):
         # create the input histograms, all at once to make optimal use of TDFs
         self.create_histograms()
-        # sort the estimation modules. TODO to be implemented # TODO Why?
+
+        # sort the estimation modules. TODO to be implemented, if estimation modules are dependent on each other
         # self.sort_estimations()
+
         # do the background estimations
         self.do_estimations()
         logger.debug("Successfully finished systematics production.")
 
     # read root histograms from the inputfiles and write them to the outputfile
     def create_histograms(self):
+        # collect ROOT objects
         self._root_objects_holder = RootObjects(self._output_file)
         for systematic in self._systematics:
+            logger.debug("Create ROOT objects for systematic %s.",
+                         systematic.name)
+            systematic.create_root_objects()
             self._root_objects_holder.add(systematic.root_objects)
-        self._root_objects_holder.remove_duplicates()
+        #self._root_objects_holder.check_duplicates() # TODO: Implement this if needed
+
+        # produce the ROOT objects (in parallel)
+        logger.debug("Produce ROOT objects using the %s backend.",
+                     self._backend)
         if self._backend == "classic":
             self._root_objects_holder.produce_classic(self._num_threads)
         elif self._backend == "tdf":  # experimental - do not use yet, need to set number of threads
@@ -157,16 +168,12 @@ class Systematics(object):
             logger.fatal("Backend %s is not implemented.", self._backend)
             raise Exception
 
-    # TODO function to sort the estimation modules depending on what has to be previously ran
-    def sort_estimations(self):
-        raise NotImplementedError
-
     # to the actual estimations. Currently do not run in parallel due to expected very low runtime, can in principle be parallelized
-    # TODO: This is not right because data driven estimations such as QCD will run in this loop
     def do_estimations(self):
         for systematic in self._systematics:
             logger.debug("Do estimation for systematic %s.", systematic.name)
-            systematic.do_estimation(self._root_objects_holder)
+            systematic.do_estimation()
+            systematic.shape.save(self._root_objects_holder)
 
     def summary(self):
         table = [[

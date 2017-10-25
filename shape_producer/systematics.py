@@ -156,6 +156,8 @@ class Systematics(object):
         #self._root_objects_holder.check_duplicates() # TODO: Implement this if needed
 
         # produce the ROOT objects (in parallel)
+        logger.debug("Produce ROOT objects using the %s backend.",
+                     self._backend)
         if self._backend == "classic":
             self._root_objects_holder.produce_classic(self._num_threads)
         elif self._backend == "tdf":  # experimental - do not use yet, need to set number of threads

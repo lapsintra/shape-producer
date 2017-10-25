@@ -50,13 +50,15 @@ class ZttEstimation(EstimationMethod):
 
     def get_cuts(self):
 
-        ztt_genmatch_cut = Cut("1 == 1","ztt_genmatch")
-        if self.channel.name in ["mt","et"]:
+        ztt_genmatch_cut = Cut("1 == 1", "ztt_genmatch")
+        if self.channel.name in ["mt", "et"]:
             ztt_genmatch_cut = Cut("gen_match_2==5", "ztt_genmatch")
         elif self.channel.name == "tt":
-            ztt_genmatch_cut = Cut("(gen_match_1==5) && (gen_match_2==5)", "ztt_genmatch")
+            ztt_genmatch_cut = Cut("(gen_match_1==5) && (gen_match_2==5)",
+                                   "ztt_genmatch")
         elif self.channel.name == "tt":
-            ztt_genmatch_cut = Cut("(gen_match_1==3) && (gen_match_2==4)", "ztt_genmatch")
+            ztt_genmatch_cut = Cut("(gen_match_1==3) && (gen_match_2==4)",
+                                   "ztt_genmatch")
         return Cuts(ztt_genmatch_cut)
 
     def get_files(self):
@@ -83,13 +85,15 @@ class ZllEstimation(ZttEstimation):
             mc_campaign="RunIISummer17MiniAOD")
 
     def get_cuts(self):
-        zll_genmatch_cut = Cut("1 == 1","zll_genmatch_mt")
-        if self.channel.name in ["mt","et"]:
+        zll_genmatch_cut = Cut("1 == 1", "zll_genmatch_mt")
+        if self.channel.name in ["mt", "et"]:
             zll_genmatch_cut = Cut("gen_match_2!=5", "zll_genmatch")
         elif self.channel.name == "tt":
-            zll_genmatch_cut = Cut("(gen_match_1!=5) || (gen_match_2!=5)", "zll_genmatch")
+            zll_genmatch_cut = Cut("(gen_match_1!=5) || (gen_match_2!=5)",
+                                   "zll_genmatch")
         elif self.channel.name == "em":
-            zll_genmatch_cut = Cut("(gen_match_1!=3) || (gen_match_2!=4)", "zll_genmatch")
+            zll_genmatch_cut = Cut("(gen_match_1!=3) || (gen_match_2!=4)",
+                                   "zll_genmatch")
         return Cuts(zll_genmatch_cut)
 
 
@@ -157,8 +161,7 @@ class TTEstimation(EstimationMethod):
             #Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))", "hadronic_tau_sf"),
 
             # Data related scale-factors
-            self.era.lumi_weight
-            )
+            self.era.lumi_weight)
 
     def get_files(self):
         query = {

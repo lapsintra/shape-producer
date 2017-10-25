@@ -114,7 +114,10 @@ class ZllEstimation(ZttEstimation):
 
     def get_weights(self):
         ztt_weights = super(ZllEstimation, self).get_weights()
-        return ztt_weights + Weights( Weight("(((decayMode_2 == 0)*1.0) + ((decayMode_2 == 1 || decayMode_2 == 2)*1.0) + ((decayMode_2 == 10)*1.0))", "decay_mode_reweight"))
+        return ztt_weights + Weights(
+            Weight(
+                "(((decayMode_2 == 0)*1.0) + ((decayMode_2 == 1 || decayMode_2 == 2)*1.0) + ((decayMode_2 == 10)*1.0))",
+                "decay_mode_reweight"))
 
 
 class WJetsEstimation(EstimationMethod):
@@ -270,7 +273,9 @@ class QCDEstimation(EstimationMethod):
 
     def do_estimation(self, systematic):
         if not hasattr(systematic, "_qcd_systematics"):
-            logger.fatal("Systematic %s does not have attribute _qcd_systematics needed for QCD estimation.", systematic.name)
+            logger.fatal(
+                "Systematic %s does not have attribute _qcd_systematics needed for QCD estimation.",
+                systematic.name)
             raise Exception
 
         # Create shapes

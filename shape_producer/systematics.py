@@ -77,12 +77,14 @@ class Systematic(object):
     @property
     def root_objects(self):
         if self._root_objects == None:
-            logger.fatal("ROOT objects of systematic %s are not created.", self.name)
+            logger.fatal("ROOT objects of systematic %s are not created.",
+                         self.name)
             raise Exception
         return self._root_objects
 
     def create_root_objects(self):
-        self._root_objects = self._process.estimation_method.create_root_objects(self)
+        self._root_objects = self._process.estimation_method.create_root_objects(
+            self)
 
     def do_estimation(self):
         self._shape = self._process.estimation_method.do_estimation(self)
@@ -147,7 +149,8 @@ class Systematics(object):
         # collect ROOT objects
         self._root_objects_holder = RootObjects(self._output_file)
         for systematic in self._systematics:
-            logger.debug("Create ROOT objects for systematic %s.", systematic.name)
+            logger.debug("Create ROOT objects for systematic %s.",
+                         systematic.name)
             systematic.create_root_objects()
             self._root_objects_holder.add(systematic.root_objects)
         #self._root_objects_holder.check_duplicates() # TODO: Implement this if needed

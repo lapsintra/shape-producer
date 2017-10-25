@@ -87,6 +87,7 @@ class SquareAndRemoveWeight(SystematicVariation):
                     "weights"]().remove(self._weight_name)
         return h_settings
 
+
 class ReplaceWeight(SystematicVariation):
     def __init__(self, name, weight_name, new_weight, direction):
         super(ReplaceWeight, self).__init__(name, direction)
@@ -95,6 +96,7 @@ class ReplaceWeight(SystematicVariation):
 
     def shifted_root_objects(self, h_settings):
         for index in range(len(h_settings)):
-            h_settings[index]["weights"] = h_settings[index]["weights"]().remove(self._weight_name)#.add(self._new_weight)
+            h_settings[index]["weights"] = h_settings[index][
+                "weights"]().remove(self._weight_name)  #.add(self._new_weight)
             h_settings[index]["weights"].add(self._new_weight)
         return h_settings

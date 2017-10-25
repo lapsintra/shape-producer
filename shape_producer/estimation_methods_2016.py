@@ -119,6 +119,40 @@ class ZllEstimation(ZttEstimation):
                 "(((decayMode_2 == 0)*1.0) + ((decayMode_2 == 1 || decayMode_2 == 2)*1.0) + ((decayMode_2 == 10)*1.0))",
                 "decay_mode_reweight"))
 
+class ZlEstimation(ZttEstimation):
+    def __init__(self, era, directory, channel):
+        super(ZttEstimation, self).__init__(
+            name="Zl",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("gen_match_2<5", "zl_genmatch_mt"))
+
+    def get_weights(self):
+        ztt_weights = super(ZlEstimation, self).get_weights()
+        return ztt_weights
+
+class ZjEstimation(ZttEstimation):
+    def __init__(self, era, directory, channel):
+        super(ZttEstimation, self).__init__(
+            name="Zj",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("gen_match_2==6", "zj_genmatch_mt"))
+
+    def get_weights(self):
+        ztt_weights = super(ZjEstimation, self).get_weights()
+        return ztt_weights
+
 
 class WJetsEstimation(EstimationMethod):
     def __init__(self, era, directory, channel):

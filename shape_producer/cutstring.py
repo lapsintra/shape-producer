@@ -12,8 +12,8 @@ logger = logging.getLogger(__name__)
 # Weight -> Weight, constant
 # Weights -> holder for weight expression
 
-supported_operators = ['<', '>', '&&', '||', '==', '!=']
-inverted_operators = ['>', '<', '||', '&&', '!=', '==']
+supported_operators = ['<', '>', '&&', '||', '==', '!=', '<=', '>=']
+inverted_operators = ['>=', '<=', '||', '&&', '!=', '==', '>', '<']
 
 
 # Base class all others inherit from.
@@ -155,7 +155,10 @@ class Cut(object):
         tmpcutstring = cutstring.split(self._operator)
         if len(tmpcutstring) == 2 and len(operators) == 1:
             self._varleft = tmpcutstring[0]
-            self._varright = float(tmpcutstring[1])
+            try:
+                self._varright = int(tmpcutstring[1])
+            except ValueError:
+                self._varright = float(tmpcutstring[1])
         self.update_weightstring()
 
     @property

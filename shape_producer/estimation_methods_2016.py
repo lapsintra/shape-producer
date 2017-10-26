@@ -33,10 +33,10 @@ class DataEstimation(EstimationMethod):
 
 
 # TODO: Does this work?
-class HttEstimation(EstimationMethod):
+class HTTEstimation(EstimationMethod):
     def __init__(self, era, directory, channel):
-        super(HttEstimation, self).__init__(
-            name="Htt",
+        super(HTTEstimation, self).__init__(
+            name="HTT",
             folder="nominal",
             era=era,
             directory=directory,
@@ -58,9 +58,9 @@ class HttEstimation(EstimationMethod):
         log_query(self.name, query, files)
         return self.artus_file_names(files)
 
-class ggHEstimation(HttEstimation):
+class ggHEstimation(HTTEstimation):
     def __init__(self, era, directory, channel):
-        super(HttEstimation, self).__init__(
+        super(HTTEstimation, self).__init__(
             name="ggH",
             folder="nominal",
             era=era,
@@ -79,9 +79,9 @@ class ggHEstimation(HttEstimation):
         log_query(self.name, query, files)
         return self.artus_file_names(files)
 
-class qqHEstimation(HttEstimation):
+class qqHEstimation(HTTEstimation):
     def __init__(self, era, directory, channel):
-        super(HttEstimation, self).__init__(
+        super(HTTEstimation, self).__init__(
             name="qqH",
             folder="nominal",
             era=era,
@@ -100,9 +100,9 @@ class qqHEstimation(HttEstimation):
         log_query(self.name, query, files)
         return self.artus_file_names(files)
 
-class VHEstimation(HttEstimation):
+class VHEstimation(HTTEstimation):
     def __init__(self, era, directory, channel):
-        super(HttEstimation, self).__init__(
+        super(HTTEstimation, self).__init__(
             name="VH",
             folder="nominal",
             era=era,
@@ -122,10 +122,10 @@ class VHEstimation(HttEstimation):
         return self.artus_file_names(files)
 
 
-class ZttEstimation(EstimationMethod):
+class ZTTEstimation(EstimationMethod):
     def __init__(self, era, directory, channel):
-        super(ZttEstimation, self).__init__(
-            name="Ztt",
+        super(ZTTEstimation, self).__init__(
+            name="ZTT",
             folder="nominal",
             era=era,
             directory=directory,
@@ -162,10 +162,10 @@ class ZttEstimation(EstimationMethod):
         return self.artus_file_names(files)
 
 
-class ZllEstimation(ZttEstimation):
+class ZLLEstimation(ZTTEstimation):
     def __init__(self, era, directory, channel):
-        super(ZttEstimation, self).__init__(
-            name="Zll",
+        super(ZTTEstimation, self).__init__(
+            name="ZLL",
             folder="nominal",
             era=era,
             directory=directory,
@@ -176,16 +176,16 @@ class ZllEstimation(ZttEstimation):
         return Cuts(Cut("(gen_match_2<5||gen_match_2==6)", "zll_genmatch_mt"))
 
     def get_weights(self):
-        ztt_weights = super(ZllEstimation, self).get_weights()
+        ztt_weights = super(ZLLEstimation, self).get_weights()
         return ztt_weights + Weights(
             Weight(
                 "(((decayMode_2 == 0)*1.0) + ((decayMode_2 == 1 || decayMode_2 == 2)*1.0) + ((decayMode_2 == 10)*1.0))",
                 "decay_mode_reweight"))
 
-class ZlEstimationMT(ZttEstimation):
+class ZLEstimationMT(ZTTEstimation):
     def __init__(self, era, directory, channel):
-        super(ZttEstimation, self).__init__(
-            name="Zl",
+        super(ZTTEstimation, self).__init__(
+            name="ZL",
             folder="nominal",
             era=era,
             directory=directory,
@@ -195,10 +195,10 @@ class ZlEstimationMT(ZttEstimation):
     def get_cuts(self):
         return Cuts(Cut("gen_match_2<5", "zl_genmatch_mt"))
 
-class ZjEstimationMT(ZttEstimation):
+class ZJEstimationMT(ZTTEstimation):
     def __init__(self, era, directory, channel):
-        super(ZttEstimation, self).__init__(
-            name="Zj",
+        super(ZTTEstimation, self).__init__(
+            name="ZJ",
             folder="nominal",
             era=era,
             directory=directory,
@@ -208,16 +208,16 @@ class ZjEstimationMT(ZttEstimation):
         return Cuts(Cut("gen_match_2==6", "zj_genmatch_mt"))
 
 # et is equivalent to mt
-class ZjEstimationET(ZjEstimationMT):
+class ZJEstimationET(ZJEstimationMT):
     pass
-class ZlEstimationET(ZlEstimationMT):
+class ZLEstimationET(ZLEstimationMT):
     pass
 
 
-class WJetsEstimation(EstimationMethod):
+class WEstimation(EstimationMethod):
     def __init__(self, era, directory, channel):
-        super(WJetsEstimation, self).__init__(
-            name="WJets",
+        super(WEstimation, self).__init__(
+            name="W",
             folder="nominal",
             era=era,
             directory=directory,
@@ -248,7 +248,7 @@ class WJetsEstimation(EstimationMethod):
 class TTEstimation(EstimationMethod):
     def __init__(self, era, directory, channel):
         super(TTEstimation, self).__init__(
-            name="tt",
+            name="TT",
             folder="nominal",
             era=era,
             directory=directory,

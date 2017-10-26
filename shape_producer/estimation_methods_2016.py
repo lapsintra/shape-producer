@@ -58,6 +58,69 @@ class HttEstimation(EstimationMethod):
         log_query(self.name, query, files)
         return self.artus_file_names(files)
 
+class ggHEstimation(HttEstimation):
+    def __init__(self, era, directory, channel):
+        super(HttEstimation, self).__init__(
+            name="ggH",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_files(self):
+        query = {
+            "process": "^GluGluHToTauTau.*125.*",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "powheg\-pythia8"
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
+class qqHEstimation(HttEstimation):
+    def __init__(self, era, directory, channel):
+        super(HttEstimation, self).__init__(
+            name="qqH",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_files(self):
+        query = {
+            "process": "^VBFHToTauTau.*125.*",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "powheg\-pythia8"
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
+class VHEstimation(HttEstimation):
+    def __init__(self, era, directory, channel):
+        super(HttEstimation, self).__init__(
+            name="VH",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_files(self):
+        query = {
+            "process": "(^W(minus|plus)HToTauTau.*125.*|^ZHToTauTau.*125.*)",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "powheg\-pythia8"
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
 
 class ZttEstimation(EstimationMethod):
     def __init__(self, era, directory, channel):
@@ -119,7 +182,7 @@ class ZllEstimation(ZttEstimation):
                 "(((decayMode_2 == 0)*1.0) + ((decayMode_2 == 1 || decayMode_2 == 2)*1.0) + ((decayMode_2 == 10)*1.0))",
                 "decay_mode_reweight"))
 
-class ZlEstimation(ZttEstimation):
+class ZlEstimationMT(ZttEstimation):
     def __init__(self, era, directory, channel):
         super(ZttEstimation, self).__init__(
             name="Zl",
@@ -132,11 +195,7 @@ class ZlEstimation(ZttEstimation):
     def get_cuts(self):
         return Cuts(Cut("gen_match_2<5", "zl_genmatch_mt"))
 
-    def get_weights(self):
-        ztt_weights = super(ZlEstimation, self).get_weights()
-        return ztt_weights
-
-class ZjEstimation(ZttEstimation):
+class ZjEstimationMT(ZttEstimation):
     def __init__(self, era, directory, channel):
         super(ZttEstimation, self).__init__(
             name="Zj",
@@ -145,13 +204,14 @@ class ZjEstimation(ZttEstimation):
             directory=directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
-
     def get_cuts(self):
         return Cuts(Cut("gen_match_2==6", "zj_genmatch_mt"))
 
-    def get_weights(self):
-        ztt_weights = super(ZjEstimation, self).get_weights()
-        return ztt_weights
+# et is equivalent to mt
+class ZjEstimationET(ZjEstimationMT):
+    pass
+class ZlEstimationET(ZlEstimationMT):
+    pass
 
 
 class WJetsEstimation(EstimationMethod):
@@ -211,6 +271,20 @@ class TTEstimation(EstimationMethod):
         files = self.era.datasets_helper.get_nicks_with_query(query)
         log_query(self.name, query, files)
         return self.artus_file_names(files)
+
+class TTTEstimationMT(TTEstimation):
+    def get_cuts(self):
+        return Cuts(Cut("gen_match_2==5", "ttt_genmatch_mt"))
+
+class TTJEstimationMT(TTEstimation):
+    def get_cuts(self):
+        return Cuts(Cut("gen_match_2!=5", "ttj_genmatch_mt"))
+
+class TTTEstimationET(TTTEstimationMT):
+    pass
+
+class TTJEstimationET(TTJEstimationMT):
+    pass
 
 
 class VVEstimation(EstimationMethod):

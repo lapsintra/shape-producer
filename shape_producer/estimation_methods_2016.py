@@ -427,6 +427,9 @@ class QCDEstimation(EstimationMethod):
         for s in systematic._qcd_systematics[1:]:
             shape.result.Add(s.shape.result, -1.0)
 
+        # Rename root object accordingly
+        shape.name = systematic.name
+
         # Test that not a single bin in TH1F shape.result is negative
         if shape.has_negative_entries():
             logger.fatal(
@@ -434,8 +437,6 @@ class QCDEstimation(EstimationMethod):
             )
             raise Exception
 
-        # Rename root object accordingly
-        shape.name = systematic.name
         return shape
 
     # Data-driven estimation, no associated files and weights

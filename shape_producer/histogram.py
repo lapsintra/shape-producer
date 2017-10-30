@@ -85,7 +85,10 @@ class Histogram(TTreeContent):
 
     def create_result(self, dataframe=False):
         if dataframe:
-            self._result = dataframe.Histo1D(self._variable.name,
+            self._result = dataframe.Histo1D(("", self._cuts.expand() + "*" + self._weights.extract(), self._variable.binning.nbinsx,
+                                             self._variable.binning.xlow,
+                                             self._variable.binning.xhigh),
+                                             self._variable.name,
                                              self._weight_name)
         else:  # classic way
             tree = ROOT.TChain()
@@ -239,7 +242,7 @@ class RootObjects(object):
         for files_folder in files_folders:
             # create the dataframe
             common_dataframe = ROOT.Experimental.TDataFrame(
-                files_folder[1], files_folder[0][0])
+                str(files_folder[1]), str(files_folder[0][0]))
             # loop over the corresponding histograms and create an own dataframe for each histogram -> TODO
             for h in [
                     h for h in self._root_objects

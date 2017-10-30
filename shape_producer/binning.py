@@ -48,3 +48,11 @@ class ConstantBinning(Binning):
     @property
     def nbinsx(self):
         return self._nbinsx
+
+    @property
+    def xlow(self):
+        return self._xlow
+
+    @property
+    def xhigh(self):
+        return self._xhigh

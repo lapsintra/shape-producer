@@ -4,6 +4,7 @@ import ROOT
 from array import array
 import hashlib
 import logging
+import binning
 logger = logging.getLogger(__name__)
 """
 """
@@ -85,6 +86,9 @@ class Histogram(TTreeContent):
 
     def create_result(self, dataframe=False):
         if dataframe:
+            if not isinstance(self._variable.binning, binning.ConstantBinning):
+                logger.fatal("TDataFrames work only with a constant binning.")
+                raise Exception
             self._result = dataframe.Histo1D(("", self._cuts.expand() + "*" + self._weights.extract(), self._variable.binning.nbinsx,
                                              self._variable.binning.xlow,
                                              self._variable.binning.xhigh),

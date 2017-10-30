@@ -372,17 +372,17 @@ class QCDEstimation(ABCDEstimationMethod):
             channel=channel,
             bg_processes=bg_processes,
             data_process=data_process,
-            AC_cut_names=[
-                "os"
-            ],  # cut to be removed to include region for shape derivation
-            BD_cuts=[
-                Cut("q_1*q_2>0", "ss")
-            ],  # cut to be applied to restrict to region for shape derivation
-            AB_cut_names=[
+            AC_cut_names=[ # cuts to be removed to include region for shape derivation
                 "tau_2_iso"
-            ],  # cut to be removed to include region for the determination of the extrapolation derivation
-            CD_cuts=[
+            ],
+            BD_cuts=[      # cuts to be applied to restrict to region for shape derivation
                 Cut("byLooseIsolationMVArun2v1DBoldDMwLT_2>0.5",
                     "tau_2_iso_loose")
+            ],
+            AB_cut_names=[ # cuts to be removed to include region for the determination of the extrapolation derivation
+                "os"
+            ],
+            CD_cuts=[      # cuts to be applied to restrict to region for the determination of the extrapolation derivation
+                Cut("q_1*q_2>0", "ss")
             ]
-        )  # cut to be applied to restrict to region for the determination of the extrapolation derivation
+        )

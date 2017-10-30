@@ -103,3 +103,73 @@ class EstimationMethod(object):
                 len(systematic.root_objects), systematic.name)
             raise Exception
         return systematic.root_objects[0]
+
+
+class SStoOSEstimation(EstimationMethod):
+    def __init__(self, era, directory, channel, bg_processes, data_process):
+        super(QCDEstimation, self).__init__(
+            name="QCD",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign=None)
+        self._bg_processes = [copy.deepcopy(p) for p in bg_processes]
+        self._data_process = copy.deepcopy(data_process)
+
+    def create_root_objects(self, systematic):
+        ss_category = copy.deepcopy(systematic.category)
+        ss_category.cuts.get("os").name = "ss"
+        ss_category.cuts.get("ss").invert()
+        ss_category.name = ss_category._name + "_ss"
+
+        root_objects = []
+        systematic._qcd_systematics = []
+        for process in [self._data_process] + self._bg_processes:
+            s = Systematic(
+                category=ss_category,
+                process=process,
+                analysis=systematic.analysis,
+                era=self.era,
+                variation=systematic.variation,
+                mass=125)
+            systematic._qcd_systematics.append(s)
+            s.create_root_objects()
+            root_objects += s.root_objects
+        return root_objects
+
+    def do_estimation(self, systematic):
+        if not hasattr(systematic, "_qcd_systematics"):
+            logger.fatal(
+                "Systematic %s does not have attribute _qcd_systematics needed for QCD estimation.",
+                systematic.name)
+            raise Exception
+
+        # Create shapes
+        for s in systematic._qcd_systematics:
+            s.do_estimation()
+
+        # Data shape
+        shape = systematic._qcd_systematics[0].shape
+
+        # Subtract MC shapes from data shape
+        for s in systematic._qcd_systematics[1:]:
+            shape.result.Add(s.shape.result, -1.0)
+
+        # Test that not a single bin in TH1F shape.result is negative
+        if shape.has_negative_entries():
+            logger.fatal(
+                "Subtraction of Monte Carlo from data results in negative number of events."
+            )
+            raise Exception
+
+        # Rename root object accordingly
+        shape.name = systematic.name
+        return shape
+
+    # Data-driven estimation, no associated files and weights
+    def get_files(self):
+        raise NotImplementedError
+
+    def get_weights(self):
+        raise NotImplementedError

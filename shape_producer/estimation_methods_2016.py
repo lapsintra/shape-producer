@@ -4,6 +4,7 @@ import copy
 import os
 
 from estimation_methods import EstimationMethod
+from estimation_methods import SStoOSEstimationMethod
 from histogram import *
 from cutstring import *
 from systematics import *
@@ -58,6 +59,7 @@ class HTTEstimation(EstimationMethod):
         log_query(self.name, query, files)
         return self.artus_file_names(files)
 
+
 class ggHEstimation(HTTEstimation):
     def __init__(self, era, directory, channel):
         super(HTTEstimation, self).__init__(
@@ -79,6 +81,7 @@ class ggHEstimation(HTTEstimation):
         log_query(self.name, query, files)
         return self.artus_file_names(files)
 
+
 class qqHEstimation(HTTEstimation):
     def __init__(self, era, directory, channel):
         super(HTTEstimation, self).__init__(
@@ -99,6 +102,7 @@ class qqHEstimation(HTTEstimation):
         files = self.era.datasets_helper.get_nicks_with_query(query)
         log_query(self.name, query, files)
         return self.artus_file_names(files)
+
 
 class VHEstimation(HTTEstimation):
     def __init__(self, era, directory, channel):
@@ -182,6 +186,7 @@ class ZLLEstimation(ZTTEstimation):
                 "(((decayMode_2 == 0)*1.0) + ((decayMode_2 == 1 || decayMode_2 == 2)*1.0) + ((decayMode_2 == 10)*1.0))",
                 "decay_mode_reweight"))
 
+
 class ZLEstimationMT(ZTTEstimation):
     def __init__(self, era, directory, channel):
         super(ZTTEstimation, self).__init__(
@@ -195,6 +200,7 @@ class ZLEstimationMT(ZTTEstimation):
     def get_cuts(self):
         return Cuts(Cut("gen_match_2<5", "zl_genmatch_mt"))
 
+
 class ZJEstimationMT(ZTTEstimation):
     def __init__(self, era, directory, channel):
         super(ZTTEstimation, self).__init__(
@@ -204,12 +210,16 @@ class ZJEstimationMT(ZTTEstimation):
             directory=directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
+
     def get_cuts(self):
         return Cuts(Cut("gen_match_2==6", "zj_genmatch_mt"))
+
 
 # et is equivalent to mt
 class ZJEstimationET(ZJEstimationMT):
     pass
+
+
 class ZLEstimationET(ZLEstimationMT):
     pass
 
@@ -272,16 +282,20 @@ class TTEstimation(EstimationMethod):
         log_query(self.name, query, files)
         return self.artus_file_names(files)
 
+
 class TTTEstimationMT(TTEstimation):
     def get_cuts(self):
         return Cuts(Cut("gen_match_2==5", "ttt_genmatch_mt"))
+
 
 class TTJEstimationMT(TTEstimation):
     def get_cuts(self):
         return Cuts(Cut("gen_match_2!=5", "ttj_genmatch_mt"))
 
+
 class TTTEstimationET(TTTEstimationMT):
     pass
+
 
 class TTJEstimationET(TTJEstimationMT):
     pass
@@ -347,71 +361,5 @@ class VVEstimation(EstimationMethod):
         return self.artus_file_names(files)
 
 
-class QCDEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, bg_processes, data_process):
-        super(QCDEstimation, self).__init__(
-            name="QCD",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            channel=channel,
-            mc_campaign=None)
-        self._bg_processes = [copy.deepcopy(p) for p in bg_processes]
-        self._data_process = copy.deepcopy(data_process)
-
-    def create_root_objects(self, systematic):
-        ss_category = copy.deepcopy(systematic.category)
-        ss_category.cuts.get("os").name = "ss"
-        ss_category.cuts.get("ss").invert()
-        ss_category.name = ss_category._name + "_ss"
-
-        root_objects = []
-        systematic._qcd_systematics = []
-        for process in [self._data_process] + self._bg_processes:
-            s = Systematic(
-                category=ss_category,
-                process=process,
-                analysis=systematic.analysis,
-                era=self.era,
-                variation=systematic.variation,
-                mass=125)
-            systematic._qcd_systematics.append(s)
-            s.create_root_objects()
-            root_objects += s.root_objects
-        return root_objects
-
-    def do_estimation(self, systematic):
-        if not hasattr(systematic, "_qcd_systematics"):
-            logger.fatal(
-                "Systematic %s does not have attribute _qcd_systematics needed for QCD estimation.",
-                systematic.name)
-            raise Exception
-
-        # Create shapes
-        for s in systematic._qcd_systematics:
-            s.do_estimation()
-
-        # Data shape
-        shape = systematic._qcd_systematics[0].shape
-
-        # Subtract MC shapes from data shape
-        for s in systematic._qcd_systematics[1:]:
-            shape.result.Add(s.shape.result, -1.0)
-
-        # Test that not a single bin in TH1F shape.result is negative
-        if shape.has_negative_entries():
-            logger.fatal(
-                "Subtraction of Monte Carlo from data results in negative number of events."
-            )
-            raise Exception
-
-        # Rename root object accordingly
-        shape.name = systematic.name
-        return shape
-
-    # Data-driven estimation, no associated files and weights
-    def get_files(self):
-        raise NotImplementedError
-
-    def get_weights(self):
-        raise NotImplementedError
+class QCDEstimation(SStoOSEstimationMethod):
+    pass

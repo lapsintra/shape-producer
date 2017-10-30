@@ -4,6 +4,7 @@ import ROOT
 from array import array
 import hashlib
 import logging
+import binning
 logger = logging.getLogger(__name__)
 """
 """
@@ -85,19 +86,28 @@ class Histogram(TTreeContent):
 
     def create_result(self, dataframe=False):
         if dataframe:
+            if not isinstance(self._variable.binning, binning.ConstantBinning):
+                logger.fatal("TDataFrames work only with a constant binning.")
+                raise Exception
             self._result = dataframe.Histo1D(("", self._cuts.expand() + "*" + self._weights.extract(), self._variable.binning.nbinsx,
                                              self._variable.binning.xlow,
                                              self._variable.binning.xhigh),
                                              self._variable.name,
                                              self._weight_name)
         else:  # classic way
+            # combine files to a single tree using TChain
             tree = ROOT.TChain()
             for inputfile in self._inputfiles:
                 tree.Add(inputfile + "/" + self._folder)
-            tree.Draw(self._variable.name + ">>" + self._name +
-                      self._variable.binning.extract(),
+            # create unfilled template histogram
+            hist = ROOT.TH1F(self._name, self._name,
+                             self._variable.binning.nbinsx,
+                             self._variable.binning.bin_borders)
+            # draw histogram and pipe result in the template histogram
+            tree.Draw(self._variable.name + ">>" + self._name,
                       self._cuts.expand() + "*" + self._weights.extract(),
                       "goff")
+            # write out result
             self._result = ROOT.gDirectory.Get(self._name)
         return self
 

@@ -1,34 +1,35 @@
 # -*- coding: utf-8 -*-
 
+import numpy as np
+
 import logging
 logger = logging.getLogger(__name__)
 """
 """
 
 
-# non-functional base class, just to express that the latter ones belong together
 class Binning(object):
     pass
 
 
-# TODO: Rewrite me
-"""
-class Variable_Binning(Binning):
-    def __init__(self, *args):
-        if not sorted(list(set(args))) == list(args):
-            logger.fatal(
-                "An invalid variable binning has been requested with a wrong bin border ordering or a repetition of bins."
-            )
-            logger.fatal("The binning was: %s.", args)
+class VariableBinning(Binning):
+    def __init__(self, bin_borders):
+        if not sorted(bin_borders) == bin_borders:
+            logger.fatal("Binning %s is not sorted.", bin_borders)
             raise Exception
-        self.bin_borders = args
+        if len(bin_borders) < 2:
+            logger.fatal(
+                "The binning has to consist of at least two border values.")
+            raise Exception
+        self._bin_borders = bin_borders
 
-    def get_nbinsx(self):
-        return len(self.bin_borders) - 1
+    @property
+    def bin_borders(self):
+        return np.array(self._bin_borders)
 
-    def extract(self):
-        return str(self.bin_borders)
-"""
+    @property
+    def nbinsx(self):
+        return len(self._bin_borders) - 1
 
 
 class ConstantBinning(Binning):
@@ -37,13 +38,9 @@ class ConstantBinning(Binning):
         self._xlow = float(xlow)
         self._xhigh = float(xhigh)
 
-    def extract(self):
-        return "".join([
-            "(",
-            str(self._nbinsx), ",",
-            str(self._xlow), ",",
-            str(self._xhigh), ")"
-        ])
+    @property
+    def bin_borders(self):
+        return np.linspace(self._xlow, self._xhigh, self._nbinsx + 1)
 
     @property
     def nbinsx(self):

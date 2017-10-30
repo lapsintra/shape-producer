@@ -4,7 +4,7 @@ import copy
 import os
 
 from estimation_methods import EstimationMethod
-from estimation_methods import SStoOSEstimationMethod
+from estimation_methods import ABCDEstimationMethod
 from histogram import *
 from cutstring import *
 from systematics import *
@@ -361,5 +361,28 @@ class VVEstimation(EstimationMethod):
         return self.artus_file_names(files)
 
 
-class QCDEstimation(SStoOSEstimationMethod):
-    pass
+class QCDEstimation(ABCDEstimationMethod):
+    def __init__(self, name, folder, era, directory, channel, bg_processes,
+                 data_process):
+        super(QCDEstimation, self).__init__(
+            name=name,
+            folder=folder,
+            era=era,
+            directory=directory,
+            channel=channel,
+            bg_processes=bg_processes,
+            data_process=data_process,
+            AC_cut_names=[
+                "os"
+            ],  # cut to be removed to include region for shape derivation
+            BD_cuts=[
+                Cut("q_1*q_2>0", "ss")
+            ],  # cut to be applied to restrict to region for shape derivation
+            AB_cut_names=[
+                "tau_2_iso"
+            ],  # cut to be removed to include region for the determination of the extrapolation derivation
+            CD_cuts=[
+                Cut("byLooseIsolationMVArun2v1DBoldDMwLT_2>0.5",
+                    "tau_2_iso_loose")
+            ]
+        )  # cut to be applied to restrict to region for the determination of the extrapolation derivation

@@ -47,8 +47,7 @@ class ET(Channel):
                 "againstElectronDiscriminator"),
             Cut("byTightIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_iso"),
             Cut("iso_1<0.1", "ele_iso"),
-            Cut("q_1*q_2<0", "os"),
-            Cut("trg_singleelectron==1", "trg_singleelectron"))
+            Cut("q_1*q_2<0", "os"))
 
     @property
     def cuts(self):

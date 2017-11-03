@@ -394,7 +394,7 @@ class QCDEstimationMT(QCDEstimationET):
 
 class QCDEstimationTT(ABCDEstimationMethod):
     def __init__(self, era, directory, channel, bg_processes, data_process):
-        super(QCDEstimation, self).__init__(
+        super(QCDEstimationTT, self).__init__(
             name="QCD",
             folder="nominal",
             era=era,

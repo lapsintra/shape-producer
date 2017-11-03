@@ -90,11 +90,11 @@ class Histogram(TTreeContent):
             if not isinstance(self._variable.binning, binning.ConstantBinning):
                 logger.fatal("TDataFrames work only with a constant binning.")
                 raise Exception
-            self._result = dataframe.Histo1D(("", self._cuts.expand() + "*" + self._weights.extract(), self._variable.binning.nbinsx,
-                                             self._variable.binning.xlow,
-                                             self._variable.binning.xhigh),
-                                             self._variable.name,
-                                             self._weight_name)
+            self._result = dataframe.Histo1D(
+                ("", self._cuts.expand() + "*" + self._weights.extract(),
+                 self._variable.binning.nbinsx, self._variable.binning.xlow,
+                 self._variable.binning.xhigh), self._variable.name,
+                self._weight_name)
         else:  # classic way
             # combine files to a single tree using TChain
             tree = ROOT.TChain()

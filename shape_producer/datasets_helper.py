@@ -28,8 +28,8 @@ class DatasetsHelperLight(object):
 
     def _load_database(self):
         if not os.path.exists(self._database_path):
-            logger.fatal(
-                "Database file does not exist: {}".format(self._database_path))
+            logger.fatal("Database file does not exist: {}".format(
+                self._database_path))
             raise Exception
         return json.load(open(self._database_path, "r"))
 

@@ -106,7 +106,8 @@ class EstimationMethod(object):
 
 
 class SStoOSEstimationMethod(EstimationMethod):
-    def __init__(self, name, folder, era, directory, channel, bg_processes, data_process):
+    def __init__(self, name, folder, era, directory, channel, bg_processes,
+                 data_process):
         super(SStoOSEstimationMethod, self).__init__(
             name=name,
             folder=folder,
@@ -176,8 +177,10 @@ class SStoOSEstimationMethod(EstimationMethod):
 
 
 class ABCDEstimationMethod(EstimationMethod):
-    def __init__(self, name, folder, era, directory, channel, bg_processes,
-                 data_process, AC_cut_names, BD_cuts, AB_cut_names, CD_cuts): #last four arguments correspond to 1. list of names of cuts to be removed in order to include the sideband for the shape derivation 2. list of cuts to be applied to restrict on that sideband and 3.,4. accordingly for the extrapolation factor sideband
+    def __init__(
+            self, name, folder, era, directory, channel, bg_processes,
+            data_process, AC_cut_names, BD_cuts, AB_cut_names, CD_cuts
+    ):  #last four arguments correspond to 1. list of names of cuts to be removed in order to include the sideband for the shape derivation 2. list of cuts to be applied to restrict on that sideband and 3.,4. accordingly for the extrapolation factor sideband
         super(ABCDEstimationMethod, self).__init__(
             name=name,
             folder=folder,
@@ -265,23 +268,14 @@ class ABCDEstimationMethod(EstimationMethod):
                 C_shapes[s.process.name] = s.shape
             elif s.category.name.endswith("_D"):
                 D_shapes[s.process.name] = s.shape
-        for s in systematic._ABCD_systematics:
-            print "%s: "%s.name, s.shape._result
-            if s.category.name.endswith("_B"):
-                print "%s: "%s.name, B_shapes[s.process.name]._result
-            elif s.category.name.endswith("_C"):
-                print "%s: "%s.name, C_shapes[s.process.name]._result
-            elif s.category.name.endswith("_D"):
-                print "%s: "%s.name, D_shapes[s.process.name]._result
 
         # Determine extrapolation factor
-        print C_shapes.keys()
         C_yield = C_shapes.pop(self._data_process.name).result - sum(
             [s.result for s in C_shapes.values()])
         D_yield = D_shapes.pop(self._data_process.name).result - sum(
             [s.result for s in D_shapes.values()])
         extrapolation_factor = C_yield / D_yield
-        print "Extrapolation factor: ",extrapolation_factor
+        print "Extrapolation factor: ", extrapolation_factor
 
         # Derive final shape
         derived_shape = B_shapes.pop(self._data_process.name)

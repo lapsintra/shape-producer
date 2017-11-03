@@ -21,11 +21,11 @@ class TTreeContent(object):
         self._cuts = cuts
         self._weights = weights
         self._weight_name = "weight_" + self._name  # internal name needed for TDFs
-        self._result = False
+        self._result = None
         self._folder = folder
 
-    def is_present(self):  # return if h is already filled
-        return self._result != False
+    def is_present(self):
+        return self._result != None
 
     def files_folders(self):
         return (self._inputfiles, self._folder)
@@ -64,7 +64,8 @@ class TTreeContent(object):
         #m.update(self.cuts.expand())  # TODO: Not implemented?
         m.update(self._weights.extract())
         m.update(self._folder)
-        m.update(self._variable.name)  # TODO: not implemented?
+        if isinstance(self, Histogram):
+            m.update(self._variable.name)  # TODO: not implemented?
         return int(m.hexdigest(), 16)
 
     @property

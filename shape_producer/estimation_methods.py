@@ -105,11 +105,11 @@ class EstimationMethod(object):
         return systematic.root_objects[0]
 
 
-class SStoOSEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, bg_processes, data_process):
-        super(QCDEstimation, self).__init__(
-            name="QCD",
-            folder="nominal",
+class SStoOSEstimationMethod(EstimationMethod):
+    def __init__(self, name, folder, era, directory, channel, bg_processes, data_process):
+        super(SStoOSEstimationMethod, self).__init__(
+            name=name,
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -177,8 +177,8 @@ class SStoOSEstimation(EstimationMethod):
 
 class ABCDEstimationMethod(EstimationMethod):
     def __init__(self, name, folder, era, directory, channel, bg_processes,
-                 data_process, AC_cut_names, BD_cuts, AB_cut_names, CD_cuts):
-        super(QCDEstimation, self).__init__(
+                 data_process, AC_cut_names, BD_cuts, AB_cut_names, CD_cuts): #last four arguments correspond to 1. list of names of cuts to be removed in order to include the sideband for the shape derivation 2. list of cuts to be applied to restrict on that sideband and 3.,4. accordingly for the extrapolation factor sideband
+        super(ABCDEstimationMethod, self).__init__(
             name=name,
             folder=folder,
             era=era,
@@ -195,40 +195,40 @@ class ABCDEstimationMethod(EstimationMethod):
     def create_root_objects(self, systematic):
         # prepare sideband categories
         B_category = copy.deepcopy(systematic.category)
-        B_category.name = B_category.name + "_B"
+        B_category._name += "_B"
         C_category = copy.deepcopy(systematic.category)
-        C_category.name = C_category.name + "_C"
+        C_category._name += "_C"
         D_category = copy.deepcopy(systematic.category)
-        D_category.name = D_category.name + "_D"
+        D_category._name += "_D"
         # C and D are to be created as counts in order to determine the extrapolation factor
-        C_category.variable = None
-        D_category.variable = None
+        C_category._variable = None
+        D_category._variable = None
         # check whether cuts limiting signal region A are applied and remove them from B,C,D
         for cut_name in self._AB_cut_names:
-            if cut_name in systematic.category.cuts:
+            if cut_name in systematic.category.cuts.names:
                 C_category.cuts.remove(cut_name)
                 D_category.cuts.remove(cut_name)
             else:
                 logger.fatal(
                     "The name %s is not part of the selection cuts of the signal region.",
-                    name)
+                    cut_name)
                 raise KeyError
         for cut_name in self._AC_cut_names:
-            if cut_name in systematic.category.cuts:
+            if cut_name in systematic.category.cuts.names:
                 B_category.cuts.remove(cut_name)
                 D_category.cuts.remove(cut_name)
             else:
                 logger.fatal(
                     "The name %s is not part of the selection cuts of the signal region.",
-                    name)
+                    cut_name)
                 raise KeyError
         # apply other cuts instead
         for cut in self._BD_cuts:
-            B_category.cuts += cut
-            D_category.cuts += cut
+            B_category.cuts.add(cut)
+            D_category.cuts.add(cut)
         for cut in self._CD_cuts:
-            C_category.cuts += cut
-            D_category.cuts += cut
+            C_category.cuts.add(cut)
+            D_category.cuts.add(cut)
 
         root_objects = []
         systematic._ABCD_systematics = []
@@ -259,23 +259,32 @@ class ABCDEstimationMethod(EstimationMethod):
         D_shapes = {}
         for s in systematic._ABCD_systematics:
             s.do_estimation()
-            if s.category.name.startswith("B_"):
+            if s.category.name.endswith("_B"):
                 B_shapes[s.process.name] = s.shape
-            if s.category.name.startswith("C_"):
+            elif s.category.name.endswith("_C"):
                 C_shapes[s.process.name] = s.shape
-            if s.category.name.startswith("D_"):
+            elif s.category.name.endswith("_D"):
                 D_shapes[s.process.name] = s.shape
+        for s in systematic._ABCD_systematics:
+            print "%s: "%s.name, s.shape._result
+            if s.category.name.endswith("_B"):
+                print "%s: "%s.name, B_shapes[s.process.name]._result
+            elif s.category.name.endswith("_C"):
+                print "%s: "%s.name, C_shapes[s.process.name]._result
+            elif s.category.name.endswith("_D"):
+                print "%s: "%s.name, D_shapes[s.process.name]._result
 
         # Determine extrapolation factor
-        C_yield = C_shapes.pop("data_obs").result - sum(
+        print C_shapes.keys()
+        C_yield = C_shapes.pop(self._data_process.name).result - sum(
             [s.result for s in C_shapes.values()])
-        D_yield = D_shapes.pop("data_obs").result - sum(
+        D_yield = D_shapes.pop(self._data_process.name).result - sum(
             [s.result for s in D_shapes.values()])
         extrapolation_factor = C_yield / D_yield
-        print "Extrapolation factor: " + extrapolation_factor
+        print "Extrapolation factor: ",extrapolation_factor
 
         # Derive final shape
-        derived_shape = B_shapes.pop("data_obs")
+        derived_shape = B_shapes.pop(self._data_process.name)
         for s in B_shapes.values():
             derived_shape.result.Add(s.result, -1.0)
         derived_shape.result.Scale(extrapolation_factor)

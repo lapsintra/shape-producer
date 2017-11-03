@@ -105,7 +105,7 @@ class Systematic(object):
             PROCESS=self._process.name,
             ANALYSIS=self._analysis,
             ERA=self._era.name,
-            VARIABLE=self._category.variable.name,
+            VARIABLE='COUNT' if self._category.variable == None else self._category.variable.name,
             MASS=self._mass,
             VARIATION=""
             if self._variation.name == "Nominal" else self._variation.name)

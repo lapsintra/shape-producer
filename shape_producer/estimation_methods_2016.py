@@ -3,8 +3,7 @@
 import copy
 import os
 
-from estimation_methods import EstimationMethod
-from estimation_methods import ABCDEstimationMethod
+from estimation_methods import EstimationMethod, SStoOSEstimationMethod, ABCDEstimationMethod
 from histogram import *
 from cutstring import *
 from systematics import *
@@ -376,13 +375,28 @@ class VVEstimation(EstimationMethod):
         log_query(self.name, "<optimzed out>", files)
         return self.artus_file_names(files)
 
+class QCDEstimationET(SStoOSEstimationMethod):
+    def __init__(self, era, directory, channel, bg_processes,
+                 data_process):
+        super(QCDEstimationET, self).__init__(
+            name="QCD",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            bg_processes=bg_processes,
+            data_process=data_process
+        )
 
-class QCDEstimation(ABCDEstimationMethod):
-    def __init__(self, name, folder, era, directory, channel, bg_processes,
+class QCDEstimationMT(QCDEstimationET):
+    pass
+
+class QCDEstimationTT(ABCDEstimationMethod):
+    def __init__(self, era, directory, channel, bg_processes,
                  data_process):
         super(QCDEstimation, self).__init__(
-            name=name,
-            folder=folder,
+            name="QCD",
+            folder="nominal",
             era=era,
             directory=directory,
             channel=channel,

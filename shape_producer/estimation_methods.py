@@ -157,6 +157,9 @@ class SStoOSEstimationMethod(EstimationMethod):
         for s in systematic._qcd_systematics[1:]:
             shape.result.Add(s.shape.result, -1.0)
 
+        # Rename root object accordingly
+        shape.name = systematic.name
+
         # Test that not a single bin in TH1F shape.result is negative
         if shape.has_negative_entries():
             logger.fatal(
@@ -164,8 +167,6 @@ class SStoOSEstimationMethod(EstimationMethod):
             )
             raise Exception
 
-        # Rename root object accordingly
-        shape.name = systematic.name
         return shape
 
     # Data-driven estimation, no associated files and weights
@@ -283,14 +284,16 @@ class ABCDEstimationMethod(EstimationMethod):
             derived_shape.result.Add(s.result, -1.0)
         derived_shape.result.Scale(extrapolation_factor)
 
+        # Rename root object accordingly
+        derived_shape.name = systematic.name
+
         # Test that not a single bin in TH1F shape.result is negative
         if derived_shape.has_negative_entries():
             logger.fatal(
                 "Subtraction of Monte Carlo from data results in negative number of events."
             )
             raise Exception
-        # Rename root object accordingly
-        derived_shape.name = systematic.name
+
         return derived_shape
 
     # Data-driven estimation, no associated files and weights

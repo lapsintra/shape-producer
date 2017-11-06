@@ -54,6 +54,8 @@ class Run2016(Era):
             query["process"] = "SingleMuon"
         elif channel.name == "et":
             query["process"] = "SingleElectron"
+        elif channel.name == "tt":
+            query["process"] = "Tau"
         else:
             logger.critical("Channel %s is not implemented.", channel.name)
         files = self.datasets_helper.get_nicks_with_query(query)

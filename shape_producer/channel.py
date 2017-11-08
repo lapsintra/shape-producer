@@ -46,7 +46,8 @@ class ET(Channel):
             Cut("againstElectronTightMVA6_2>0.5",
                 "againstElectronDiscriminator"),
             Cut("byTightIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_iso"),
-            Cut("iso_1<0.1", "ele_iso"), Cut("q_1*q_2<0", "os"))
+            Cut("iso_1<0.1", "ele_iso"),
+            Cut("q_1*q_2<0", "os"), Cut("trg_singleelectron==1", "trg_singleelectron"))
 
     @property
     def cuts(self):
@@ -69,7 +70,7 @@ class TT(Channel):
                 "againstElectronDiscriminator"),
             Cut("byTightIsolationMVArun2v1DBoldDMwLT_1>0.5", "tau_1_iso"),
             Cut("byTightIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_2_iso"),
-            Cut("q_1*q_2<0", "os"))
+            Cut("q_1*q_2<0", "os"), Cut("trg_doubletau==1", "trg_doubletau"))
 
     @property
     def cuts(self):

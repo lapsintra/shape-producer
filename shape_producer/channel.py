@@ -87,8 +87,8 @@ class EM(Channel):
             Cut("extraelec_veto<0.5", "extraelec_veto"),
             Cut("extramuon_veto<0.5", "extramuon_veto"),
             Cut("dilepton_veto<0.5", "dilepton_veto"),
-            Cut("iso_1<0.1", "ele_iso"),
-            Cut("iso_1<0.15", "muon_iso"),
+            Cut("iso_1<0.15", "ele_iso"),
+            Cut("iso_2<0.2", "muon_iso"),
             Cut("q_1*q_2<0", "os"),
             Cut("trg_muonelectron==1", "trg_muonelectron"))
 

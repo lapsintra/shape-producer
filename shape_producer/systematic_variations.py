@@ -100,3 +100,15 @@ class ReplaceWeight(SystematicVariation):
                 "weights"]().remove(self._weight_name)  #.add(self._new_weight)
             h_settings[index]["weights"].add(self._new_weight)
         return h_settings
+
+
+class AddWeight(SystematicVariation):
+    def __init__(self, name, weight_name, new_weight, direction):
+        super(AddWeight, self).__init__(name, direction)
+        self._weight_name = weight_name
+        self._new_weight = new_weight
+
+    def shifted_root_objects(self, h_settings):
+        for index in range(len(h_settings)):
+            h_settings[index]["weights"]().add(self._new_weight)
+        return h_settings

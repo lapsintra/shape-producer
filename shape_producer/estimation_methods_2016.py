@@ -406,6 +406,8 @@ class QCDEstimationTT(ABCDEstimationMethod):
                 "tau_2_iso"
             ],
             BD_cuts=[      # cuts to be applied to restrict to region for shape derivation
+                Cut("byTightIsolationMVArun2v1DBoldDMwLT_2<0.5",
+                    "tau_2_iso"),
                 Cut("byLooseIsolationMVArun2v1DBoldDMwLT_2>0.5",
                     "tau_2_iso_loose")
             ],

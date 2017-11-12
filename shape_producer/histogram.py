@@ -134,6 +134,34 @@ class Histogram(TTreeContent):
                 return True
         return False
 
+    def replace_negative_entries_and_renormalize(self):
+        if not self.is_present():
+            logger.fatal("Histogram %s is not produced.", self.name)
+            raise Exception
+
+        # Find negative entries and calculate norm
+        norm_all = 0.0
+        norm_positive = 0.0
+        for i_bin in range(1, self._result.GetNbinsX() + 1):
+            this_bin = self._result.GetBinContent(i_bin)
+            if this_bin < 0.0:
+                self._result.SetBinContent(i_bin, 0.0)
+            else:
+                norm_positive += this_bin
+            norm_all += this_bin
+
+        # Renormalize histogram if negative entries are found
+        if norm_all != norm_positive:
+            if norm_positive == 0.0:
+                logger.fatal(
+                    "Renormalization failed because all bins have negative entries."
+                )
+                raise Exception
+            for i_bin in range(1, self._result.GetNbinsX() + 1):
+                this_bin = self._result.GetBinContent(i_bin)
+                self._result.SetBinContent(i_bin,
+                                           this_bin * norm_all / norm_positive)
+
 
 # class to count the (weighted) number of events in a selection
 class Count(TTreeContent):

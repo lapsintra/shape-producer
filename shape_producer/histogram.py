@@ -105,7 +105,7 @@ class Histogram(TTreeContent):
                              self._variable.binning.nbinsx,
                              self._variable.binning.bin_borders)
             # draw histogram and pipe result in the template histogram
-            tree.Draw(self._variable.name + ">>" + self._name,
+            tree.Draw(self._variable.expression + ">>" + self._name,
                       self._cuts.expand() + "*" + self._weights.extract(),
                       "goff")
             # write out result

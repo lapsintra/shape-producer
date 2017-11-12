@@ -160,12 +160,8 @@ class SStoOSEstimationMethod(EstimationMethod):
         # Rename root object accordingly
         shape.name = systematic.name
 
-        # Test that not a single bin in TH1F shape.result is negative
-        if shape.has_negative_entries():
-            logger.fatal(
-                "Subtraction of Monte Carlo from data results in negative number of events."
-            )
-            raise Exception
+        # Replace negative entries by zeros and renormalize shape
+        shape.replace_negative_entries_and_renormalize()
 
         return shape
 

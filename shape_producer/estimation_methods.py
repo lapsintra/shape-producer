@@ -161,7 +161,7 @@ class SStoOSEstimationMethod(EstimationMethod):
         shape.name = systematic.name
 
         # Replace negative entries by zeros and renormalize shape
-        shape.replace_negative_entries_and_renormalize()
+        shape.replace_negative_entries_and_renormalize(tolerance=0.05)
 
         return shape
 

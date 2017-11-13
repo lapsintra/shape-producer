@@ -134,7 +134,7 @@ class Histogram(TTreeContent):
                 return True
         return False
 
-    def replace_negative_entries_and_renormalize(self):
+    def replace_negative_entries_and_renormalize(self, tolerance):
         if not self.is_present():
             logger.fatal("Histogram %s is not produced.", self.name)
             raise Exception
@@ -149,6 +149,12 @@ class Histogram(TTreeContent):
             else:
                 norm_positive += this_bin
             norm_all += this_bin
+
+        if abs(norm_all - norm_positive) / norm_all > tolerance:
+            logger.fatal(
+                "Renormalization failed because the normalization changed by %f, which is above the tolerance %f.",
+                abs(norm_all - norm_positive) / norm_all, tolerance)
+            raise Exception
 
         # Renormalize histogram if negative entries are found
         if norm_all != norm_positive:

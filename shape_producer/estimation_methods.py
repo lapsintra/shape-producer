@@ -282,12 +282,8 @@ class ABCDEstimationMethod(EstimationMethod):
         # Rename root object accordingly
         derived_shape.name = systematic.name
 
-        # Test that not a single bin in TH1F shape.result is negative
-        if derived_shape.has_negative_entries():
-            logger.fatal(
-                "Subtraction of Monte Carlo from data results in negative number of events."
-            )
-            raise Exception
+        # Replace negative entries by zeros and renormalize shape
+        derived_shape.replace_negative_entries_and_renormalize(tolerance=0.05)
 
         return derived_shape
 

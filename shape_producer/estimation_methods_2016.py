@@ -184,6 +184,24 @@ class ZLLEstimation(ZTTEstimation):
                 "decay_mode_reweight"))
 
 
+class ZLLEstimationMTSM(ZLLEstimation):
+    def get_weights(self):
+        ztt_weights = super(ZLLEstimation, self).get_weights()
+        return ztt_weights + Weights(
+            Weight(
+                "(((decayMode_2 == 0)*0.75) + ((decayMode_2 == 1 || decayMode_2 == 2)*1.0) + ((decayMode_2 == 10)*1.0))",
+                "decay_mode_reweight"))
+
+
+class ZLLEstimationETSM(ZLLEstimation):
+    def get_weights(self):
+        ztt_weights = super(ZLLEstimation, self).get_weights()
+        return ztt_weights + Weights(
+            Weight(
+                "(((decayMode_2 == 0)*0.98) + ((decayMode_2 == 1 || decayMode_2 == 2)*1.2) + ((decayMode_2 == 10)*1.0))",
+                "decay_mode_reweight"))
+    
+
 class ZLEstimationMT(ZTTEstimation):
     def __init__(self, era, directory, channel):
         super(ZTTEstimation, self).__init__(
@@ -196,6 +214,24 @@ class ZLEstimationMT(ZTTEstimation):
 
     def get_cuts(self):
         return Cuts(Cut("gen_match_2<5", "zl_genmatch_mt"))
+
+
+class ZLEstimationMTSM(ZLEstimationMT):
+    def get_weights(self):
+        ztt_weights = super(ZLEstimationMT, self).get_weights()
+        return ztt_weights + Weights(
+            Weight(
+                "(((decayMode_2 == 0)*0.75) + ((decayMode_2 == 1 || decayMode_2 == 2)*1.0) + ((decayMode_2 == 10)*1.0))",
+                "decay_mode_reweight"))
+
+
+class ZLEstimationETSM(ZLEstimationMT):
+    def get_weights(self):
+        ztt_weights = super(ZLEstimationMT, self).get_weights()
+        return ztt_weights + Weights(
+            Weight(
+                "(((decayMode_2 == 0)*0.98) + ((decayMode_2 == 1 || decayMode_2 == 2)*1.2) + ((decayMode_2 == 10)*1.0))",
+                "decay_mode_reweight"))
 
 
 class ZJEstimationMT(ZTTEstimation):
@@ -218,6 +254,15 @@ class ZJEstimationET(ZJEstimationMT):
 
 
 class ZLEstimationET(ZLEstimationMT):
+    pass
+
+
+# tt is equivalent to mt
+class ZJEstimationTT(ZJEstimationMT):
+    pass
+
+
+class ZLEstimationTT(ZLEstimationMT):
     pass
 
 
@@ -313,6 +358,14 @@ class TTTEstimationET(TTTEstimationMT):
 
 
 class TTJEstimationET(TTJEstimationMT):
+    pass
+
+
+class TTTEstimationTT(TTTEstimationMT):
+    pass
+
+
+class TTJEstimationTT(TTJEstimationMT):
     pass
 
 

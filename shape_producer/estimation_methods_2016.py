@@ -200,7 +200,7 @@ class ZLLEstimationETSM(ZLLEstimation):
             Weight(
                 "(((decayMode_2 == 0)*0.98) + ((decayMode_2 == 1 || decayMode_2 == 2)*1.2) + ((decayMode_2 == 10)*1.0))",
                 "decay_mode_reweight"))
-    
+
 
 class ZLEstimationMT(ZTTEstimation):
     def __init__(self, era, directory, channel):

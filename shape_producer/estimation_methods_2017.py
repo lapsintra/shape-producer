@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from cutstring import *
-from estimation_methods import EstimationMethod
+from estimation_methods import EstimationMethod, SStoOSEstimationMethod, ABCDEstimationMethod
 from estimation_methods_2016 import DataEstimation as DataEstimation2016
-from estimation_methods_2016 import QCDEstimation as QCDEstimation2016
-from estimation_methods_2016 import VVEstimation as VVEstimation2016
 from era import log_query
 
 
@@ -12,18 +10,121 @@ class DataEstimation(DataEstimation2016):
     pass
 
 
-class QCDEstimation(QCDEstimation2016):
-    pass
+class QCDEstimation_SStoOS_MTETEM(SStoOSEstimationMethod):
+    def __init__(self, era, directory, channel, bg_processes, data_process):
+        super(QCDEstimation_SStoOS_MTETEM, self).__init__(
+            name="QCD",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            bg_processes=bg_processes,
+            data_process=data_process)
 
 
-class VVEstimation(VVEstimation2016):
-    pass
+class QCDEstimation_ABCD_TT_ISO2(ABCDEstimationMethod):
+    def __init__(self, era, directory, channel, bg_processes, data_process):
+        super(QCDEstimation_ABCD_TT_ISO2, self).__init__(
+            name="QCD",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            bg_processes=bg_processes,
+            data_process=data_process,
+            AC_cut_names=[ # cuts to be removed to include region for shape derivation
+                "tau_2_iso"
+            ],
+            BD_cuts=[      # cuts to be applied to restrict to region for shape derivation
+                #Cut("byTightIsolationMVArun2v1DBoldDMwLT_2<0.5", "tau_2_iso"),
+                Cut("byMediumIsolationMVArun2v1DBoldDMwLT_2<0.5", "tau_2_iso"),
+                Cut("byLooseIsolationMVArun2v1DBoldDMwLT_2>0.5",
+                    "tau_2_iso_loose")
+            ],
+            AB_cut_names=[ # cuts to be removed to include region for the determination of the extrapolation derivation
+                "os"
+            ],
+            CD_cuts=[      # cuts to be applied to restrict to region for the determination of the extrapolation derivation
+                Cut("q_1*q_2>0", "ss")
+            ]
+        )
 
+class QCDEstimation_ABCD_TT_ISO1(ABCDEstimationMethod):
+    def __init__(self, era, directory, channel, bg_processes, data_process):
+        super(QCDEstimation_ABCD_TT_ISO1, self).__init__(
+            name="QCD",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            bg_processes=bg_processes,
+            data_process=data_process,
+            AC_cut_names=[ # cuts to be removed to include region for shape derivation
+                "tau_1_iso"
+            ],
+            BD_cuts=[      # cuts to be applied to restrict to region for shape derivation
+                #Cut("byTightIsolationMVArun2v1DBoldDMwLT_1<0.5", "tau_1_iso"),
+                Cut("byMediumIsolationMVArun2v1DBoldDMwLT_1<0.5", "tau_1_iso"),
+                Cut("byLooseIsolationMVArun2v1DBoldDMwLT_1>0.5",
+                    "tau_1_iso_loose")
+            ],
+            AB_cut_names=[ # cuts to be removed to include region for the determination of the extrapolation derivation
+                "os"
+            ],
+            CD_cuts=[      # cuts to be applied to restrict to region for the determination of the extrapolation derivation
+                Cut("q_1*q_2>0", "ss")
+            ]
+        )
 
-class ZttEstimation(EstimationMethod):
+class VVEstimation(EstimationMethod):
     def __init__(self, era, directory, channel):
-        super(ZttEstimation, self).__init__(
-            name="Ztt",
+        super(VVEstimation, self).__init__(
+            name="VV",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign="RunIISummer17MiniAOD")
+
+    def get_weights(self):
+        return Weights(
+
+            # MC related weights
+            Weight("generatorWeight", "generatorWeight"),
+            Weight("numberGeneratedEventsWeight", "numberGeneratedEventsWeight"),
+            Weight("crossSectionPerEventWeight", "crossSectionPerEventWeight"),
+
+            # Weights for corrections
+            #Weight("topPtReweightWeight", "topPtReweightWeight"),
+            #Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))", "hadronic_tau_sf"),
+
+            # Data related scale-factors
+            self.era.lumi_weight)
+
+    def get_files(self):
+        query = {
+            "process": "(WW|ZZ|WZ)", # Query for Di-Boson samples
+            "data": False,
+            "generator" : "^pythia8",
+            "campaign": self._mc_campaign
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+
+        query = {
+            "process": "STtW", # Query for Single-Top samples
+            "data": False,
+            "generator" : "powheg\-pythia8",
+            "campaign": self._mc_campaign
+        }
+        files += self.era.datasets_helper.get_nicks_with_query(query)
+
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
+class DYJetsToLLEstimation(EstimationMethod):
+    def __init__(self, era, directory, channel):
+        super(DYJetsToLLEstimation, self).__init__(
+            name="DYJetsToLL",
             folder="nominal",
             era=era,
             directory=directory,
@@ -48,6 +149,29 @@ class ZttEstimation(EstimationMethod):
             # Data related scale-factors
             self.era.lumi_weight)
 
+    def get_files(self):
+        query = {
+            "process": "(DYJetsToLL_M10to50|DY.?JetsToLL_M50)",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "madgraph\-pythia8",
+            #"version": "v1" to be used if only one inclusive sample is desired
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
+
+class ZttEstimation(DYJetsToLLEstimation):
+    def __init__(self, era, directory, channel):
+        super(DYJetsToLLEstimation, self).__init__(
+            name="Ztt",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign="RunIISummer17MiniAOD")
+
     def get_cuts(self):
 
         ztt_genmatch_cut = Cut("1 == 1", "ztt_genmatch")
@@ -61,22 +185,11 @@ class ZttEstimation(EstimationMethod):
                                    "ztt_genmatch")
         return Cuts(ztt_genmatch_cut)
 
-    def get_files(self):
-        query = {
-            "process": "(DYJetsToLL_M10to50|DY.?JetsToLL_M50)",
-            "data": False,
-            "campaign": self._mc_campaign,
-            "generator": "madgraph\-pythia8",
-            #"version": "v1"
-        }
-        files = self.era.datasets_helper.get_nicks_with_query(query)
-        log_query(self.name, query, files)
-        return self.artus_file_names(files)
 
 
-class ZllEstimation(ZttEstimation):
+class ZllEstimation(DYJetsToLLEstimation):
     def __init__(self, era, directory, channel):
-        super(ZttEstimation, self).__init__(
+        super(DYJetsToLLEstimation, self).__init__(
             name="Zll",
             folder="nominal",
             era=era,
@@ -151,13 +264,12 @@ class TTEstimation(EstimationMethod):
 
             # MC related weights
             Weight("generatorWeight", "generatorWeight"),
-            Weight("numberGeneratedEventsWeight", "numberGeneratedEventsWeight"
-                   ),  # to be used only for one inclusive sample
-            Weight("crossSectionPerEventWeight", "crossSectionPerEventWeight"
-                   ),  # to be used only for one inclusive sample
+            Weight("numberGeneratedEventsWeight", "numberGeneratedEventsWeight"),
+            Weight("crossSectionPerEventWeight", "crossSectionPerEventWeight"),
+            Weight("0.5", "tt_stitching_weight"),
 
             # Weights for corrections
-            Weight("topPtReweightWeight", "topPtReweightWeight"),
+            #Weight("topPtReweightWeight", "topPtReweightWeight"),
             #Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))", "hadronic_tau_sf"),
 
             # Data related scale-factors

@@ -24,7 +24,8 @@ class MT(Channel):
                 "againstElectronDiscriminator"),
             Cut("byTightIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_iso"),
             Cut("iso_1<0.15", "muon_iso"),
-            Cut("q_1*q_2<0", "os"), Cut("trg_singlemuon==1", "trg_singlemuon"))
+            Cut("q_1*q_2<0", "os"),
+            Cut("((trg_singlemuon==1 && pt_1>23 && pt_2>30) + (trg_mutaucross==1 && pt_1>20 && pt_1<=23 && pt_2>30))", "trg_singlemuoncross"))
 
     @property
     def cuts(self):
@@ -47,7 +48,8 @@ class ET(Channel):
                 "againstElectronDiscriminator"),
             Cut("byTightIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_iso"),
             Cut("iso_1<0.1", "ele_iso"),
-            Cut("q_1*q_2<0", "os"), Cut("trg_singleelectron==1", "trg_singleelectron"))
+            Cut("q_1*q_2<0", "os"),
+            Cut("(trg_singleelectron==1 && pt_1>26 && pt_2>30)", "trg_singleelectron"))
 
     @property
     def cuts(self):
@@ -70,7 +72,8 @@ class TT(Channel):
                 "againstElectronDiscriminator"),
             Cut("byTightIsolationMVArun2v1DBoldDMwLT_1>0.5", "tau_1_iso"),
             Cut("byTightIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_2_iso"),
-            Cut("q_1*q_2<0", "os"), Cut("trg_doubletau==1", "trg_doubletau"))
+            Cut("q_1*q_2<0", "os"),
+            Cut("(trg_doubletau==1 && pt_1>50 && pt_2>40)", "trg_doubletau"))
 
     @property
     def cuts(self):

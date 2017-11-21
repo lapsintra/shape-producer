@@ -382,7 +382,7 @@ class VVEstimation(EstimationMethod):
     def get_weights(self):
         return Weights(
             Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
-                   "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"))
+                   "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"), self.era.lumi_weight)
 
     def get_files(self):
         query = {

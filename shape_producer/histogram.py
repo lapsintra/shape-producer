@@ -12,11 +12,18 @@ logger = logging.getLogger(__name__)
 
 # Base class for Histogram and Count
 class TTreeContent(object):
-    def __init__(self, name, inputfiles, folder, cuts,
-                 weights):  # empty histogram
+    def __init__(self,
+                 name,
+                 inputfiles,
+                 folder,
+                 cuts,
+                 weights,
+                 friend_inputfiles=None):  # empty histogram
         self._name = name
         self._inputfiles = [inputfiles] if isinstance(inputfiles,
                                                       str) else inputfiles
+        self._friend_inputfiles = [friend_inputfiles] if isinstance(
+            friend_inputfiles, str) else friend_inputfiles
 
         self._cuts = cuts
         self._weights = weights
@@ -78,11 +85,22 @@ class TTreeContent(object):
 
 
 class Histogram(TTreeContent):
-    def __init__(self, name, inputfiles, folder, cuts, weights,
-                 variable):  # empty histogram
+    def __init__(self,
+                 name,
+                 inputfiles,
+                 folder,
+                 cuts,
+                 weights,
+                 variable,
+                 friend_inputfiles=None):  # empty histogram
         self._variable = variable
-        super(Histogram, self).__init__(name, inputfiles, folder, cuts,
-                                        weights)
+        super(Histogram, self).__init__(
+            name,
+            inputfiles,
+            folder,
+            cuts,
+            weights,
+            friend_inputfiles=friend_inputfiles)
 
     def create_result(self, dataframe=False):
         if dataframe:
@@ -99,6 +117,13 @@ class Histogram(TTreeContent):
             tree = ROOT.TChain()
             for inputfile in self._inputfiles:
                 tree.Add(inputfile + "/" + self._folder)
+            # repeat this for friends if applicable
+            if self._friend_inputfiles != None:
+                friend_tree = ROOT.TChain()
+                for friend_inputfile in self._friend_inputfiles:
+                    friend_tree.Add(friend_inputfile + "/" + self._folder)
+                tree.AddFriend(friend_tree)
+
             # create unfilled template histogram
             hist = ROOT.TH1F(self._name, self._name,
                              self._variable.binning.nbinsx,
@@ -170,8 +195,20 @@ class Histogram(TTreeContent):
 
 # class to count the (weighted) number of events in a selection
 class Count(TTreeContent):
-    def __init__(self, name, inputfiles, folder, cuts, weights):
-        super(Count, self).__init__(name, inputfiles, folder, cuts, weights)
+    def __init__(self,
+                 name,
+                 inputfiles,
+                 folder,
+                 cuts,
+                 weights,
+                 friend_inputfiles=None):
+        super(Count, self).__init__(
+            name,
+            inputfiles,
+            folder,
+            cuts,
+            weights,
+            friend_inputfiles=friend_inputfiles)
         self._inputfiles = [inputfiles] if isinstance(inputfiles,
                                                       str) else inputfiles
 
@@ -186,6 +223,12 @@ class Count(TTreeContent):
             tree = ROOT.TChain()
             for inputfile in self._inputfiles:
                 tree.Add(inputfile + "/" + self._folder)
+            # repeat this for friends if applicable
+            if self._friend_inputfiles != None:
+                friend_tree = ROOT.TChain()
+                for friend_inputfile in self._friend_inputfiles:
+                    friend_tree.Add(friend_inputfile + "/" + self._folder)
+                tree.AddFriend(friend_tree)
 
             tree.Draw("1>>" + self._name + "(1)",
                       self._cuts.expand() + "*" + self._weights.extract(),

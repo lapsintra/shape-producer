@@ -15,12 +15,13 @@ logger = logging.getLogger(__name__)
 
 
 class DataEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(DataEstimation, self).__init__(
             name="data_obs",
             folder="nominal",
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             mc_campaign=None)
         self._channel = channel
@@ -33,12 +34,13 @@ class DataEstimation(EstimationMethod):
 
 
 class HTTEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(HTTEstimation, self).__init__(
             name="HTT",
             folder="nominal",
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
 
@@ -59,12 +61,13 @@ class HTTEstimation(EstimationMethod):
 
 
 class ggHEstimation(HTTEstimation):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(HTTEstimation, self).__init__(
             name="ggH",
             folder="nominal",
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
 
@@ -81,12 +84,13 @@ class ggHEstimation(HTTEstimation):
 
 
 class qqHEstimation(HTTEstimation):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(HTTEstimation, self).__init__(
             name="qqH",
             folder="nominal",
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
 
@@ -103,12 +107,13 @@ class qqHEstimation(HTTEstimation):
 
 
 class VHEstimation(HTTEstimation):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(HTTEstimation, self).__init__(
             name="VH",
             folder="nominal",
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
 
@@ -125,12 +130,13 @@ class VHEstimation(HTTEstimation):
 
 
 class ZTTEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(ZTTEstimation, self).__init__(
             name="ZTT",
             folder="nominal",
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
 
@@ -164,12 +170,13 @@ class ZTTEstimation(EstimationMethod):
 
 
 class ZLLEstimation(ZTTEstimation):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(ZTTEstimation, self).__init__(
             name="ZLL",
             folder="nominal",
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
 
@@ -203,12 +210,13 @@ class ZLLEstimationETSM(ZLLEstimation):
 
 
 class ZLEstimationMT(ZTTEstimation):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(ZTTEstimation, self).__init__(
             name="ZL",
             folder="nominal",
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
 
@@ -235,12 +243,13 @@ class ZLEstimationETSM(ZLEstimationMT):
 
 
 class ZJEstimationMT(ZTTEstimation):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(ZTTEstimation, self).__init__(
             name="ZJ",
             folder="nominal",
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
 
@@ -267,12 +276,13 @@ class ZLEstimationTT(ZLEstimationMT):
 
 
 class WEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(WEstimation, self).__init__(
             name="W",
             folder="nominal",
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
 
@@ -298,12 +308,13 @@ class WEstimation(EstimationMethod):
 
 
 class TTEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
             name="TT",
             folder="nominal",
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
 
@@ -326,12 +337,13 @@ class TTEstimation(EstimationMethod):
 
 
 class TTTEstimationMT(TTEstimation):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
             name="TTT",
             folder="nominal",
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
 
@@ -340,12 +352,13 @@ class TTTEstimationMT(TTEstimation):
 
 
 class TTJEstimationMT(TTEstimation):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
             name="TTJ",
             folder="nominal",
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
 
@@ -370,19 +383,21 @@ class TTJEstimationTT(TTJEstimationMT):
 
 
 class VVEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(VVEstimation, self).__init__(
             name="VV",
             folder="nominal",
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
 
     def get_weights(self):
         return Weights(
             Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
-                   "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"))
+                   "hadronic_tau_sf"),
+            Weight("eventWeight", "eventWeight"), self.era.lumi_weight)
 
     def get_files(self):
         query = {
@@ -430,12 +445,19 @@ class VVEstimation(EstimationMethod):
 
 
 class QCDEstimationET(SStoOSEstimationMethod):
-    def __init__(self, era, directory, channel, bg_processes, data_process):
+    def __init__(self,
+                 era,
+                 directory,
+                 channel,
+                 bg_processes,
+                 data_process,
+                 friend_directory=None):
         super(QCDEstimationET, self).__init__(
             name="QCD",
             folder="nominal",
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             bg_processes=bg_processes,
             data_process=data_process)
@@ -446,12 +468,19 @@ class QCDEstimationMT(QCDEstimationET):
 
 
 class QCDEstimationTT(ABCDEstimationMethod):
-    def __init__(self, era, directory, channel, bg_processes, data_process):
+    def __init__(self,
+                 era,
+                 directory,
+                 channel,
+                 bg_processes,
+                 data_process,
+                 friend_directory=None):
         super(QCDEstimationTT, self).__init__(
             name="QCD",
             folder="nominal",
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             bg_processes=bg_processes,
             data_process=data_process,

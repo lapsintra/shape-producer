@@ -154,9 +154,10 @@ class Systematics(object):
                          systematic.name)
             systematic.create_root_objects()
             self._root_objects_holder.add(systematic.root_objects)
+            self._root_objects_holder.add_unique(systematic.root_objects)
         #self._root_objects_holder.check_duplicates() # TODO: Implement this if needed
 
-        # produce the ROOT objects (in parallel)
+        # produce unique ROOT objects (in parallel)
         logger.debug("Produce ROOT objects using the %s backend.",
                      self._backend)
         if self._backend == "classic":
@@ -166,6 +167,9 @@ class Systematics(object):
         else:
             logger.fatal("Backend %s is not implemented.", self._backend)
             raise Exception
+
+        # set duplicates to the produced ROOT objects
+        self._root_objects_holder.set_duplicates()
 
     # to the actual estimations. Currently do not run in parallel due to expected very low runtime, can in principle be parallelized
     def do_estimations(self):

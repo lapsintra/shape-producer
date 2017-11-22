@@ -32,19 +32,19 @@ class QCDEstimation_ABCD_TT_ISO2(ABCDEstimationMethod):
             channel=channel,
             bg_processes=bg_processes,
             data_process=data_process,
-            AC_cut_names=[ # cuts to be removed to include region for shape derivation
+            AC_cut_names=[ # cuts applied in AC, which should be removed in the BD control regions
                 "tau_2_iso"
             ],
-            BD_cuts=[      # cuts to be applied to restrict to region for shape derivation
+            BD_cuts=[      # cuts to be applied instead of cuts removed above
                 #Cut("byTightIsolationMVArun2v1DBoldDMwLT_2<0.5", "tau_2_iso"),
                 Cut("byMediumIsolationMVArun2v1DBoldDMwLT_2<0.5", "tau_2_iso"),
                 Cut("byLooseIsolationMVArun2v1DBoldDMwLT_2>0.5",
                     "tau_2_iso_loose")
             ],
-            AB_cut_names=[ # cuts to be removed to include region for the determination of the extrapolation derivation
+            AB_cut_names=[ # cuts applied in AB, which should be removed in the CD control regions
                 "os"
             ],
-            CD_cuts=[      # cuts to be applied to restrict to region for the determination of the extrapolation derivation
+            CD_cuts=[      # cuts to be applied instead of cuts removed above
                 Cut("q_1*q_2>0", "ss")
             ]
         )
@@ -59,19 +59,19 @@ class QCDEstimation_ABCD_TT_ISO1(ABCDEstimationMethod):
             channel=channel,
             bg_processes=bg_processes,
             data_process=data_process,
-            AC_cut_names=[ # cuts to be removed to include region for shape derivation
+            AC_cut_names=[ # cuts applied in AC, which should be removed in the BD control regions
                 "tau_1_iso"
             ],
-            BD_cuts=[      # cuts to be applied to restrict to region for shape derivation
+            BD_cuts=[      # cuts to be applied instead of cuts removed above
                 #Cut("byTightIsolationMVArun2v1DBoldDMwLT_1<0.5", "tau_1_iso"),
                 Cut("byMediumIsolationMVArun2v1DBoldDMwLT_1<0.5", "tau_1_iso"),
                 Cut("byLooseIsolationMVArun2v1DBoldDMwLT_1>0.5",
                     "tau_1_iso_loose")
             ],
-            AB_cut_names=[ # cuts to be removed to include region for the determination of the extrapolation derivation
+            AB_cut_names=[ # cuts applied in AB, which should be removed in the CD control regions
                 "os"
             ],
-            CD_cuts=[      # cuts to be applied to restrict to region for the determination of the extrapolation derivation
+            CD_cuts=[      # cuts to be applied instead of cuts removed above
                 Cut("q_1*q_2>0", "ss")
             ]
         )
@@ -97,6 +97,7 @@ class VVEstimation(EstimationMethod):
             # Weights for corrections
             #Weight("topPtReweightWeight", "topPtReweightWeight"),
             #Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))", "hadronic_tau_sf"),
+            #Weight("puweight","puweight"),
 
             # Data related scale-factors
             self.era.lumi_weight)
@@ -145,6 +146,7 @@ class DYJetsToLLEstimation(EstimationMethod):
             # Weights for corrections
             #Weight("zPtReweightWeight", "zPtReweightWeight"),
             #Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))", "hadronic_tau_sf"),
+            #Weight("puweight","puweight"),
 
             # Data related scale-factors
             self.era.lumi_weight)
@@ -152,10 +154,11 @@ class DYJetsToLLEstimation(EstimationMethod):
     def get_files(self):
         query = {
             "process": "(DYJetsToLL_M10to50|DY.?JetsToLL_M50)",
+            #"process": "(DYJetsToLL_M10to50|DYJetsToLL_M50)",
             "data": False,
             "campaign": self._mc_campaign,
             "generator": "madgraph\-pythia8",
-            #"version": "v1" to be used if only one inclusive sample is desired
+            #"version": "v1" # to be used if only one inclusive sample is desired
         }
         files = self.era.datasets_helper.get_nicks_with_query(query)
         log_query(self.name, query, files)
@@ -180,8 +183,8 @@ class ZttEstimation(DYJetsToLLEstimation):
         elif self.channel.name == "tt":
             ztt_genmatch_cut = Cut("(gen_match_1==5) && (gen_match_2==5)",
                                    "ztt_genmatch")
-        elif self.channel.name == "tt":
-            ztt_genmatch_cut = Cut("(gen_match_1==3) && (gen_match_2==4)",
+        elif self.channel.name == "em":
+            ztt_genmatch_cut = Cut("(gen_match_1>2) && (gen_match_2>3)",
                                    "ztt_genmatch")
         return Cuts(ztt_genmatch_cut)
 
@@ -198,14 +201,14 @@ class ZllEstimation(DYJetsToLLEstimation):
             mc_campaign="RunIISummer17MiniAOD")
 
     def get_cuts(self):
-        zll_genmatch_cut = Cut("1 == 1", "zll_genmatch_mt")
+        zll_genmatch_cut = Cut("1 == 1", "zll_genmatch")
         if self.channel.name in ["mt", "et"]:
             zll_genmatch_cut = Cut("gen_match_2!=5", "zll_genmatch")
         elif self.channel.name == "tt":
             zll_genmatch_cut = Cut("(gen_match_1!=5) || (gen_match_2!=5)",
                                    "zll_genmatch")
         elif self.channel.name == "em":
-            zll_genmatch_cut = Cut("(gen_match_1!=3) || (gen_match_2!=4)",
+            zll_genmatch_cut = Cut("(gen_match_1<3) || (gen_match_2<4)",
                                    "zll_genmatch")
         return Cuts(zll_genmatch_cut)
 
@@ -233,6 +236,7 @@ class WJetsEstimation(EstimationMethod):
 
             # Weights for corrections
             #Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))", "hadronic_tau_sf"),
+            #Weight("puweight","puweight"),
 
             # Data related scale-factors
             self.era.lumi_weight)
@@ -240,6 +244,7 @@ class WJetsEstimation(EstimationMethod):
     def get_files(self):
         query = {
             "process": "W.?JetsToLNu",
+            #"process": "WJetsToLNu",
             "data": False,
             "campaign": self._mc_campaign,
             "generator": "madgraph-pythia8"
@@ -271,6 +276,7 @@ class TTEstimation(EstimationMethod):
             # Weights for corrections
             #Weight("topPtReweightWeight", "topPtReweightWeight"),
             #Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))", "hadronic_tau_sf"),
+            #Weight("puweight","puweight"),
 
             # Data related scale-factors
             self.era.lumi_weight)
@@ -279,7 +285,8 @@ class TTEstimation(EstimationMethod):
         query = {
             "process": "^TT$",
             "data": False,
-            "campaign": self._mc_campaign
+            "campaign": self._mc_campaign,
+            #"version": "v1" # to be used if only one inclusive sample is desired
         }
         files = self.era.datasets_helper.get_nicks_with_query(query)
         log_query(self.name, query, files)

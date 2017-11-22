@@ -12,13 +12,21 @@ logger = logging.getLogger(__name__)
 
 
 class EstimationMethod(object):
-    def __init__(self, name, folder, era, directory, channel, mc_campaign):
+    def __init__(self,
+                 name,
+                 folder,
+                 era,
+                 directory,
+                 channel,
+                 mc_campaign,
+                 friend_directory=None):
         self._directory = directory
         self._folder = folder
         self._name = name
         self._mc_campaign = mc_campaign
         self._channel = channel
         self._era = era
+        self._friend_directory = friend_directory
 
     def get_path(self, systematic, folder):
         return systematic.category.channel.name + "_" + folder + "/ntuple"
@@ -51,6 +59,12 @@ class EstimationMethod(object):
     def get_files(self):
         raise NotImplementedError
 
+    def get_friend_files(self):
+        return [
+            filename.replace(self._directory, self._friend_directory)
+            for filename in self.get_files()
+        ]
+
     def artus_file_names(self, files):
         return [os.path.join(self._directory, f, "%s.root" % f) for f in files]
 
@@ -74,6 +88,8 @@ class EstimationMethod(object):
         })
         if systematic.category.variable != None:
             histogram_settings[-1]["variable"] = systematic.category.variable
+        if self._friend_directory != None:
+            histogram_settings[-1]["friend_inputfiles"] = self.get_friend_files
         return histogram_settings
 
     # TODO: Make this less magic
@@ -106,13 +122,21 @@ class EstimationMethod(object):
 
 
 class SStoOSEstimationMethod(EstimationMethod):
-    def __init__(self, name, folder, era, directory, channel, bg_processes,
-                 data_process):
+    def __init__(self,
+                 name,
+                 folder,
+                 era,
+                 directory,
+                 channel,
+                 bg_processes,
+                 data_process,
+                 friend_directory=None):
         super(SStoOSEstimationMethod, self).__init__(
             name=name,
             folder=folder,
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             mc_campaign=None)
         self._bg_processes = [copy.deepcopy(p) for p in bg_processes]
@@ -175,14 +199,26 @@ class SStoOSEstimationMethod(EstimationMethod):
 
 class ABCDEstimationMethod(EstimationMethod):
     def __init__(
-            self, name, folder, era, directory, channel, bg_processes,
-            data_process, AC_cut_names, BD_cuts, AB_cut_names, CD_cuts
+            self,
+            name,
+            folder,
+            era,
+            directory,
+            channel,
+            bg_processes,
+            data_process,
+            AC_cut_names,
+            BD_cuts,
+            AB_cut_names,
+            CD_cuts,
+            friend_directory=None
     ):  #last four arguments correspond to 1. list of names of cuts to be removed in order to include the sideband for the shape derivation 2. list of cuts to be applied to restrict on that sideband and 3.,4. accordingly for the extrapolation factor sideband
         super(ABCDEstimationMethod, self).__init__(
             name=name,
             folder=folder,
             era=era,
             directory=directory,
+            friend_directory=friend_directory,
             channel=channel,
             mc_campaign=None)
         self._bg_processes = [copy.deepcopy(p) for p in bg_processes]

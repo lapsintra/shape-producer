@@ -471,3 +471,392 @@ class QCDEstimationTT(ABCDEstimationMethod):
                 Cut("q_1*q_2>0", "ss")
             ]
         )
+
+
+class WEstimationWithQCD(EstimationMethod):
+    def __init__(self, era, directory, channel, bg_processes, data_process, w_process, qcd_ss_to_os_extrapolation_factor):
+        super(WEstimationWithQCD, self).__init__(
+            name="WJets",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign=None)
+        self._bg_processes = bg_processes
+        self._data_process = data_process
+        self._w_process = w_process
+        self._qcd_ss_to_os_extrapolation_factor = qcd_ss_to_os_extrapolation_factor
+
+    def create_root_objects(self, systematic):
+
+        # create category for MC WJets shape estimation in the signal region
+        signal_region = copy.deepcopy(systematic.category)
+        signal_region.name = (signal_region.name+"_for_wjets_mc").lstrip(self.channel.name+"_")
+
+        # create control regions for W yield estimation
+        high_mt_ss_control_region = copy.deepcopy(systematic.category)
+        high_mt_ss_control_region.name = "wjets_high_mt_ss_cr"
+        high_mt_ss_control_region._variable = None
+
+        high_mt_ss_control_region.cuts.remove("mt")
+        high_mt_ss_control_region.cuts.remove("os")
+
+        high_mt_ss_control_region.cuts.add(Cut("mt_1>70","mt"))
+        high_mt_ss_control_region.cuts.add(Cut("q_1*q_2>0","ss"))
+
+        # create control regions for W high mt to low mt extrapolation factor
+        high_mt_os_control_region = copy.deepcopy(systematic.category) # this one also used for W yield estimation
+        high_mt_os_control_region.name = "wjets_high_mt_os_cr"
+        high_mt_os_control_region._variable = None
+
+        high_mt_os_control_region.cuts.remove("mt")
+
+        high_mt_os_control_region.cuts.add(Cut("mt_1>70","mt"))
+
+        low_mt_os_control_region = copy.deepcopy(systematic.category)
+        low_mt_os_control_region.name = "wjets_low_mt_os_cr"
+        low_mt_os_control_region._variable = None
+
+        low_mt_ss_control_region = copy.deepcopy(systematic.category)
+        low_mt_ss_control_region.name = "wjets_low_mt_ss_cr"
+        low_mt_ss_control_region._variable = None
+
+        low_mt_ss_control_region.cuts.remove("os")
+
+        low_mt_ss_control_region.cuts.add(Cut("q_1*q_2>0","ss"))
+
+        # create control regions for W ss to os extrapolation factor
+        inclusive_os_control_region = copy.deepcopy(systematic.category)
+        inclusive_os_control_region.name = "wjets_os_cr"
+        inclusive_os_control_region._variable = None
+
+        inclusive_os_control_region.cuts.remove("mt")
+
+        inclusive_ss_control_region = copy.deepcopy(systematic.category)
+        inclusive_ss_control_region.name = "wjets_ss_cr"
+        inclusive_ss_control_region._variable = None
+
+        inclusive_ss_control_region.cuts.remove("mt")
+        inclusive_ss_control_region.cuts.remove("os")
+
+        inclusive_ss_control_region.cuts.add(Cut("q_1*q_2>0","ss"))
+
+        # initialize root objects and systematics
+        root_objects = []
+        systematic._WandQCD_systematics = []
+
+        # for extrapolation factors: only W MC is needed
+        for category in [high_mt_os_control_region, low_mt_os_control_region, high_mt_ss_control_region, low_mt_ss_control_region, inclusive_os_control_region, inclusive_ss_control_region]:
+            s = Systematic(
+                category=category,
+                process=self._w_process,
+                analysis=systematic.analysis,
+                era=self.era,
+                variation=systematic.variation,
+                mass=125)
+            systematic._WandQCD_systematics.append(s)
+            s.create_root_objects()
+            root_objects += s.root_objects
+
+        # for yields in high mt control regions: data and other bg processes needed
+        for process in [self._data_process] + self._bg_processes:
+            for category in [high_mt_os_control_region, high_mt_ss_control_region]:
+                s = Systematic(
+                    category=category,
+                    process=process,
+                    analysis=systematic.analysis,
+                    era=self.era,
+                    variation=systematic.variation,
+                    mass=125)
+                systematic._WandQCD_systematics.append(s)
+                s.create_root_objects()
+                root_objects += s.root_objects
+
+        # for signal region shape
+        s = Systematic(category=signal_region,process=self._w_process,analysis=systematic.analysis,era=self.era,variation=systematic.variation,mass=125)
+        systematic._WandQCD_systematics.append(s)
+        s.create_root_objects()
+        root_objects += s.root_objects
+
+        return root_objects
+
+    def do_estimation(self, systematic):
+        if not hasattr(systematic, "_WandQCD_systematics"):
+            logger.fatal(
+                "Systematic %s does not have attribute _WandQCD_systematics needed for WandQCD estimation.",
+                systematic.name)
+            raise Exception
+
+        # Sort shapes and counts
+        wjets_mc_shape = None
+        wjets_high_mt_ss_cr_counts = {}
+        wjets_high_mt_os_cr_counts = {}
+        wjets_low_mt_os_cr_count = None
+        wjets_low_mt_ss_cr_count = None
+        wjets_os_cr_count = None
+        wjets_ss_cr_count = None
+        for s in systematic._WandQCD_systematics:
+            s.do_estimation()
+            if s.category.name.endswith("for_wjets_mc"):
+                wjets_mc_shape = s.shape
+            elif s.category.name.endswith("wjets_high_mt_ss_cr"):
+                wjets_high_mt_ss_cr_counts[s.process.name] = s.shape
+            elif s.category.name.endswith("wjets_high_mt_os_cr"):
+                wjets_high_mt_os_cr_counts[s.process.name] = s.shape
+            elif s.category.name.endswith("wjets_low_mt_os_cr"):
+                wjets_low_mt_os_cr_count = s.shape
+            elif s.category.name.endswith("wjets_low_mt_ss_cr"):
+                wjets_low_mt_ss_cr_count = s.shape
+            elif s.category.name.endswith("wjets_os_cr"):
+                wjets_os_cr_count = s.shape
+            elif s.category.name.endswith("wjets_ss_cr"):
+                wjets_ss_cr_count = s.shape
+
+        # Determine extrapolation factors
+        R_ss_to_os = wjets_os_cr_count.result/wjets_ss_cr_count.result
+        R_high_to_low_mt_os = wjets_low_mt_os_cr_count.result/wjets_high_mt_os_cr_counts.pop(self._w_process.name).result
+        R_high_to_low_mt_ss = wjets_low_mt_ss_cr_count.result/wjets_high_mt_ss_cr_counts.pop(self._w_process.name).result
+        print "SS to OS extrapolation factor:",R_ss_to_os
+        print "high to low mt os extrapolation factor:",R_high_to_low_mt_os
+        print "high to low mt ss extrapolation factor:",R_high_to_low_mt_ss
+
+        # Determine yields in wjets CRs
+        print "Data yield in ss high mt region:",wjets_high_mt_ss_cr_counts[self._data_process.name].result
+        high_mt_ss_yield = wjets_high_mt_ss_cr_counts.pop(self._data_process.name).result - sum(
+            [s.result for s in wjets_high_mt_ss_cr_counts.values()])
+        sum_mc = sum([s.result for s in wjets_high_mt_ss_cr_counts.values()])
+        print "MC yield to be subtracted:",sum_mc
+        for name,s in wjets_high_mt_ss_cr_counts.items():
+            print name,":",s.result/sum_mc
+        print "yield in ss high mt region:",high_mt_ss_yield
+
+        print "Data yield in os high mt region:",wjets_high_mt_os_cr_counts[self._data_process.name].result
+        high_mt_os_yield = wjets_high_mt_os_cr_counts.pop(self._data_process.name).result - sum(
+            [s.result for s in wjets_high_mt_os_cr_counts.values()])
+        sum_mc = sum([s.result for s in wjets_high_mt_os_cr_counts.values()])
+        print "MC yield to be subtracted:",sum_mc
+        for name,s in wjets_high_mt_os_cr_counts.items():
+            print name,":",s.result/sum_mc
+        print "yield in os high mt region:",high_mt_os_yield
+
+        # Derive and normalize final shape
+        wjets_integral = wjets_mc_shape.result.Integral()
+        print "MC yield in signal region:",wjets_integral
+        estimated_yield = R_high_to_low_mt_os*R_ss_to_os*(high_mt_os_yield - self._qcd_ss_to_os_extrapolation_factor*high_mt_ss_yield)/(R_ss_to_os-self._qcd_ss_to_os_extrapolation_factor)
+        print "Estimated yield in signal region:",estimated_yield
+        sf = estimated_yield/wjets_integral
+        print "Scale wjets by",sf
+        wjets_shape = copy.deepcopy(wjets_mc_shape)
+        wjets_shape.result.Scale(sf)
+
+        # Rename root object accordingly
+        wjets_shape.name = systematic.name
+
+        # Replace negative entries by zeros and renormalize shape
+        wjets_shape.replace_negative_entries_and_renormalize(tolerance=0.05)
+
+        return wjets_shape
+
+    # Data-driven estimation, no associated files and weights
+    def get_files(self):
+        raise NotImplementedError
+
+    def get_weights(self):
+        raise NotImplementedError
+
+
+class QCDEstimationWithW(EstimationMethod):
+    def __init__(self, era, directory, channel, bg_processes, data_process, w_process, qcd_ss_to_os_extrapolation_factor):
+        super(QCDEstimationWithW, self).__init__(
+            name="QCD",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign=None)
+        self._bg_processes = bg_processes
+        self._data_process = data_process
+        self._w_process = w_process
+        self._qcd_ss_to_os_extrapolation_factor = qcd_ss_to_os_extrapolation_factor
+
+    def create_root_objects(self, systematic):
+
+        # create category for WJets and QCD shape estimation in the qcd control region
+        qcd_control_region = copy.deepcopy(systematic.category)
+        qcd_control_region.name = (qcd_control_region.name+"_ss_for_qcd").lstrip(self.channel.name+"_")
+
+        qcd_control_region.cuts.remove("os")
+
+        qcd_control_region.cuts.add(Cut("q_1*q_2>0","ss"))
+
+        # create control regions for W yield estimation
+        high_mt_ss_control_region = copy.deepcopy(systematic.category)
+        high_mt_ss_control_region.name = "wjets_high_mt_ss_cr"
+        high_mt_ss_control_region._variable = None
+
+        high_mt_ss_control_region.cuts.remove("mt")
+        high_mt_ss_control_region.cuts.remove("os")
+
+        high_mt_ss_control_region.cuts.add(Cut("mt_1>70","mt"))
+        high_mt_ss_control_region.cuts.add(Cut("q_1*q_2>0","ss"))
+
+        # create control regions for W high mt to low mt extrapolation factor
+        high_mt_os_control_region = copy.deepcopy(systematic.category) # this one also used for W yield estimation
+        high_mt_os_control_region.name = "wjets_high_mt_os_cr"
+        high_mt_os_control_region._variable = None
+
+        high_mt_os_control_region.cuts.remove("mt")
+
+        high_mt_os_control_region.cuts.add(Cut("mt_1>70","mt"))
+
+        low_mt_os_control_region = copy.deepcopy(systematic.category)
+        low_mt_os_control_region.name = "wjets_low_mt_os_cr"
+        low_mt_os_control_region._variable = None
+
+        low_mt_ss_control_region = copy.deepcopy(systematic.category)
+        low_mt_ss_control_region.name = "wjets_low_mt_ss_cr"
+        low_mt_ss_control_region._variable = None
+
+        low_mt_ss_control_region.cuts.remove("os")
+
+        low_mt_ss_control_region.cuts.add(Cut("q_1*q_2>0","ss"))
+
+        # create control regions for W ss to os extrapolation factor
+        inclusive_os_control_region = copy.deepcopy(systematic.category)
+        inclusive_os_control_region.name = "wjets_os_cr"
+        inclusive_os_control_region._variable = None
+
+        inclusive_os_control_region.cuts.remove("mt")
+
+        inclusive_ss_control_region = copy.deepcopy(systematic.category)
+        inclusive_ss_control_region.name = "wjets_ss_cr"
+        inclusive_ss_control_region._variable = None
+
+        inclusive_ss_control_region.cuts.remove("mt")
+        inclusive_ss_control_region.cuts.remove("os")
+
+        inclusive_ss_control_region.cuts.add(Cut("q_1*q_2>0","ss"))
+
+        # initialize root objects and systematics
+        root_objects = []
+        systematic._WandQCD_systematics = []
+
+        # for extrapolation factors: only W MC is needed
+        for category in [high_mt_os_control_region, low_mt_os_control_region, high_mt_ss_control_region, low_mt_ss_control_region, inclusive_os_control_region, inclusive_ss_control_region]:
+            s = Systematic(
+                category=category,
+                process=self._w_process,
+                analysis=systematic.analysis,
+                era=self.era,
+                variation=systematic.variation,
+                mass=125)
+            systematic._WandQCD_systematics.append(s)
+            s.create_root_objects()
+            root_objects += s.root_objects
+
+        # for yields in high mt control regions: data and other bg processes needed
+        for process in [self._data_process] + self._bg_processes:
+            for category in [high_mt_os_control_region, high_mt_ss_control_region]:
+                s = Systematic(
+                    category=category,
+                    process=process,
+                    analysis=systematic.analysis,
+                    era=self.era,
+                    variation=systematic.variation,
+                    mass=125)
+                systematic._WandQCD_systematics.append(s)
+                s.create_root_objects()
+                root_objects += s.root_objects
+
+        # for Wjets and QCD shape
+        for process in [self._data_process,self._w_process] + self._bg_processes:
+            s = Systematic(category=qcd_control_region,process=process,analysis=systematic.analysis,era=self.era,variation=systematic.variation,mass=125)
+            systematic._WandQCD_systematics.append(s)
+            s.create_root_objects()
+            root_objects += s.root_objects
+
+        return root_objects
+
+    def do_estimation(self, systematic):
+        if not hasattr(systematic, "_WandQCD_systematics"):
+            logger.fatal(
+                "Systematic %s does not have attribute _WandQCD_systematics needed for WandQCD estimation.",
+                systematic.name)
+            raise Exception
+
+        # Sort shapes and counts
+        qcd_control_region_shapes = {}
+        wjets_high_mt_ss_cr_counts = {}
+        wjets_high_mt_os_cr_counts = {}
+        wjets_low_mt_os_cr_count = None
+        wjets_low_mt_ss_cr_count = None
+        wjets_os_cr_count = None
+        wjets_ss_cr_count = None
+        for s in systematic._WandQCD_systematics:
+            s.do_estimation()
+            if s.category.name.endswith("ss_for_qcd"):
+                qcd_control_region_shapes[s.process.name] = s.shape
+            elif s.category.name.endswith("wjets_high_mt_ss_cr"):
+                wjets_high_mt_ss_cr_counts[s.process.name] = s.shape
+            elif s.category.name.endswith("wjets_high_mt_os_cr"):
+                wjets_high_mt_os_cr_counts[s.process.name] = s.shape
+            elif s.category.name.endswith("wjets_low_mt_os_cr"):
+                wjets_low_mt_os_cr_count = s.shape
+            elif s.category.name.endswith("wjets_low_mt_ss_cr"):
+                wjets_low_mt_ss_cr_count = s.shape
+            elif s.category.name.endswith("wjets_os_cr"):
+                wjets_os_cr_count = s.shape
+            elif s.category.name.endswith("wjets_ss_cr"):
+                wjets_ss_cr_count = s.shape
+
+        # Determine extrapolation factors
+        R_ss_to_os = wjets_os_cr_count.result/wjets_ss_cr_count.result
+        R_high_to_low_mt_os = wjets_low_mt_os_cr_count.result/wjets_high_mt_os_cr_counts.pop(self._w_process.name).result
+        R_high_to_low_mt_ss = wjets_low_mt_ss_cr_count.result/wjets_high_mt_ss_cr_counts.pop(self._w_process.name).result
+        print "SS to OS extrapolation factor:",R_ss_to_os
+        print "high to low mt os extrapolation factor:",R_high_to_low_mt_os
+        print "high to low mt ss extrapolation factor:",R_high_to_low_mt_ss
+
+        # Determine yields in wjets CRs
+        high_mt_ss_yield = wjets_high_mt_ss_cr_counts.pop(self._data_process.name).result - sum(
+            [s.result for s in wjets_high_mt_ss_cr_counts.values()])
+
+        high_mt_os_yield = wjets_high_mt_os_cr_counts.pop(self._data_process.name).result - sum(
+            [s.result for s in wjets_high_mt_os_cr_counts.values()])
+
+        print "yield in ss high mt region:",high_mt_ss_yield
+        print "yield in os high mt region:",high_mt_os_yield
+
+        # Derive and normalize final shape for QCD
+        wjets_shape = qcd_control_region_shapes.pop(self._w_process.name)
+        wjets_integral = wjets_shape.result.Integral()
+        print "MC yield in qcd control region for wjets:",wjets_integral
+        estimated_yield = R_high_to_low_mt_ss*(high_mt_os_yield - self._qcd_ss_to_os_extrapolation_factor*high_mt_ss_yield)/(R_ss_to_os-self._qcd_ss_to_os_extrapolation_factor)
+        print "Estimated yield in qcd control region for wjets:",estimated_yield
+        sf = estimated_yield/wjets_integral
+        print "Scale wjets by",sf
+        wjets_shape.result.Scale(sf)
+
+        qcd_shape = copy.deepcopy(qcd_control_region_shapes.pop(self._data_process.name))
+        print "remaining members of qcd cr shapes:"
+        for sh in qcd_control_region_shapes.values():
+            print sh.name
+        qcd_shape.result.Add(wjets_shape.result,-1.0)
+        for sh in qcd_control_region_shapes.values():
+            qcd_shape.result.Add(sh.result,-1.0)
+        qcd_shape.result.Scale(self._qcd_ss_to_os_extrapolation_factor)
+
+        # Rename root object accordingly
+        qcd_shape.name = systematic.name
+
+        # Replace negative entries by zeros and renormalize shape
+        #qcd_shape.replace_negative_entries_and_renormalize(tolerance=0.1)
+
+        return qcd_shape
+
+    # Data-driven estimation, no associated files and weights
+    def get_files(self):
+        raise NotImplementedError
+
+    def get_weights(self):
+        raise NotImplementedError

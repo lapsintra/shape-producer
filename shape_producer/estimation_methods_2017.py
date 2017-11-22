@@ -3,10 +3,20 @@
 from cutstring import *
 from estimation_methods import EstimationMethod, SStoOSEstimationMethod, ABCDEstimationMethod
 from estimation_methods_2016 import DataEstimation as DataEstimation2016
+from estimation_methods_2016 import WEstimationWithQCD as WEstimationWithQCD2016
+from estimation_methods_2016 import QCDEstimationWithW as QCDEstimationWithW2016
 from era import log_query
 
 
 class DataEstimation(DataEstimation2016):
+    pass
+
+
+class WEstimationWithQCD(WEstimationWithQCD2016):
+    pass
+
+
+class QCDEstimationWithW(QCDEstimationWithW2016):
     pass
 
 

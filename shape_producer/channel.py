@@ -102,6 +102,19 @@ class EM(Channel):
         return self._name
 
 
+class PU(Channel):
+    def __init__(self):
+        self._name = "pu"
+        self._cuts = Cuts()
+
+    @property
+    def cuts(self):
+        return self._cuts
+
+    @property
+    def name(self):
+        return self._name
+
 # collection of channels an analysis can be ran on
 class Channels(object):
     def __init__(self, name):

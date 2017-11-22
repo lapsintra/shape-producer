@@ -65,12 +65,12 @@ class Run2016(Era):
 
 class Run2017(Era):
     def __init__(self, database_path):
-        super(Run2017, self).__init__("Run2017", 24.92 * 1000.0, database_path)
+        super(Run2017, self).__init__("Run2017", 38.72 * 1000.0, database_path)
 
     def data_files(self, channel):
         query = {
             "data": True,
-            "campaign": "Run2017(B|C|D|E)",
+            "campaign": "Run2017(B|C|D|E|F)",
             "scenario": "PromptRecov(1|2|3)"
         }
         if channel.name == "mt":

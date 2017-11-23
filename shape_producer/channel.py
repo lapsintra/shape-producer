@@ -68,6 +68,8 @@ class TT(Channel):
             Cut("againstMuonLoose3_2>0.5", "againstMuonDiscriminator"),
             Cut("againstElectronVLooseMVA6_2>0.5",
                 "againstElectronDiscriminator"),
+            #Cut("byMediumIsolationMVArun2v1DBoldDMwLT_1>0.5", "tau_1_iso"),
+            #Cut("byMediumIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_2_iso"),
             Cut("byTightIsolationMVArun2v1DBoldDMwLT_1>0.5", "tau_1_iso"),
             Cut("byTightIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_2_iso"),
             Cut("q_1*q_2<0", "os"), Cut("trg_doubletau==1", "trg_doubletau"))

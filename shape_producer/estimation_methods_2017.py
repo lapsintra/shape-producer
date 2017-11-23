@@ -8,6 +8,8 @@ from era import log_query
 
 class DataEstimation(DataEstimation2016):
     pass
+#    def get_cuts(self):
+#        return Cuts(Cut("run <= 300676", "rereco_equivalent"))
 
 
 class QCDEstimation_SStoOS_MTETEM(SStoOSEstimationMethod):

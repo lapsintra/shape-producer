@@ -66,12 +66,41 @@ class Run2016(Era):
 class Run2017(Era):
     def __init__(self, database_path):
         super(Run2017, self).__init__("Run2017", 38.72 * 1000.0, database_path)
+        #super(Run2017, self).__init__("Run2017", 18.90 * 1000.0, database_path) # for B, C, D only
+        #super(Run2017, self).__init__("Run2017", 10.22 * 1000.0, database_path) # for Rereco B, C equivalent
 
     def data_files(self, channel):
         query = {
             "data": True,
             "campaign": "Run2017(B|C|D|E|F)",
+            #"campaign": "Run2017(B|C|D)",
+            #"campaign": "Run2017(B|C)",
             "scenario": "PromptRecov(1|2|3)"
+        }
+        if channel.name == "mt":
+            query["process"] = "SingleMuon"
+        elif channel.name == "et":
+            query["process"] = "SingleElectron"
+        elif channel.name == "tt":
+            query["process"] = "Tau"
+        elif channel.name == "em":
+            query["process"] = "MuonEG"
+        else:
+            logger.critical("Channel %s is not implemented.", channel.name)
+        files = self.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
+        return files
+
+
+class Run201712SepRereco(Era):
+    def __init__(self, database_path):
+        super(Run201712SepRereco, self).__init__("Run201712SepRereco", 10.22 * 1000.0, database_path)
+
+    def data_files(self, channel):
+        query = {
+            "data": True,
+            "campaign": "Run2017(B|C)",
+            "scenario": "12Sep2017v1"
         }
         if channel.name == "mt":
             query["process"] = "SingleMuon"

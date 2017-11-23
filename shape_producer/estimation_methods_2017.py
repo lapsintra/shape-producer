@@ -99,7 +99,7 @@ class VVEstimation(EstimationMethod):
             # Weights for corrections
             #Weight("topPtReweightWeight", "topPtReweightWeight"),
             #Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))", "hadronic_tau_sf"),
-            #Weight("puweight","puweight"),
+            Weight("puweight","puweight"),
 
             # Data related scale-factors
             self.era.lumi_weight)
@@ -148,7 +148,7 @@ class DYJetsToLLEstimation(EstimationMethod):
             # Weights for corrections
             #Weight("zPtReweightWeight", "zPtReweightWeight"),
             #Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))", "hadronic_tau_sf"),
-            #Weight("puweight","puweight"),
+            Weight("puweight","puweight"),
 
             # Data related scale-factors
             self.era.lumi_weight)
@@ -238,7 +238,7 @@ class WJetsEstimation(EstimationMethod):
 
             # Weights for corrections
             #Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))", "hadronic_tau_sf"),
-            #Weight("puweight","puweight"),
+            Weight("puweight","puweight"),
 
             # Data related scale-factors
             self.era.lumi_weight)
@@ -278,7 +278,7 @@ class TTEstimation(EstimationMethod):
             # Weights for corrections
             #Weight("topPtReweightWeight", "topPtReweightWeight"),
             #Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))", "hadronic_tau_sf"),
-            #Weight("puweight","puweight"),
+            Weight("puweight","puweight"),
 
             # Data related scale-factors
             self.era.lumi_weight)

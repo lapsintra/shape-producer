@@ -614,7 +614,11 @@ class WEstimationWithQCD(EstimationMethod):
 
         # Determine extrapolation factors
         R_ss_to_os = wjets_os_cr_count.result/wjets_ss_cr_count.result
-        R_high_to_low_mt_os = wjets_low_mt_os_cr_count.result/wjets_high_mt_os_cr_counts.pop(self._w_process.name).result
+
+        wjets_integral_low_mt_os = wjets_low_mt_os_cr_count.result
+        wjets_integral_high_mt_os = wjets_high_mt_os_cr_counts.pop(self._w_process.name).result
+
+        R_high_to_low_mt_os = wjets_integral_low_mt_os/wjets_integral_high_mt_os
         R_high_to_low_mt_ss = wjets_low_mt_ss_cr_count.result/wjets_high_mt_ss_cr_counts.pop(self._w_process.name).result
         print "SS to OS extrapolation factor:",R_ss_to_os
         print "high to low mt os extrapolation factor:",R_high_to_low_mt_os
@@ -640,11 +644,10 @@ class WEstimationWithQCD(EstimationMethod):
         print "yield in os high mt region:",high_mt_os_yield
 
         # Derive and normalize final shape
-        wjets_integral = wjets_mc_shape.result.Integral()
-        print "MC yield in signal region:",wjets_integral
+        print "MC yield in signal region:",wjets_integral_low_mt_os
+        sf = (high_mt_os_yield - self._qcd_ss_to_os_extrapolation_factor*high_mt_ss_yield)/(R_ss_to_os-self._qcd_ss_to_os_extrapolation_factor)/wjets_integral_high_mt_os
         estimated_yield = R_high_to_low_mt_os*R_ss_to_os*(high_mt_os_yield - self._qcd_ss_to_os_extrapolation_factor*high_mt_ss_yield)/(R_ss_to_os-self._qcd_ss_to_os_extrapolation_factor)
         print "Estimated yield in signal region:",estimated_yield
-        sf = estimated_yield/wjets_integral
         print "Scale wjets by",sf
         wjets_shape = copy.deepcopy(wjets_mc_shape)
         wjets_shape.result.Scale(sf)
@@ -811,8 +814,12 @@ class QCDEstimationWithW(EstimationMethod):
 
         # Determine extrapolation factors
         R_ss_to_os = wjets_os_cr_count.result/wjets_ss_cr_count.result
+
+        wjets_integral_low_mt_ss = wjets_low_mt_ss_cr_count.result
+        wjets_integral_high_mt_ss = wjets_high_mt_ss_cr_counts.pop(self._w_process.name).result
+
         R_high_to_low_mt_os = wjets_low_mt_os_cr_count.result/wjets_high_mt_os_cr_counts.pop(self._w_process.name).result
-        R_high_to_low_mt_ss = wjets_low_mt_ss_cr_count.result/wjets_high_mt_ss_cr_counts.pop(self._w_process.name).result
+        R_high_to_low_mt_ss = wjets_integral_low_mt_ss/wjets_integral_high_mt_ss
         print "SS to OS extrapolation factor:",R_ss_to_os
         print "high to low mt os extrapolation factor:",R_high_to_low_mt_os
         print "high to low mt ss extrapolation factor:",R_high_to_low_mt_ss
@@ -829,11 +836,10 @@ class QCDEstimationWithW(EstimationMethod):
 
         # Derive and normalize final shape for QCD
         wjets_shape = qcd_control_region_shapes.pop(self._w_process.name)
-        wjets_integral = wjets_shape.result.Integral()
-        print "MC yield in qcd control region for wjets:",wjets_integral
+        print "MC yield in qcd control region for wjets:",wjets_integral_low_mt_ss
+        sf = (high_mt_os_yield - self._qcd_ss_to_os_extrapolation_factor*high_mt_ss_yield)/(R_ss_to_os-self._qcd_ss_to_os_extrapolation_factor)/wjets_integral_high_mt_ss
         estimated_yield = R_high_to_low_mt_ss*(high_mt_os_yield - self._qcd_ss_to_os_extrapolation_factor*high_mt_ss_yield)/(R_ss_to_os-self._qcd_ss_to_os_extrapolation_factor)
         print "Estimated yield in qcd control region for wjets:",estimated_yield
-        sf = estimated_yield/wjets_integral
         print "Scale wjets by",sf
         wjets_shape.result.Scale(sf)
 

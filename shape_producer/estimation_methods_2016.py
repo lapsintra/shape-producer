@@ -674,7 +674,7 @@ class WEstimationWithQCD(EstimationMethod):
 
         # Derive and normalize final shape
         print "MC yield in signal region:",wjets_integral_low_mt_os
-        sf = (high_mt_os_yield - self._qcd_ss_to_os_extrapolation_factor*high_mt_ss_yield)/(R_ss_to_os-self._qcd_ss_to_os_extrapolation_factor)/wjets_integral_high_mt_os
+        sf = R_ss_to_os*(high_mt_os_yield - self._qcd_ss_to_os_extrapolation_factor*high_mt_ss_yield)/(R_ss_to_os-self._qcd_ss_to_os_extrapolation_factor)/wjets_integral_high_mt_os
         estimated_yield = R_high_to_low_mt_os*R_ss_to_os*(high_mt_os_yield - self._qcd_ss_to_os_extrapolation_factor*high_mt_ss_yield)/(R_ss_to_os-self._qcd_ss_to_os_extrapolation_factor)
         print "Estimated yield in signal region:",estimated_yield
         print "Scale wjets by",sf

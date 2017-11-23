@@ -56,16 +56,15 @@ class TTreeContent(object):
         return self.__hash__() == other.__hash__()
 
     def __hash__(self):
-        # TODO: Make this nicer, could fail for some root_objects?
         m = hashlib.md5()
         m.update(self._name)
         for i_file in self._inputfiles:
             m.update(i_file)
-        #m.update(self.cuts.expand())  # TODO: Not implemented?
+        m.update(self._cuts.expand())
         m.update(self._weights.extract())
         m.update(self._folder)
         if isinstance(self, Histogram):
-            m.update(self._variable.name)  # TODO: not implemented?
+            m.update(self._variable.name)
         return int(m.hexdigest(), 16)
 
     @property
@@ -250,31 +249,24 @@ class RootObjects(object):
         else:
             if isinstance(root_object, list):
                 for r in root_object:
-                    unique_names = [ro.name for ro in self._unique_root_objects]
-                    found_duplicate_for = unique_names.index(r.name) if r.name in unique_names else None
-                    if r.name in unique_names:
-                        logger.warning(
-                            "!!! Attention !!! Attempt to add another root object with name \"%s\" !!! Attention !!!",
-                            r.name)
-                        self._duplicate_root_objects.setdefault(r.name,[self._unique_root_objects[found_duplicate_for]]).append(r)
-
-                        logger.warning("Already present for %s: %s",
-                                    r.name,self._duplicate_root_objects[r.name])
-                    else:
+                    add_object = True
+                    for ur in self._unique_root_objects:
+                        if r == ur:
+                            self._duplicate_root_objects.setdefault(ur,[]).append(r)
+                            add_object = False
+                            break
+                    if add_object:
                         self._unique_root_objects.append(r)
-            else:
-                unique_names = [ro.name for ro in self._unique_root_objects]
-                found_duplicate_for = unique_names.index(root_object.name) if root_object.name in unique_names else None
-                if root_object.name in unique_names:
-                    logger.warning(
-                        "!!! Attention !!! Attempt to add another root object with name \"%s\" !!! Attention !!!",
-                        root_object.name)
-                    self._duplicate_root_objects.setdefault(root_object.name,[self._unique_root_objects[found_duplicate_for]]).append(r)
 
-                    logger.warning("Already present for %s: %s",
-                             root_object.name, self._duplicate_root_objects.values[root_object.name])
-                else:
-                    self._unique_root_objects.append(root_object)
+            else:
+                add_object = True
+                for ur in self._unique_root_objects:
+                    if r == ur:
+                        self._duplicate_root_objects.setdefault(ur,[]).append(r)
+                        add_object = False
+                        break
+                if add_object:
+                    self._unique_root_objects.append(r)
 
     def new_histogram(self, **kwargs):
         self.add(Histogram(**kwargs))
@@ -357,11 +349,13 @@ class RootObjects(object):
     def set_duplicates(self):
         logger.debug("Setting duplicates to the corresponding produced ROOT objects")
         for ro in self._unique_root_objects:
-            if ro.name in self._duplicate_root_objects:
-                logger.debug("Setting duplicates for %s",ro.name)
-                for dup_ro in self._duplicate_root_objects[ro.name]:
+            if ro in self._duplicate_root_objects:
+                logger.debug("Setting following duplicates for produced object %s with address %s",ro.name,ro)
+                for dup_ro in self._duplicate_root_objects[ro]:
+                    logger.debug("duplicate %s with address %s",dup_ro.name,dup_ro)
                     dup_ro._result = ro.result
-                    self._root_objects[self._root_objects.index(dup_ro)]._result = ro.result
+                    #self._root_objects[self._root_objects.index(dup_ro)]._result = ro.result
+                logger.debug("--------------------------------")
 
     def save(self):
         if not self._produced:

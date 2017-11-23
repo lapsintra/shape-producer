@@ -838,9 +838,6 @@ class QCDEstimationWithW(EstimationMethod):
         wjets_shape.result.Scale(sf)
 
         qcd_shape = copy.deepcopy(qcd_control_region_shapes.pop(self._data_process.name))
-        print "remaining members of qcd cr shapes:"
-        for sh in qcd_control_region_shapes.values():
-            print sh.name
         qcd_shape.result.Add(wjets_shape.result,-1.0)
         for sh in qcd_control_region_shapes.values():
             qcd_shape.result.Add(sh.result,-1.0)
@@ -850,7 +847,7 @@ class QCDEstimationWithW(EstimationMethod):
         qcd_shape.name = systematic.name
 
         # Replace negative entries by zeros and renormalize shape
-        #qcd_shape.replace_negative_entries_and_renormalize(tolerance=0.1)
+        qcd_shape.replace_negative_entries_and_renormalize(tolerance=0.05)
 
         return qcd_shape
 

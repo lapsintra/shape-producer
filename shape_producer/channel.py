@@ -8,8 +8,13 @@ logger = logging.getLogger(__name__)
 
 
 class Channel(object):
-    # TODO: Make cuts and name as property of channel class
-    pass
+    @property
+    def cuts(self):
+        return self._cuts
+
+    @property
+    def name(self):
+        return self._name
 
 
 class MT(Channel):
@@ -26,13 +31,22 @@ class MT(Channel):
             Cut("iso_1<0.15", "muon_iso"),
             Cut("q_1*q_2<0", "os"), Cut("trg_singlemuon==1", "trg_singlemuon"))
 
-    @property
-    def cuts(self):
-        return self._cuts
 
-    @property
-    def name(self):
-        return self._name
+class MTSM(Channel):
+    def __init__(self):
+        self._name = "mt"
+        self._cuts = Cuts(
+            Cut("extraelec_veto<0.5", "extraelec_veto"),
+            Cut("extramuon_veto<0.5", "extramuon_veto"),
+            Cut("dilepton_veto<0.5", "dilepton_veto"),
+            Cut("againstMuonTight3_2>0.5", "againstMuonDiscriminator"),
+            Cut("againstElectronVLooseMVA6_2>0.5",
+                "againstElectronDiscriminator"),
+            Cut("byTightIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_iso"),
+            Cut("iso_1<0.15", "muon_iso"),
+            Cut("q_1*q_2<0", "os"),
+            Cut("((trg_singlemuon==1 && pt_1>23 && pt_2>30) + (trg_mutaucross==1 && pt_1>20 && pt_1<=23 && pt_2>30))",
+                "trg_singlemuoncross"))
 
 
 class ET(Channel):
@@ -47,15 +61,25 @@ class ET(Channel):
                 "againstElectronDiscriminator"),
             Cut("byTightIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_iso"),
             Cut("iso_1<0.1", "ele_iso"),
-            Cut("q_1*q_2<0", "os"), Cut("trg_singleelectron==1", "trg_singleelectron"))
+            Cut("q_1*q_2<0", "os"),
+            Cut("trg_singleelectron==1", "trg_singleelectron"))
 
-    @property
-    def cuts(self):
-        return self._cuts
 
-    @property
-    def name(self):
-        return self._name
+class ETSM(Channel):
+    def __init__(self):
+        self._name = "et"
+        self._cuts = Cuts(
+            Cut("extraelec_veto<0.5", "extraelec_veto"),
+            Cut("extramuon_veto<0.5", "extramuon_veto"),
+            Cut("dilepton_veto<0.5", "dilepton_veto"),
+            Cut("againstMuonLoose3_2>0.5", "againstMuonDiscriminator"),
+            Cut("againstElectronTightMVA6_2>0.5",
+                "againstElectronDiscriminator"),
+            Cut("byTightIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_iso"),
+            Cut("iso_1<0.1", "ele_iso"),
+            Cut("q_1*q_2<0", "os"),
+            Cut("(trg_singleelectron==1 && pt_1>26 && pt_2>30)",
+                "trg_singleelectron"))
 
 
 class TT(Channel):
@@ -68,19 +92,25 @@ class TT(Channel):
             Cut("againstMuonLoose3_2>0.5", "againstMuonDiscriminator"),
             Cut("againstElectronVLooseMVA6_2>0.5",
                 "againstElectronDiscriminator"),
-            #Cut("byMediumIsolationMVArun2v1DBoldDMwLT_1>0.5", "tau_1_iso"),
-            #Cut("byMediumIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_2_iso"),
             Cut("byTightIsolationMVArun2v1DBoldDMwLT_1>0.5", "tau_1_iso"),
             Cut("byTightIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_2_iso"),
             Cut("q_1*q_2<0", "os"), Cut("trg_doubletau==1", "trg_doubletau"))
 
-    @property
-    def cuts(self):
-        return self._cuts
 
-    @property
-    def name(self):
-        return self._name
+class TTSM(Channel):
+    def __init__(self):
+        self._name = "tt"
+        self._cuts = Cuts(
+            Cut("extraelec_veto<0.5", "extraelec_veto"),
+            Cut("extramuon_veto<0.5", "extramuon_veto"),
+            Cut("dilepton_veto<0.5", "dilepton_veto"),
+            Cut("againstMuonLoose3_2>0.5", "againstMuonDiscriminator"),
+            Cut("againstElectronVLooseMVA6_2>0.5",
+                "againstElectronDiscriminator"),
+            Cut("byVTightIsolationMVArun2v1DBoldDMwLT_1>0.5", "tau_1_iso"),
+            Cut("byVTightIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_2_iso"),
+            Cut("q_1*q_2<0", "os"),
+            Cut("(trg_doubletau==1 && pt_1>50 && pt_2>40)", "trg_doubletau"))
 
 
 class EM(Channel):
@@ -95,27 +125,12 @@ class EM(Channel):
             Cut("q_1*q_2<0", "os"),
             Cut("trg_muonelectron==1", "trg_muonelectron"))
 
-    @property
-    def cuts(self):
-        return self._cuts
-
-    @property
-    def name(self):
-        return self._name
-
 
 class PU(Channel):
     def __init__(self):
         self._name = "pu"
         self._cuts = Cuts()
 
-    @property
-    def cuts(self):
-        return self._cuts
-
-    @property
-    def name(self):
-        return self._name
 
 # collection of channels an analysis can be ran on
 class Channels(object):

@@ -403,10 +403,11 @@ class EWKEstimation(EstimationMethod):
 
     def get_files(self):
         query = {
-            "process": "^EWK",
+            "process": "^EWKZ",
             "data": False,
             "campaign": self._mc_campaign,
-            "generator": "madgraph\-pythia8"
+            "generator": "madgraph\-pythia8",
+            "extension": "ext2"
         }
         files = self.era.datasets_helper.get_nicks_with_query(query)
 

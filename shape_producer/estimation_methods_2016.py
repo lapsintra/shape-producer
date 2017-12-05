@@ -46,6 +46,8 @@ class HTTEstimation(EstimationMethod):
 
     def get_weights(self):
         return Weights(
+            Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
+                   "hadronic_tau_sf"),
             Weight("eventWeight", "eventWeight"), self.era.lumi_weight)
 
     def get_files(self):
@@ -382,6 +384,36 @@ class TTJEstimationTT(TTJEstimationMT):
     pass
 
 
+class EWKEstimation(EstimationMethod):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(EWKEstimation, self).__init__(
+            name="EWK",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_weights(self):
+        return Weights(
+            Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
+                   "hadronic_tau_sf"),
+            Weight("eventWeight", "eventWeight"), self.era.lumi_weight)
+
+    def get_files(self):
+        query = {
+            "process": "^EWK",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "madgraph\-pythia8"
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
+
 class VVEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(VVEstimation, self).__init__(
@@ -437,14 +469,6 @@ class VVEstimation(EstimationMethod):
             False,
             "campaign":
             self._mc_campaign
-        }
-        files += self.era.datasets_helper.get_nicks_with_query(query)
-
-        query = {
-            "process": "^EWK",
-            "data": False,
-            "campaign": self._mc_campaign,
-            "generator": "madgraph\-pythia8"
         }
         files += self.era.datasets_helper.get_nicks_with_query(query)
 

@@ -484,7 +484,8 @@ class QCDEstimationET(SStoOSEstimationMethod):
                  channel,
                  bg_processes,
                  data_process,
-                 friend_directory=None):
+                 friend_directory=None,
+                 extrapolation_factor=1.0):
         super(QCDEstimationET, self).__init__(
             name="QCD",
             folder="nominal",
@@ -493,7 +494,8 @@ class QCDEstimationET(SStoOSEstimationMethod):
             friend_directory=friend_directory,
             channel=channel,
             bg_processes=bg_processes,
-            data_process=data_process)
+            data_process=data_process,
+            extrapolation_factor=extrapolation_factor)
 
 
 class QCDEstimationMT(QCDEstimationET):

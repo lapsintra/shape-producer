@@ -130,7 +130,8 @@ class SStoOSEstimationMethod(EstimationMethod):
                  channel,
                  bg_processes,
                  data_process,
-                 friend_directory=None):
+                 friend_directory=None,
+                 extrapolation_factor=1.0):
         super(SStoOSEstimationMethod, self).__init__(
             name=name,
             folder=folder,
@@ -141,6 +142,7 @@ class SStoOSEstimationMethod(EstimationMethod):
             mc_campaign=None)
         self._bg_processes = [copy.deepcopy(p) for p in bg_processes]
         self._data_process = copy.deepcopy(data_process)
+        self._extrapolation_factor = extrapolation_factor
 
     def create_root_objects(self, systematic):
         ss_category = copy.deepcopy(systematic.category)
@@ -180,6 +182,9 @@ class SStoOSEstimationMethod(EstimationMethod):
         # Subtract MC shapes from data shape
         for s in systematic._qcd_systematics[1:]:
             shape.result.Add(s.shape.result, -1.0)
+
+        # Scale with extrapolation factor
+        shape.result.Scale(self._extrapolation_factor)
 
         # Rename root object accordingly
         shape.name = systematic.name

@@ -23,7 +23,7 @@ class QCDEstimationWithW(QCDEstimationWithW2016):
 
 
 class QCDEstimation_SStoOS_MTETEM(SStoOSEstimationMethod):
-    def __init__(self, era, directory, channel, bg_processes, data_process):
+    def __init__(self, era, directory, channel, bg_processes, data_process, extrapolation_factor=1.0):
         super(QCDEstimation_SStoOS_MTETEM, self).__init__(
             name="QCD",
             folder="nominal",
@@ -31,7 +31,8 @@ class QCDEstimation_SStoOS_MTETEM(SStoOSEstimationMethod):
             directory=directory,
             channel=channel,
             bg_processes=bg_processes,
-            data_process=data_process)
+            data_process=data_process,
+            extrapolation_factor=extrapolation_factor)
 
 
 class QCDEstimation_ABCD_TT_ISO2(ABCDEstimationMethod):

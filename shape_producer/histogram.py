@@ -283,7 +283,7 @@ class RootObjects(object):
             else:
                 self._root_objects.append(root_object)
 
-    def add_unique(self,root_object):
+    def add_unique(self, root_object):
         if self._produced:
             logger.fatal(
                 "A produce function has already been called. No more histograms can be added."
@@ -295,7 +295,8 @@ class RootObjects(object):
                     add_object = True
                     for ur in self._unique_root_objects:
                         if r == ur:
-                            self._duplicate_root_objects.setdefault(ur,[]).append(r)
+                            self._duplicate_root_objects.setdefault(
+                                ur, []).append(r)
                             add_object = False
                             break
                     if add_object:
@@ -305,7 +306,8 @@ class RootObjects(object):
                 add_object = True
                 for ur in self._unique_root_objects:
                     if r == ur:
-                        self._duplicate_root_objects.setdefault(ur,[]).append(r)
+                        self._duplicate_root_objects.setdefault(ur,
+                                                                []).append(r)
                         add_object = False
                         break
                 if add_object:
@@ -341,7 +343,8 @@ class RootObjects(object):
         self.create_output_file()
         self._produced = True
         # determine how many data frames have to be created; sort by inputfiles and trees
-        files_folders = self.get_combinations(self._unique_root_objects, self._counts)
+        files_folders = self.get_combinations(self._unique_root_objects,
+                                              self._counts)
 
         for files_folder in files_folders:
             # create the dataframe
@@ -373,8 +376,9 @@ class RootObjects(object):
         else:
             from multiprocessing import Pool
             pool = Pool(processes=num_threads)
-            root_objects_new = pool.map(root_object_create_result,
-                                        [ro for ro in self._unique_root_objects])
+            root_objects_new = pool.map(
+                root_object_create_result,
+                [ro for ro in self._unique_root_objects])
             pool.close()
             pool.join()
 
@@ -390,12 +394,16 @@ class RootObjects(object):
         return self
 
     def set_duplicates(self):
-        logger.debug("Setting duplicates to the corresponding produced ROOT objects")
+        logger.debug(
+            "Setting duplicates to the corresponding produced ROOT objects")
         for ro in self._unique_root_objects:
             if ro in self._duplicate_root_objects:
-                logger.debug("Setting following duplicates for produced object %s with address %s",ro.name,ro)
+                logger.debug(
+                    "Setting following duplicates for produced object %s with address %s",
+                    ro.name, ro)
                 for dup_ro in self._duplicate_root_objects[ro]:
-                    logger.debug("duplicate %s with address %s",dup_ro.name,dup_ro)
+                    logger.debug("duplicate %s with address %s", dup_ro.name,
+                                 dup_ro)
                     dup_ro._result = ro.result
                     #self._root_objects[self._root_objects.index(dup_ro)]._result = ro.result
                 logger.debug("--------------------------------")

@@ -94,7 +94,8 @@ class Run2017(Era):
 
 class Run201712SepRereco(Era):
     def __init__(self, database_path):
-        super(Run201712SepRereco, self).__init__("Run201712SepRereco", 10.22 * 1000.0, database_path)
+        super(Run201712SepRereco, self).__init__("Run201712SepRereco",
+                                                 10.22 * 1000.0, database_path)
 
     def data_files(self, channel):
         query = {

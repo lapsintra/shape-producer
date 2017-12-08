@@ -649,35 +649,36 @@ class WEstimationWithQCD(EstimationMethod):
 
         R_high_to_low_mt_os = wjets_integral_low_mt_os/wjets_integral_high_mt_os
         R_high_to_low_mt_ss = wjets_low_mt_ss_cr_count.result/wjets_high_mt_ss_cr_counts.pop(self._w_process.name).result
-        print "SS to OS extrapolation factor:",R_ss_to_os
-        print "high to low mt os extrapolation factor:",R_high_to_low_mt_os
-        print "high to low mt ss extrapolation factor:",R_high_to_low_mt_ss
+        logger.debug("WJets SS to OS extrapolation factor: %s",str(R_ss_to_os))
+        logger.debug("WJets high to low mt os extrapolation factor: %s",str(R_high_to_low_mt_os))
+        logger.debug("WJets high to low mt ss extrapolation factor: %s",str(R_high_to_low_mt_ss))
 
         # Determine yields in wjets CRs
-        print "Data yield in ss high mt region:",wjets_high_mt_ss_cr_counts[self._data_process.name].result
+        #print "Data yield in ss high mt region:",wjets_high_mt_ss_cr_counts[self._data_process.name].result
         high_mt_ss_yield = wjets_high_mt_ss_cr_counts.pop(self._data_process.name).result - sum(
             [s.result for s in wjets_high_mt_ss_cr_counts.values()])
         sum_mc = sum([s.result for s in wjets_high_mt_ss_cr_counts.values()])
-        print "MC yield to be subtracted:",sum_mc
-        for name,s in wjets_high_mt_ss_cr_counts.items():
-            print name,":",s.result/sum_mc
-        print "yield in ss high mt region:",high_mt_ss_yield
+        #print "MC yield to be subtracted:",sum_mc
+        #for name,s in wjets_high_mt_ss_cr_counts.items():
+        #    print name,":",s.result/sum_mc
 
-        print "Data yield in os high mt region:",wjets_high_mt_os_cr_counts[self._data_process.name].result
+        #print "Data yield in os high mt region:",wjets_high_mt_os_cr_counts[self._data_process.name].result
         high_mt_os_yield = wjets_high_mt_os_cr_counts.pop(self._data_process.name).result - sum(
             [s.result for s in wjets_high_mt_os_cr_counts.values()])
         sum_mc = sum([s.result for s in wjets_high_mt_os_cr_counts.values()])
-        print "MC yield to be subtracted:",sum_mc
-        for name,s in wjets_high_mt_os_cr_counts.items():
-            print name,":",s.result/sum_mc
-        print "yield in os high mt region:",high_mt_os_yield
+        #print "MC yield to be subtracted:",sum_mc
+        #for name,s in wjets_high_mt_os_cr_counts.items():
+        #    print name,":",s.result/sum_mc
+
+        logger.debug("WJets + QCD yield in ss high mt region: %s",str(high_mt_ss_yield))
+        logger.debug("WJets + QCD yield in os high mt region: %s",str(high_mt_os_yield))
 
         # Derive and normalize final shape
-        print "MC yield in signal region:",wjets_integral_low_mt_os
+        logger.debug("WJets MC yield in signal region: %s",str(wjets_integral_low_mt_os))
         sf = R_ss_to_os*(high_mt_os_yield - self._qcd_ss_to_os_extrapolation_factor*high_mt_ss_yield)/(R_ss_to_os-self._qcd_ss_to_os_extrapolation_factor)/wjets_integral_high_mt_os
         estimated_yield = R_high_to_low_mt_os*R_ss_to_os*(high_mt_os_yield - self._qcd_ss_to_os_extrapolation_factor*high_mt_ss_yield)/(R_ss_to_os-self._qcd_ss_to_os_extrapolation_factor)
-        print "Estimated yield in signal region:",estimated_yield
-        print "Scale wjets by",sf
+        logger.debug("WJets Estimated yield in signal region: %s",str(estimated_yield))
+        logger.debug("Scale WJets by %s",str(sf))
         wjets_shape = copy.deepcopy(wjets_mc_shape)
         wjets_shape.result.Scale(sf)
 
@@ -849,9 +850,6 @@ class QCDEstimationWithW(EstimationMethod):
 
         R_high_to_low_mt_os = wjets_low_mt_os_cr_count.result/wjets_high_mt_os_cr_counts.pop(self._w_process.name).result
         R_high_to_low_mt_ss = wjets_integral_low_mt_ss/wjets_integral_high_mt_ss
-        print "SS to OS extrapolation factor:",R_ss_to_os
-        print "high to low mt os extrapolation factor:",R_high_to_low_mt_os
-        print "high to low mt ss extrapolation factor:",R_high_to_low_mt_ss
 
         # Determine yields in wjets CRs
         high_mt_ss_yield = wjets_high_mt_ss_cr_counts.pop(self._data_process.name).result - sum(
@@ -860,22 +858,31 @@ class QCDEstimationWithW(EstimationMethod):
         high_mt_os_yield = wjets_high_mt_os_cr_counts.pop(self._data_process.name).result - sum(
             [s.result for s in wjets_high_mt_os_cr_counts.values()])
 
-        print "yield in ss high mt region:",high_mt_ss_yield
-        print "yield in os high mt region:",high_mt_os_yield
-
         # Derive and normalize final shape for QCD
         wjets_shape = qcd_control_region_shapes.pop(self._w_process.name)
-        print "MC yield in qcd control region for wjets:",wjets_integral_low_mt_ss
+        logger.debug("WJets MC yield in qcd control region: %s",str(wjets_integral_low_mt_ss))
         sf = (high_mt_os_yield - self._qcd_ss_to_os_extrapolation_factor*high_mt_ss_yield)/(R_ss_to_os-self._qcd_ss_to_os_extrapolation_factor)/wjets_integral_high_mt_ss
         estimated_yield = R_high_to_low_mt_ss*(high_mt_os_yield - self._qcd_ss_to_os_extrapolation_factor*high_mt_ss_yield)/(R_ss_to_os-self._qcd_ss_to_os_extrapolation_factor)
-        print "Estimated yield in qcd control region for wjets:",estimated_yield
-        print "Scale wjets by",sf
+        logger.debug("WJets Estimated yield in qcd control region: %s",str(estimated_yield))
+        logger.debug("Scale WJets by %s",str(sf))
         wjets_shape.result.Scale(sf)
+        wjets_shape._result.Write()
 
         qcd_shape = copy.deepcopy(qcd_control_region_shapes.pop(self._data_process.name))
         qcd_shape.result.Add(wjets_shape.result,-1.0)
         for sh in qcd_control_region_shapes.values():
             qcd_shape.result.Add(sh.result,-1.0)
+        # Saving QCD shape in ss control region
+        qcd_ss_shape = copy.deepcopy(qcd_shape)
+        ss_category_name = ""
+        for s in systematic._WandQCD_systematics:
+            if s.category.name.endswith("ss_for_qcd"):
+                ss_category_name = s.category._name
+        print ss_category_name
+        qcd_ss_shape.name = systematic.name.replace(systematic.category._name,ss_category_name)
+        qcd_ss_shape._result.Write()
+
+        # Rescale QCD shape for signal region
         qcd_shape.result.Scale(self._qcd_ss_to_os_extrapolation_factor)
 
         # Rename root object accordingly

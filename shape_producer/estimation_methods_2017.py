@@ -48,8 +48,8 @@ class QCDEstimation_ABCD_TT_ISO2(ABCDEstimationMethod):
                 "tau_2_iso"
             ],
             BD_cuts=[      # cuts to be applied instead of cuts removed above
-                #Cut("byTightIsolationMVArun2v1DBoldDMwLT_2<0.5", "tau_2_iso"),
-                Cut("byMediumIsolationMVArun2v1DBoldDMwLT_2<0.5", "tau_2_iso"),
+                Cut("byTightIsolationMVArun2v1DBoldDMwLT_2<0.5", "tau_2_iso"),
+                #Cut("byMediumIsolationMVArun2v1DBoldDMwLT_2<0.5", "tau_2_iso"),
                 Cut("byLooseIsolationMVArun2v1DBoldDMwLT_2>0.5",
                     "tau_2_iso_loose")
             ],
@@ -57,6 +57,33 @@ class QCDEstimation_ABCD_TT_ISO2(ABCDEstimationMethod):
                 "os"
             ],
             CD_cuts=[      # cuts to be applied instead of cuts removed above
+                Cut("q_1*q_2>0", "ss")
+            ]
+        )
+
+class QCDEstimation_ABCD_TT_ISO2_TRANSPOSED(ABCDEstimationMethod):
+    def __init__(self, era, directory, channel, bg_processes, data_process):
+        super(QCDEstimation_ABCD_TT_ISO2_TRANSPOSED, self).__init__(
+            name="QCD",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            bg_processes=bg_processes,
+            data_process=data_process,
+            AB_cut_names=[ # cuts applied in AB, which should be removed in the CD control regions
+                "tau_2_iso"
+            ],
+            CD_cuts=[      # cuts to be applied instead of cuts removed above
+                Cut("byTightIsolationMVArun2v1DBoldDMwLT_2<0.5", "tau_2_iso"),
+                #Cut("byMediumIsolationMVArun2v1DBoldDMwLT_2<0.5", "tau_2_iso"),
+                Cut("byLooseIsolationMVArun2v1DBoldDMwLT_2>0.5",
+                    "tau_2_iso_loose")
+            ],
+            AC_cut_names=[ # cuts applied in AC, which should be removed in the BD control regions
+                "os"
+            ],
+            BD_cuts=[      # cuts to be applied instead of cuts removed above
                 Cut("q_1*q_2>0", "ss")
             ]
         )
@@ -75,8 +102,8 @@ class QCDEstimation_ABCD_TT_ISO1(ABCDEstimationMethod):
                 "tau_1_iso"
             ],
             BD_cuts=[      # cuts to be applied instead of cuts removed above
-                #Cut("byTightIsolationMVArun2v1DBoldDMwLT_1<0.5", "tau_1_iso"),
-                Cut("byMediumIsolationMVArun2v1DBoldDMwLT_1<0.5", "tau_1_iso"),
+                Cut("byTightIsolationMVArun2v1DBoldDMwLT_1<0.5", "tau_1_iso"),
+                #Cut("byMediumIsolationMVArun2v1DBoldDMwLT_1<0.5", "tau_1_iso"),
                 Cut("byLooseIsolationMVArun2v1DBoldDMwLT_1>0.5",
                     "tau_1_iso_loose")
             ],
@@ -223,6 +250,42 @@ class ZllEstimation(DYJetsToLLEstimation):
             zll_genmatch_cut = Cut("(gen_match_1<3) || (gen_match_2<4)",
                                    "zll_genmatch")
         return Cuts(zll_genmatch_cut)
+
+class ZttEmbeddingEstimation(EstimationMethod):
+    def __init__(self, era, directory, channel):
+        super(ZttEmbeddingEstimation, self).__init__(
+            name="Ztt",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign=None)
+
+    def get_weights(self):
+        return Weights(
+
+            # MC related weights
+            Weight("generatorWeight*(generatorWeight <= 1)", "generatorWeight"),
+
+            # Weights for corrections
+
+            # Data related scale-factors
+        )
+
+    def get_files(self):
+        query = {"process" : "Embedding2017(B|C)", "embedded" : True}
+        #query = {"process" : "Embedding2017(B|C|D|E|F)", "embedded" : True}
+        if self.channel.name  == "mt":
+           query["campaign"] = "MuTauFinalState"
+        elif self.channel.name == "et":
+           query["campaign"] = "ElTauFinalState"
+        elif self.channel.name == "tt":
+           query["campaign"] = "TauTauFinalState"
+        elif self.channel.name == "em":
+           query["campaign"] = "ElMuFinalState"
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
 
 
 class WJetsEstimation(EstimationMethod):

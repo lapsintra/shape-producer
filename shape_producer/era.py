@@ -65,7 +65,7 @@ class Run2016(Era):
 
 class Run2017(Era):
     def __init__(self, database_path):
-        super(Run2017, self).__init__("Run2017", 38.72 * 1000.0, database_path)
+        super(Run2017, self).__init__("Run2017", 41.96 * 1000.0, database_path)
         #super(Run2017, self).__init__("Run2017", 18.90 * 1000.0, database_path) # for B, C, D only
         #super(Run2017, self).__init__("Run2017", 10.22 * 1000.0, database_path) # for Rereco B, C equivalent
 

@@ -308,6 +308,7 @@ class ABCDEstimationMethod(EstimationMethod):
         D_yield = D_shapes.pop(self._data_process.name).result - sum(
             [s.result for s in D_shapes.values()])
         extrapolation_factor = C_yield / D_yield
+        logger.debug("D to C extrapolation factor: %s",str(extrapolation_factor))
 
         # Derive final shape
         derived_shape = B_shapes.pop(self._data_process.name)

@@ -183,16 +183,21 @@ class SStoOSEstimationMethod(EstimationMethod):
         for s in systematic._qcd_systematics[1:]:
             shape.result.Add(s.shape.result, -1.0)
 
-        # Scale with extrapolation factor
-        shape.result.Scale(self._extrapolation_factor)
+        final_shape = copy.deepcopy(shape)
+        # Saving shape in ss region
+        shape._result = final_shape.result.Clone()
+        shape.name = systematic.name.replace(systematic.category._name,systematic._qcd_systematics[0].category._name)
+        shape._result.Write()
+        # Scale shape with extrapolation factor
+        final_shape.result.Scale(self._extrapolation_factor)
 
         # Rename root object accordingly
-        shape.name = systematic.name
+        final_shape.name = systematic.name
 
         # Replace negative entries by zeros and renormalize shape
         shape.replace_negative_entries_and_renormalize(tolerance=0.05)
 
-        return shape
+        return final_shape
 
     # Data-driven estimation, no associated files and weights
     def get_files(self):

@@ -289,6 +289,18 @@ class ZttEmbeddingEstimation(EstimationMethod):
         log_query(self.name, query, files)
         return self.artus_file_names(files)
 
+    def get_cuts(self):
+        ztt_genmatch_cut = Cut("1 == 1", "ztt_genmatch")
+        if self.channel.name in ["mt", "et"]:
+            ztt_genmatch_cut = Cut("gen_match_2==5", "ztt_genmatch")
+        elif self.channel.name == "tt":
+            ztt_genmatch_cut = Cut("(gen_match_1==5) && (gen_match_2==5)",
+                                   "ztt_genmatch")
+        elif self.channel.name == "em":
+            ztt_genmatch_cut = Cut("(gen_match_1>2) && (gen_match_2>3)",
+                                   "ztt_genmatch")
+        return Cuts(ztt_genmatch_cut)
+
 
 class ZttEmbeddingEstimation_ScaledToMC(EstimationMethod):
 

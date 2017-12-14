@@ -14,6 +14,9 @@ class Binning(object):
 
 class VariableBinning(Binning):
     def __init__(self, bin_borders):
+        # Convert bin borders to list of floats
+        bin_borders = [float(f) for f in bin_borders]
+
         if not sorted(bin_borders) == bin_borders:
             logger.fatal("Binning %s is not sorted.", bin_borders)
             raise Exception

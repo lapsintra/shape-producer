@@ -5,6 +5,7 @@ from estimation_methods import EstimationMethod, SStoOSEstimationMethod, ABCDEst
 from estimation_methods_2016 import DataEstimation as DataEstimation2016
 from estimation_methods_2016 import WEstimationWithQCD as WEstimationWithQCD2016
 from estimation_methods_2016 import QCDEstimationWithW as QCDEstimationWithW2016
+from systematics import *
 from era import log_query
 
 
@@ -289,6 +290,79 @@ class ZttEmbeddingEstimation(EstimationMethod):
         return self.artus_file_names(files)
 
 
+class ZttEmbeddingEstimation_ScaledToMC(EstimationMethod):
+
+    def __init__(self, era, directory, channel, embedding_process, ttbar_tautau_mc_process, z_tautau_mc_process):
+        super(ZttEmbeddingEstimation_ScaledToMC, self).__init__(
+            name="Ztt",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign=None)
+        self._embedding_process = copy.deepcopy(embedding_process)
+        self._ttbar_tautau_mc_process = copy.deepcopy(ttbar_tautau_mc_process)
+        self._z_tautau_mc_process = copy.deepcopy(z_tautau_mc_process)
+
+    def create_root_objects(self, systematic):
+        yield_category = copy.deepcopy(systematic.category)
+        yield_category._variable = None
+
+        shape_category = copy.deepcopy(systematic.category)
+        shape_category._name += "_unscaled"
+
+        root_objects = []
+        systematic._embedding_systematics = []
+        shape_systematic = Systematic(
+            category=shape_category,
+            process=self._embedding_process,
+            analysis=systematic.analysis,
+            era=self.era,
+            variation=systematic.variation,
+            mass=125)
+        systematic._embedding_systematics.append(shape_systematic)
+        shape_systematic.create_root_objects()
+        root_objects += shape_systematic.root_objects
+
+        for process in [self._embedding_process, self._ttbar_tautau_mc_process, self._z_tautau_mc_process]:
+            s = Systematic(
+                category=yield_category,
+                process=process,
+                analysis=systematic.analysis,
+                era=self.era,
+                variation=systematic.variation,
+                mass=125)
+            systematic._embedding_systematics.append(s)
+            s.create_root_objects()
+            root_objects += s.root_objects
+        return root_objects
+
+    def do_estimation(self, systematic):
+        if not hasattr(systematic, "_embedding_systematics"):
+            logger.fatal(
+                "Systematic %s does not have attribute _embedding_systematics needed for embedding scaled to MC estimation.",
+                systematic.name)
+            raise Exception
+
+        for s in systematic._embedding_systematics:
+            s.do_estimation()
+
+        shapes = [s.shape for s in systematic._embedding_systematics]
+
+        # embedding shape
+        embedding_shape = shapes[0]
+
+        # scale factor = MC(TTT + ZTT) yield / embedding yield
+        sf = (shapes[2].result + shapes[3].result)/shapes[1].result
+        print "Scale factor",sf
+
+        # scaling shape
+        embedding_shape.result.Scale(sf)
+
+        embedding_shape.name = systematic.name
+        return embedding_shape
+
+
 class WJetsEstimation(EstimationMethod):
     def __init__(self, era, directory, channel):
         super(WJetsEstimation, self).__init__(
@@ -367,3 +441,30 @@ class TTEstimation(EstimationMethod):
         files = self.era.datasets_helper.get_nicks_with_query(query)
         log_query(self.name, query, files)
         return self.artus_file_names(files)
+
+class TTTEstimation(TTEstimation):
+    def __init__(self, era, directory, channel):
+        super(TTEstimation, self).__init__(
+            name="TTT",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign="RunIISummer17MiniAOD")
+
+    def get_cuts(self):
+        return Cuts(Cut("(gen_match_1 > 2 && gen_match_1 < 6) && (gen_match_1 > 2 && gen_match_2 < 6)","gen_match_genuine_taus"))
+
+
+class TTJEstimation(TTEstimation):
+    def __init__(self, era, directory, channel):
+        super(TTEstimation, self).__init__(
+            name="TTJ",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign="RunIISummer17MiniAOD")
+
+    def get_cuts(self):
+        return Cuts(Cut("!(gen_match_1 > 2 && gen_match_1 < 6) && (gen_match_1 > 2 && gen_match_2 < 6)","gen_match_genuine_taus"))

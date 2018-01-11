@@ -65,16 +65,12 @@ class Run2016(Era):
 
 class Run2017(Era):
     def __init__(self, database_path):
-        super(Run2017, self).__init__("Run2017", 41.96 * 1000.0, database_path)
-        #super(Run2017, self).__init__("Run2017", 18.90 * 1000.0, database_path) # for B, C, D only
-        #super(Run2017, self).__init__("Run2017", 10.22 * 1000.0, database_path) # for Rereco B, C equivalent
+        super(Run2017, self).__init__("Run2017", 42.71 * 1000.0, database_path) # Lumi according to full Run2017 data (Prompt) with normtag
 
     def data_files(self, channel):
         query = {
             "data": True,
             "campaign": "Run2017(B|C|D|E|F)",
-            #"campaign": "Run2017(B|C|D)",
-            #"campaign": "Run2017(B|C)",
             "scenario": "PromptRecov(1|2|3)"
         }
         if channel.name == "mt":

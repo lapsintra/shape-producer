@@ -340,3 +340,66 @@ class ABCDEstimationMethod(EstimationMethod):
 
     def get_weights(self):
         raise NotImplementedError
+
+class SumUpEstimationMethod(EstimationMethod):
+    def __init__(
+            self,
+            name,
+            folder,
+            era,
+            directory,
+            channel,
+            processes,
+            friend_directory=None
+    ):
+        super(SumUpEstimationMethod, self).__init__(
+            name=name,
+            folder=folder,
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign=None)
+        self._processes = [copy.deepcopy(p) for p in processes]
+
+    def create_root_objects(self, systematic):
+        root_objects = []
+        systematic._sumUp_systematics = []
+        sum_category = copy.deepcopy(systematic.category)
+        sum_category._name += "_sum"
+        for process in self._processes:
+            s = Systematic(
+                category=sum_category,
+                process=process,
+                analysis=systematic.analysis,
+                era=self.era,
+                variation=systematic.variation,
+                mass=125)
+            systematic._sumUp_systematics.append(s)
+            s.create_root_objects()
+            root_objects += s.root_objects
+        return root_objects
+
+    def do_estimation(self, systematic):
+        if not hasattr(systematic, "_sumUp_systematics"):
+            logger.fatal(
+                "Systematic %s does not have attribute _sumUp_systematics needed for summation.",
+                systematic.name)
+            raise Exception
+
+        # Create shapes
+        shapes = []
+        for s in systematic._sumUp_systematics:
+            s.do_estimation()
+            shapes.append(s.shape)
+        derived_shape = None
+        for shape in shapes:
+            if derived_shape == None:
+                derived_shape = shape
+            else:
+                derived_shape.result.Add(shape.result)
+        
+        # Rename root object accordingly
+        derived_shape.name = systematic.name
+
+        return derived_shape

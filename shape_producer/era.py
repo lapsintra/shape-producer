@@ -56,6 +56,12 @@ class Run2016(Era):
             query["process"] = "SingleElectron"
         elif channel.name == "tt":
             query["process"] = "Tau"
+        elif channel.name == "mm":
+            query["process"] = "DoubleMuon"
+        elif channel.name == "em":
+            query["process"] = "MuonEG"
+        elif channel.name == "ee":
+            query["process"] = "DoubleEG"
         else:
             logger.critical("Channel %s is not implemented.", channel.name)
         files = self.datasets_helper.get_nicks_with_query(query)
@@ -65,7 +71,9 @@ class Run2016(Era):
 
 class Run2017(Era):
     def __init__(self, database_path):
-        super(Run2017, self).__init__("Run2017", 42.71 * 1000.0, database_path) # Lumi according to full Run2017 data (Prompt) with normtag
+        super(Run2017, self).__init__(
+            "Run2017", 42.71 * 1000.0, database_path
+        )  # Lumi according to full Run2017 data (Prompt) with normtag
 
     def data_files(self, channel):
         query = {

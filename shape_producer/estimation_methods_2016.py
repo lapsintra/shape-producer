@@ -47,8 +47,8 @@ class HTTEstimation(EstimationMethod):
     def get_weights(self):
         return Weights(
             Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
-                   "hadronic_tau_sf"),
-            Weight("eventWeight", "eventWeight"), self.era.lumi_weight)
+                   "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
+            self.era.lumi_weight)
 
     def get_files(self):
         query = {
@@ -171,6 +171,13 @@ class ZTTEstimation(EstimationMethod):
         return self.artus_file_names(files)
 
 
+class ZTTEstimationLL(ZTTEstimation):
+    def get_cuts(self):
+        return Cuts(
+            Cut("(gen_match_1==3||gen_match_1==4)&&(gen_match_1==gen_match_2)",
+                "ztt_genmatch_ll"))
+
+
 class ZLLEstimation(ZTTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(ZTTEstimation, self).__init__(
@@ -244,6 +251,23 @@ class ZLEstimationETSM(ZLEstimationMT):
                 "decay_mode_reweight"))
 
 
+class ZLEstimationLL(ZTTEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(ZTTEstimation, self).__init__(
+            name="ZL",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(
+            Cut("(gen_match_1==1||gen_match_1==2)&&(gen_match_1==gen_match_2)",
+                "zl_genmatch_ll"))
+
+
 class ZJEstimationMT(ZTTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(ZTTEstimation, self).__init__(
@@ -262,6 +286,23 @@ class ZJEstimationMT(ZTTEstimation):
 # et is equivalent to mt
 class ZJEstimationET(ZJEstimationMT):
     pass
+
+
+class ZJEstimationLL(ZTTEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(ZTTEstimation, self).__init__(
+            name="ZJ",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(
+            Cut("(gen_match_1>4)||(gen_match_1!=gen_match_2)",
+                "zj_genmatch_ll"))
 
 
 class ZLEstimationET(ZLEstimationMT):
@@ -294,8 +335,8 @@ class WEstimation(EstimationMethod):
                 "(((npartons == 0 || npartons >= 5)*7.09390278348407e-4) + ((npartons == 1)*1.90063898596475e-4) + ((npartons == 2)*5.8529964471165e-5) + ((npartons == 3)*1.9206444928444e-5) + ((npartons == 4)*1.923548021385e-5))/(numberGeneratedEventsWeight*crossSectionPerEventWeight*sampleStitchingWeight)",
                 "wj_stitching_weight"),
             Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
-                   "hadronic_tau_sf"),
-            Weight("eventWeight", "eventWeight"), self.era.lumi_weight)
+                   "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
+            self.era.lumi_weight)
 
     def get_files(self):
         query = {
@@ -398,8 +439,8 @@ class EWKEstimation(EstimationMethod):
     def get_weights(self):
         return Weights(
             Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
-                   "hadronic_tau_sf"),
-            Weight("eventWeight", "eventWeight"), self.era.lumi_weight)
+                   "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
+            self.era.lumi_weight)
 
     def get_files(self):
         query = {
@@ -429,8 +470,8 @@ class VVEstimation(EstimationMethod):
     def get_weights(self):
         return Weights(
             Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
-                   "hadronic_tau_sf"),
-            Weight("eventWeight", "eventWeight"), self.era.lumi_weight)
+                   "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
+            self.era.lumi_weight)
 
     def get_files(self):
         query = {
@@ -519,22 +560,24 @@ class QCDEstimationTT(ABCDEstimationMethod):
             channel=channel,
             bg_processes=bg_processes,
             data_process=data_process,
-            AC_cut_names=[ # cuts to be removed to include region for shape derivation
+            AC_cut_names=
+            [  # cuts to be removed to include region for shape derivation
                 "tau_2_iso"
             ],
-            BD_cuts=[      # cuts to be applied to restrict to region for shape derivation
-                Cut("byTightIsolationMVArun2v1DBoldDMwLT_2<0.5",
-                    "tau_2_iso"),
+            BD_cuts=
+            [  # cuts to be applied to restrict to region for shape derivation
+                Cut("byTightIsolationMVArun2v1DBoldDMwLT_2<0.5", "tau_2_iso"),
                 Cut("byLooseIsolationMVArun2v1DBoldDMwLT_2>0.5",
                     "tau_2_iso_loose")
             ],
-            AB_cut_names=[ # cuts to be removed to include region for the determination of the extrapolation derivation
+            AB_cut_names=
+            [  # cuts to be removed to include region for the determination of the extrapolation derivation
                 "os"
             ],
-            CD_cuts=[      # cuts to be applied to restrict to region for the determination of the extrapolation derivation
+            CD_cuts=
+            [  # cuts to be applied to restrict to region for the determination of the extrapolation derivation
                 Cut("q_1*q_2>0", "ss")
-            ]
-        )
+            ])
 
 
 class WEstimationWithQCD(EstimationMethod):
@@ -698,38 +741,55 @@ class WEstimationWithQCD(EstimationMethod):
         wjets_integral_high_mt_os = wjets_high_mt_os_cr_counts.pop(
             self._w_process.name).result
 
-        R_high_to_low_mt_os = wjets_integral_low_mt_os/wjets_integral_high_mt_os
-        R_high_to_low_mt_ss = wjets_low_mt_ss_cr_count.result/wjets_high_mt_ss_cr_counts.pop(self._w_process.name).result
-        logger.debug("WJets SS to OS extrapolation factor: %s",str(R_ss_to_os))
-        logger.debug("WJets high to low mt os extrapolation factor: %s",str(R_high_to_low_mt_os))
-        logger.debug("WJets high to low mt ss extrapolation factor: %s",str(R_high_to_low_mt_ss))
+        R_high_to_low_mt_os = wjets_integral_low_mt_os / wjets_integral_high_mt_os
+        R_high_to_low_mt_ss = wjets_low_mt_ss_cr_count.result / wjets_high_mt_ss_cr_counts.pop(
+            self._w_process.name).result
+        logger.debug("WJets SS to OS extrapolation factor: %s",
+                     str(R_ss_to_os))
+        logger.debug("WJets high to low mt os extrapolation factor: %s",
+                     str(R_high_to_low_mt_os))
+        logger.debug("WJets high to low mt ss extrapolation factor: %s",
+                     str(R_high_to_low_mt_ss))
 
         # Determine yields in wjets CRs
         #print "Data yield in ss high mt region:",wjets_high_mt_ss_cr_counts[self._data_process.name].result
-        high_mt_ss_yield = wjets_high_mt_ss_cr_counts.pop(self._data_process.name).result - sum(
-            [s.result for s in wjets_high_mt_ss_cr_counts.values()])
+        high_mt_ss_yield = wjets_high_mt_ss_cr_counts.pop(
+            self._data_process.name).result - sum(
+                [s.result for s in wjets_high_mt_ss_cr_counts.values()])
         sum_mc = sum([s.result for s in wjets_high_mt_ss_cr_counts.values()])
         #print "MC yield to be subtracted:",sum_mc
         #for name,s in wjets_high_mt_ss_cr_counts.items():
         #    print name,":",s.result/sum_mc
 
         #print "Data yield in os high mt region:",wjets_high_mt_os_cr_counts[self._data_process.name].result
-        high_mt_os_yield = wjets_high_mt_os_cr_counts.pop(self._data_process.name).result - sum(
-            [s.result for s in wjets_high_mt_os_cr_counts.values()])
+        high_mt_os_yield = wjets_high_mt_os_cr_counts.pop(
+            self._data_process.name).result - sum(
+                [s.result for s in wjets_high_mt_os_cr_counts.values()])
         sum_mc = sum([s.result for s in wjets_high_mt_os_cr_counts.values()])
         #print "MC yield to be subtracted:",sum_mc
         #for name,s in wjets_high_mt_os_cr_counts.items():
         #    print name,":",s.result/sum_mc
 
-        logger.debug("WJets + QCD yield in ss high mt region: %s",str(high_mt_ss_yield))
-        logger.debug("WJets + QCD yield in os high mt region: %s",str(high_mt_os_yield))
+        logger.debug("WJets + QCD yield in ss high mt region: %s",
+                     str(high_mt_ss_yield))
+        logger.debug("WJets + QCD yield in os high mt region: %s",
+                     str(high_mt_os_yield))
 
         # Derive and normalize final shape
-        logger.debug("WJets MC yield in signal region: %s",str(wjets_integral_low_mt_os))
-        sf = R_ss_to_os*(high_mt_os_yield - self._qcd_ss_to_os_extrapolation_factor*high_mt_ss_yield)/(R_ss_to_os-self._qcd_ss_to_os_extrapolation_factor)/wjets_integral_high_mt_os
-        estimated_yield = R_high_to_low_mt_os*R_ss_to_os*(high_mt_os_yield - self._qcd_ss_to_os_extrapolation_factor*high_mt_ss_yield)/(R_ss_to_os-self._qcd_ss_to_os_extrapolation_factor)
-        logger.debug("WJets Estimated yield in signal region: %s",str(estimated_yield))
-        logger.debug("Scale WJets by %s",str(sf))
+        logger.debug("WJets MC yield in signal region: %s",
+                     str(wjets_integral_low_mt_os))
+        sf = R_ss_to_os * (
+            high_mt_os_yield -
+            self._qcd_ss_to_os_extrapolation_factor * high_mt_ss_yield) / (
+                R_ss_to_os - self._qcd_ss_to_os_extrapolation_factor
+            ) / wjets_integral_high_mt_os
+        estimated_yield = R_high_to_low_mt_os * R_ss_to_os * (
+            high_mt_os_yield -
+            self._qcd_ss_to_os_extrapolation_factor * high_mt_ss_yield) / (
+                R_ss_to_os - self._qcd_ss_to_os_extrapolation_factor)
+        logger.debug("WJets Estimated yield in signal region: %s",
+                     str(estimated_yield))
+        logger.debug("Scale WJets by %s", str(sf))
         wjets_shape = copy.deepcopy(wjets_mc_shape)
         wjets_shape.result.Scale(sf)
 
@@ -916,8 +976,9 @@ class QCDEstimationWithW(EstimationMethod):
         wjets_integral_high_mt_ss = wjets_high_mt_ss_cr_counts.pop(
             self._w_process.name).result
 
-        R_high_to_low_mt_os = wjets_low_mt_os_cr_count.result/wjets_high_mt_os_cr_counts.pop(self._w_process.name).result
-        R_high_to_low_mt_ss = wjets_integral_low_mt_ss/wjets_integral_high_mt_ss
+        R_high_to_low_mt_os = wjets_low_mt_os_cr_count.result / wjets_high_mt_os_cr_counts.pop(
+            self._w_process.name).result
+        R_high_to_low_mt_ss = wjets_integral_low_mt_ss / wjets_integral_high_mt_ss
 
         # Determine yields in wjets CRs
         high_mt_ss_yield = wjets_high_mt_ss_cr_counts.pop(
@@ -930,11 +991,19 @@ class QCDEstimationWithW(EstimationMethod):
 
         # Derive and normalize final shape for QCD
         wjets_shape = qcd_control_region_shapes.pop(self._w_process.name)
-        logger.debug("WJets MC yield in qcd control region: %s",str(wjets_integral_low_mt_ss))
-        sf = (high_mt_os_yield - self._qcd_ss_to_os_extrapolation_factor*high_mt_ss_yield)/(R_ss_to_os-self._qcd_ss_to_os_extrapolation_factor)/wjets_integral_high_mt_ss
-        estimated_yield = R_high_to_low_mt_ss*(high_mt_os_yield - self._qcd_ss_to_os_extrapolation_factor*high_mt_ss_yield)/(R_ss_to_os-self._qcd_ss_to_os_extrapolation_factor)
-        logger.debug("WJets Estimated yield in qcd control region: %s",str(estimated_yield))
-        logger.debug("Scale WJets by %s",str(sf))
+        logger.debug("WJets MC yield in qcd control region: %s",
+                     str(wjets_integral_low_mt_ss))
+        sf = (high_mt_os_yield -
+              self._qcd_ss_to_os_extrapolation_factor * high_mt_ss_yield) / (
+                  R_ss_to_os - self._qcd_ss_to_os_extrapolation_factor
+              ) / wjets_integral_high_mt_ss
+        estimated_yield = R_high_to_low_mt_ss * (
+            high_mt_os_yield -
+            self._qcd_ss_to_os_extrapolation_factor * high_mt_ss_yield) / (
+                R_ss_to_os - self._qcd_ss_to_os_extrapolation_factor)
+        logger.debug("WJets Estimated yield in qcd control region: %s",
+                     str(estimated_yield))
+        logger.debug("Scale WJets by %s", str(sf))
         wjets_shape.result.Scale(sf)
         wjets_shape._result.Write()
 
@@ -942,7 +1011,7 @@ class QCDEstimationWithW(EstimationMethod):
             qcd_control_region_shapes.pop(self._data_process.name))
         qcd_shape.result.Add(wjets_shape.result, -1.0)
         for sh in qcd_control_region_shapes.values():
-            qcd_shape.result.Add(sh.result,-1.0)
+            qcd_shape.result.Add(sh.result, -1.0)
         # Saving QCD shape in ss control region
         qcd_ss_shape = copy.deepcopy(qcd_shape)
         ss_category_name = ""
@@ -950,7 +1019,8 @@ class QCDEstimationWithW(EstimationMethod):
             if s.category.name.endswith("ss_for_qcd"):
                 ss_category_name = s.category._name
         print ss_category_name
-        qcd_ss_shape.name = systematic.name.replace(systematic.category._name,ss_category_name)
+        qcd_ss_shape.name = systematic.name.replace(systematic.category._name,
+                                                    ss_category_name)
         qcd_ss_shape._result.Write()
 
         # Rescale QCD shape for signal region

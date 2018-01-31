@@ -174,7 +174,7 @@ class ZTTEstimation(EstimationMethod):
 class ZTTEstimationLL(ZTTEstimation):
     def get_cuts(self):
         return Cuts(
-            Cut("(gen_match_1==3||gen_match_1==4)&&(gen_match_1==gen_match_2)",
+            Cut("(gen_match_1==3||gen_match_1==4)&&(gen_match_2==3||gen_match_2==4)",
                 "ztt_genmatch_ll"))
 
 
@@ -301,7 +301,7 @@ class ZJEstimationLL(ZTTEstimation):
 
     def get_cuts(self):
         return Cuts(
-            Cut("(gen_match_1>4)||(gen_match_1!=gen_match_2)",
+            Cut("!(((gen_match_1==3||gen_match_1==4)&&(gen_match_2==3||gen_match_2==4))||((gen_match_1==1||gen_match_1==2)&&(gen_match_1==gen_match_2)))",
                 "zj_genmatch_ll"))
 
 
@@ -348,6 +348,36 @@ class WEstimation(EstimationMethod):
         files = self.era.datasets_helper.get_nicks_with_query(query)
         log_query(self.name, query, files)
         return self.artus_file_names(files)
+
+
+class WTEstimation(WEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(WEstimation, self).__init__(
+            name="W",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+    def get_cuts(self):
+        return Cuts(
+            Cut("gen_match_1==3||gen_match_1==4", "wt_genmatch"))
+
+
+class WLEstimation(WEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(WEstimation, self).__init__(
+            name="W",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+    def get_cuts(self):
+        return Cuts(
+            Cut("!(gen_match_1==3||gen_match_1==4)", "wl_genmatch"))
 
 
 class TTEstimation(EstimationMethod):

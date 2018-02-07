@@ -110,5 +110,6 @@ class AddWeight(SystematicVariation):
 
     def shifted_root_objects(self, h_settings):
         for index in range(len(h_settings)):
-            h_settings[index]["weights"]().add(self._new_weight)
+            h_settings[index]["weights"] = h_settings[index]["weights"]()
+            h_settings[index]["weights"].add(self._new_weight)
         return h_settings

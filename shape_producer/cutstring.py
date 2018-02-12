@@ -245,7 +245,8 @@ class Cuts(object):
             else:
                 self._cutstrings.append(cutstring)
         else:
-            pass  # TODO: Add error handling
+            logger.fatal("Cut %s is not of type `Cut`.", cutstring)
+            raise TypeError
 
     def extract(self):
         return self._cutstrings

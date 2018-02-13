@@ -518,7 +518,7 @@ class VVEstimation(EstimationMethod):
         files = self.era.datasets_helper.get_nicks_with_query(query)
 
         query = {
-            "process": "ZZTo4L",
+            "process": "(VVTo2L2Nu|ZZTo4L)",
             "extension": "ext1",
             "data": False,
             "campaign": self._mc_campaign,

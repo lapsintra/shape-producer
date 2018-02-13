@@ -150,16 +150,21 @@ class Cut(object):
         # test if simple, parseable cutstring
         # TODO: Corner cases? They are all checked?
         # TODO: error handling?
-        operators = [s for s in supported_operators if s in cutstring]
-        self._operator = operators[0]
-        tmpcutstring = cutstring.split(self._operator)
-        if len(tmpcutstring) == 2 and len(operators) == 1:
-            self._varleft = tmpcutstring[0]
-            try:
-                self._varright = int(tmpcutstring[1])
-            except ValueError:
-                self._varright = float(tmpcutstring[1])
-        self.update_weightstring()
+        try:
+            operators = [s for s in supported_operators if s in cutstring]
+            self._operator = operators[0]
+            tmpcutstring = cutstring.split(self._operator)
+            if len(tmpcutstring) == 2 and len(operators) == 1:
+                self._varleft = tmpcutstring[0]
+                try:
+                    self._varright = int(tmpcutstring[1])
+                except ValueError:
+                    self._varright = float(tmpcutstring[1])
+            self.update_weightstring()
+        except:
+            logger.fatal(
+                "Failed to compose cut from string \'{}\'.".format(cutstring))
+            raise Exception
 
     @property
     def weightstring(self):

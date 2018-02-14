@@ -171,6 +171,13 @@ class ZTTEstimation(EstimationMethod):
         return self.artus_file_names(files)
 
 
+class ZTTEstimationTT(ZTTEstimation):
+    def get_cuts(self):
+        return Cuts(
+            Cut("(gen_match_1==5&&gen_match_2==5)",
+                "ztt_genmatch_tt"))
+
+
 class ZTTEstimationLL(ZTTEstimation):
     def get_cuts(self):
         return Cuts(
@@ -309,13 +316,18 @@ class ZLEstimationET(ZLEstimationMT):
     pass
 
 
-# tt is equivalent to mt
 class ZJEstimationTT(ZJEstimationMT):
-    pass
+    def get_cuts(self):
+        return Cuts(
+            Cut("(gen_match_2 == 6 || gen_match_1 == 6)",
+                "zj_genmatch_tt"))
 
 
 class ZLEstimationTT(ZLEstimationMT):
-    pass
+    def get_cuts(self):
+        return Cuts(
+            Cut("(gen_match_1<6&&gen_match_2<6&&!(gen_match_1==5&&gen_match_2==5))",
+                "zl_genmatch_tt"))
 
 
 class WEstimation(EstimationMethod):

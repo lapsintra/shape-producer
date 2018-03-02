@@ -379,11 +379,6 @@ class AddHistogramEstimationMethod(EstimationMethod):
 
     def do_estimation(self, systematic):
         print systematic
-        #~ if not hasattr(systematic, "_embttbar_systematics"):
-            #~ logger.fatal(
-                #~ "Systematic %s does not have attribute _embttbar_systematics needed for ttbar contamination estimation.",
-                #~ systematic.name)
-            #~ raise Exception
 
         # Create shapes
         for s in systematic._add_systematics:
@@ -398,12 +393,10 @@ class AddHistogramEstimationMethod(EstimationMethod):
 
         final_shape = copy.deepcopy(shape)
 
-        # Rename root object accordingly
+        # Rename root object accordingly (hacky part)
         final_shape.name = systematic.name
-        
-        # hacky part
-        if "ZTTpTTTauTauDown" in final_shape.name:
-            final_shape.name=systematic.name.replace("ZTTpTTTauTauDown","ZTT")
+        if "ZTTpTTTauTauUp" in final_shape.name:
+            final_shape.name=systematic.name.replace("ZTTpTTTauTauUp","ZTT")
         elif "ZTTpTTTauTauDown" in final_shape.name:
             final_shape.name=systematic.name.replace("ZTTpTTTauTauDown","ZTT")
         return final_shape

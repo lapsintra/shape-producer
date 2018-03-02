@@ -87,6 +87,24 @@ class SquareAndRemoveWeight(SystematicVariation):
                     "weights"]().remove(self._weight_name)
         return h_settings
 
+class Relabel(SystematicVariation):
+    # TODO: Do this with super?
+    def __init__(self, name, direction=None):
+        self._name = name
+        self._direction = direction
+
+    @property
+    def name(self):
+        name = self._name
+        if self._direction:
+            name += "_" + self._direction
+        return name
+
+    def change_histogram_name(self, h_settings, direction):
+        return h_settings
+
+    def shifted_root_objects(self, h_settings):
+        return h_settings
 
 class ReplaceWeight(SystematicVariation):
     def __init__(self, name, weight_name, new_weight, direction):

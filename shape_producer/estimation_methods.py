@@ -186,16 +186,18 @@ class SStoOSEstimationMethod(EstimationMethod):
         final_shape = copy.deepcopy(shape)
         # Saving shape in ss region
         shape._result = final_shape.result.Clone()
-        shape.name = systematic.name.replace(systematic.category._name,systematic._qcd_systematics[0].category._name)
+        shape.name = systematic.name.replace(
+            systematic.category._name,
+            systematic._qcd_systematics[0].category._name)
         shape._result.Write()
         # Scale shape with extrapolation factor
         final_shape.result.Scale(self._extrapolation_factor)
 
         # Rename root object accordingly
         final_shape.name = systematic.name
-
+        print systematic.name
         # Replace negative entries by zeros and renormalize shape
-        shape.replace_negative_entries_and_renormalize(tolerance=0.05)
+        shape.replace_negative_entries_and_renormalize(tolerance=10.05)
 
         return final_shape
 
@@ -318,7 +320,8 @@ class ABCDEstimationMethod(EstimationMethod):
         D_yield = D_shapes.pop(self._data_process.name).result - sum(
             [s.result for s in D_shapes.values()])
         extrapolation_factor = C_yield / D_yield
-        logger.debug("D to C extrapolation factor: %s",str(extrapolation_factor))
+        logger.debug("D to C extrapolation factor: %s",
+                     str(extrapolation_factor))
 
         # Derive final shape
         derived_shape = B_shapes.pop(self._data_process.name)
@@ -341,14 +344,9 @@ class ABCDEstimationMethod(EstimationMethod):
     def get_weights(self):
         raise NotImplementedError
 
+
 class AddHistogramEstimationMethod(EstimationMethod):
-    def __init__(self,
-                 name,
-                 folder,
-                 era,
-                 directory,
-                 channel,
-                 add_processes,
+    def __init__(self, name, folder, era, directory, channel, add_processes,
                  add_weights):
         super(AddHistogramEstimationMethod, self).__init__(
             name=name,
@@ -361,7 +359,7 @@ class AddHistogramEstimationMethod(EstimationMethod):
         self._add_weights = copy.deepcopy(add_weights)
 
     def create_root_objects(self, systematic):
-        
+
         root_objects = []
         systematic._add_systematics = []
         for process in self._add_processes:
@@ -386,7 +384,7 @@ class AddHistogramEstimationMethod(EstimationMethod):
 
         # First shape
         shape = systematic._add_systematics[0].shape
-        
+
         # Add/subtract additional shapes from first shape
         for s in systematic._add_systematics[1:]:
             shape.result.Add(s.shape.result, self._add_weights[-1])
@@ -396,9 +394,10 @@ class AddHistogramEstimationMethod(EstimationMethod):
         # Rename root object accordingly (hacky part)
         final_shape.name = systematic.name
         if "ZTTpTTTauTauUp" in final_shape.name:
-            final_shape.name=systematic.name.replace("ZTTpTTTauTauUp","ZTT")
+            final_shape.name = systematic.name.replace("ZTTpTTTauTauUp", "ZTT")
         elif "ZTTpTTTauTauDown" in final_shape.name:
-            final_shape.name=systematic.name.replace("ZTTpTTTauTauDown","ZTT")
+            final_shape.name = systematic.name.replace("ZTTpTTTauTauDown",
+                                                       "ZTT")
         return final_shape
 
     def get_files(self):
@@ -407,17 +406,16 @@ class AddHistogramEstimationMethod(EstimationMethod):
     def get_weights(self):
         raise NotImplementedError
 
+
 class SumUpEstimationMethod(EstimationMethod):
-    def __init__(
-            self,
-            name,
-            folder,
-            era,
-            directory,
-            channel,
-            processes,
-            friend_directory=None
-    ):
+    def __init__(self,
+                 name,
+                 folder,
+                 era,
+                 directory,
+                 channel,
+                 processes,
+                 friend_directory=None):
         super(SumUpEstimationMethod, self).__init__(
             name=name,
             folder=folder,
@@ -464,7 +462,7 @@ class SumUpEstimationMethod(EstimationMethod):
                 derived_shape = shape
             else:
                 derived_shape.result.Add(shape.result)
-        
+
         # Rename root object accordingly
         derived_shape.name = systematic.name
 

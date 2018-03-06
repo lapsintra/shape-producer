@@ -173,9 +173,7 @@ class ZTTEstimation(EstimationMethod):
 
 class ZTTEstimationTT(ZTTEstimation):
     def get_cuts(self):
-        return Cuts(
-            Cut("(gen_match_1==5&&gen_match_2==5)",
-                "ztt_genmatch_tt"))
+        return Cuts(Cut("(gen_match_1==5&&gen_match_2==5)", "ztt_genmatch_tt"))
 
 
 class ZTTEstimationLL(ZTTEstimation):
@@ -186,7 +184,7 @@ class ZTTEstimationLL(ZTTEstimation):
 
 
 class ZTTEmbeddedEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel,friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(ZTTEmbeddedEstimation, self).__init__(
             name="ZTT",
             folder="nominal",
@@ -195,111 +193,120 @@ class ZTTEmbeddedEstimation(EstimationMethod):
             directory=directory,
             channel=channel,
             mc_campaign=None)
+
     def embedding_stitchingweight(self):
-        if self.channel.name=='mt':
-            comp_eff_B="(1.0/0.899)"
-            comp_eff_C="(1.0/0.881)"
-            comp_eff_D="(1.0/0.877)"
-            comp_eff_E="(1.0/0.939)"
-            comp_eff_F="(1.0/0.936)"
-            comp_eff_G="(1.0/0.908)"
-            comp_eff_H="(1.0/0.962)"
-            runB = "((run >= 272007) && (run < 275657))*"+comp_eff_B
-            runC = "+((run >= 275657) && (run < 276315))*"+comp_eff_C
-            runD = "+((run >= 276315) && (run < 276831))*"+comp_eff_D
-            runE = "+((run >= 276831) && (run < 277772))*"+comp_eff_E
-            runF = "+((run >= 277772) && (run < 278820))*"+comp_eff_F
-            runG = "+((run >= 278820) && (run < 280919))*"+comp_eff_G
-            runH = "+((run >= 280919) && (run < 284045))*"+comp_eff_H
-            return "("+runB+runC+runD+runE+runF+runG+runH+")"
-        elif self.channel.name=='et':
-            comp_eff_B="(1.0/0.902)"
-            comp_eff_C="(1.0/0.910)"
-            comp_eff_D="(1.0/0.945)"
-            comp_eff_E="(1.0/0.945)"
-            comp_eff_F="(1.0/0.915)"
-            comp_eff_G="(1.0/0.903)"
-            comp_eff_H="(1.0/0.933)"
-            runB = "((run >= 272007) && (run < 275657))*"+comp_eff_B
-            runC = "+((run >= 275657) && (run < 276315))*"+comp_eff_C
-            runD = "+((run >= 276315) && (run < 276831))*"+comp_eff_D
-            runE = "+((run >= 276831) && (run < 277772))*"+comp_eff_E
-            runF = "+((run >= 277772) && (run < 278820))*"+comp_eff_F
-            runG = "+((run >= 278820) && (run < 280919))*"+comp_eff_G
-            runH = "+((run >= 280919) && (run < 284045))*"+comp_eff_H
-            return "("+runB+runC+runD+runE+runF+runG+runH+")"
-        elif self.channel.name=='tt':
-            comp_eff_B="(1.0/0.897)"
-            comp_eff_C="(1.0/0.908)"
-            comp_eff_D="(1.0/0.950)"
-            comp_eff_E="(1.0/0.861)"
-            comp_eff_F="(1.0/0.941)"
-            comp_eff_G="(1.0/0.908)"
-            comp_eff_H="(1.0/0.949)"
-            runB = "((run >= 272007) && (run < 275657))*"+comp_eff_B
-            runC = "+((run >= 275657) && (run < 276315))*"+comp_eff_C
-            runD = "+((run >= 276315) && (run < 276831))*"+comp_eff_D
-            runE = "+((run >= 276831) && (run < 277772))*"+comp_eff_E
-            runF = "+((run >= 277772) && (run < 278820))*"+comp_eff_F
-            runG = "+((run >= 278820) && (run < 280919))*"+comp_eff_G
-            runH = "+((run >= 280919) && (run < 284045))*"+comp_eff_H
-            return "("+runB+runC+runD+runE+runF+runG+runH+")"
-        elif self.channel.name=='em':
-            comp_eff_B="(1.0/0.891)"
-            comp_eff_C="(1.0/0.910)"
-            comp_eff_D="(1.0/0.953)"
-            comp_eff_E="(1.0/0.947)"
-            comp_eff_F="(1.0/0.942)"
-            comp_eff_G="(1.0/0.906)"
-            comp_eff_H="(1.0/0.950)"
-            runB = "((run >= 272007) && (run < 275657))*"+comp_eff_B
-            runC = "+((run >= 275657) && (run < 276315))*"+comp_eff_C
-            runD = "+((run >= 276315) && (run < 276831))*"+comp_eff_D
-            runE = "+((run >= 276831) && (run < 277772))*"+comp_eff_E
-            runF = "+((run >= 277772) && (run < 278820))*"+comp_eff_F
-            runG = "+((run >= 278820) && (run < 280919))*"+comp_eff_G
-            runH = "+((run >= 280919) && (run < 284045))*"+comp_eff_H
-            return "("+runB+runC+runD+runE+runF+runG+runH+")"
+        if self.channel.name == 'mt':
+            comp_eff_B = "(1.0/0.899)"
+            comp_eff_C = "(1.0/0.881)"
+            comp_eff_D = "(1.0/0.877)"
+            comp_eff_E = "(1.0/0.939)"
+            comp_eff_F = "(1.0/0.936)"
+            comp_eff_G = "(1.0/0.908)"
+            comp_eff_H = "(1.0/0.962)"
+            runB = "((run >= 272007) && (run < 275657))*" + comp_eff_B
+            runC = "+((run >= 275657) && (run < 276315))*" + comp_eff_C
+            runD = "+((run >= 276315) && (run < 276831))*" + comp_eff_D
+            runE = "+((run >= 276831) && (run < 277772))*" + comp_eff_E
+            runF = "+((run >= 277772) && (run < 278820))*" + comp_eff_F
+            runG = "+((run >= 278820) && (run < 280919))*" + comp_eff_G
+            runH = "+((run >= 280919) && (run < 284045))*" + comp_eff_H
+            print "(" + runB + runC + runD + runE + runF + runG + runH + ")"
+            return "(" + runB + runC + runD + runE + runF + runG + runH + ")"
+        elif self.channel.name == 'et':
+            comp_eff_B = "(1.0/0.902)"
+            comp_eff_C = "(1.0/0.910)"
+            comp_eff_D = "(1.0/0.945)"
+            comp_eff_E = "(1.0/0.945)"
+            comp_eff_F = "(1.0/0.915)"
+            comp_eff_G = "(1.0/0.903)"
+            comp_eff_H = "(1.0/0.933)"
+            runB = "((run >= 272007) && (run < 275657))*" + comp_eff_B
+            runC = "+((run >= 275657) && (run < 276315))*" + comp_eff_C
+            runD = "+((run >= 276315) && (run < 276831))*" + comp_eff_D
+            runE = "+((run >= 276831) && (run < 277772))*" + comp_eff_E
+            runF = "+((run >= 277772) && (run < 278820))*" + comp_eff_F
+            runG = "+((run >= 278820) && (run < 280919))*" + comp_eff_G
+            runH = "+((run >= 280919) && (run < 284045))*" + comp_eff_H
+            return "(" + runB + runC + runD + runE + runF + runG + runH + ")"
+        elif self.channel.name == 'tt':
+            comp_eff_B = "(1.0/0.897)"
+            comp_eff_C = "(1.0/0.908)"
+            comp_eff_D = "(1.0/0.950)"
+            comp_eff_E = "(1.0/0.861)"
+            comp_eff_F = "(1.0/0.941)"
+            comp_eff_G = "(1.0/0.908)"
+            comp_eff_H = "(1.0/0.949)"
+            runB = "((run >= 272007) && (run < 275657))*" + comp_eff_B
+            runC = "+((run >= 275657) && (run < 276315))*" + comp_eff_C
+            runD = "+((run >= 276315) && (run < 276831))*" + comp_eff_D
+            runE = "+((run >= 276831) && (run < 277772))*" + comp_eff_E
+            runF = "+((run >= 277772) && (run < 278820))*" + comp_eff_F
+            runG = "+((run >= 278820) && (run < 280919))*" + comp_eff_G
+            runH = "+((run >= 280919) && (run < 284045))*" + comp_eff_H
+            return "(" + runB + runC + runD + runE + runF + runG + runH + ")"
+        elif self.channel.name == 'em':
+            comp_eff_B = "(1.0/0.891)"
+            comp_eff_C = "(1.0/0.910)"
+            comp_eff_D = "(1.0/0.953)"
+            comp_eff_E = "(1.0/0.947)"
+            comp_eff_F = "(1.0/0.942)"
+            comp_eff_G = "(1.0/0.906)"
+            comp_eff_H = "(1.0/0.950)"
+            runB = "((run >= 272007) && (run < 275657))*" + comp_eff_B
+            runC = "+((run >= 275657) && (run < 276315))*" + comp_eff_C
+            runD = "+((run >= 276315) && (run < 276831))*" + comp_eff_D
+            runE = "+((run >= 276831) && (run < 277772))*" + comp_eff_E
+            runF = "+((run >= 277772) && (run < 278820))*" + comp_eff_F
+            runG = "+((run >= 278820) && (run < 280919))*" + comp_eff_G
+            runH = "+((run >= 280919) && (run < 284045))*" + comp_eff_H
+            return "(" + runB + runC + runD + runE + runF + runG + runH + ")"
         else:
-            log.error("Embedded currently not implemented for channel \"%s\"!" % self.channel.name)
+            log.error("Embedded currently not implemented for channel \"%s\"!"
+                      % self.channel.name)
+
     def embedding_normalization(self):
-        if self.channel.name=="mt":
+        if self.channel.name == "mt":
             return "1.171"
-        elif self.channel.name=="et":
+        elif self.channel.name == "et":
             return "1.15"
-        elif self.channel.name=="tt":
+        elif self.channel.name == "tt":
             return "2.2"
-        elif self.channel.name=="em":
+        elif self.channel.name == "em":
             return "1.14"
+
     def eta_correction(self):
-        if self.channel.name=="mt":
+        if self.channel.name == "mt":
             return "(1+((eta_2<-0.18)&&(eta_2>-0.3))*0.2+((eta_2>0.18)&&(eta_2<0.3))*0.2)"
-        elif self.channel.name=="et":
+        elif self.channel.name == "et":
             return "(1+((eta_2<-0.18)&&(eta_2>-0.3))*0.2+((eta_2>0.18)&&(eta_2<0.3))*0.2)"
-        elif self.channel.name=="tt":
+        elif self.channel.name == "tt":
             return "(1.0)"
-        elif self.channel.name=="em":
+        elif self.channel.name == "em":
             return "1.0"
+
     def scale_factors(self):
-        if self.channel.name=="mt":
+        if self.channel.name == "mt":
             return "idWeight_1*(idWeight_1<2.0)*trigWeight_1*(trigWeight_1<2.0)*isoWeight_1*(isoWeight_1<2.0)"
-        elif self.channel.name=="et":
+        elif self.channel.name == "et":
             return "idWeight_1*(idWeight_1<2.0)*trigWeight_1*(trigWeight_1<2.0)*isoWeight_1*(isoWeight_1<2.0)"
-        elif self.channel.name=="tt":
+        elif self.channel.name == "tt":
             return "1.0"
-        elif self.channel.name=="em":
+        elif self.channel.name == "em":
             return "1.0"
+
     def get_weights(self):
         return Weights(
             # Stitching weights
 
             # Channel-dependent normalization
-            Constant(self.embedding_normalization(),"Normalization to MC"),
+            Constant(self.embedding_normalization(), "Normalization to MC"),
             # Embedded weights
-            Weight(self.embedding_stitchingweight(),"Stitching weight (embedding)"),
-            Weight("generatorWeight*(generatorWeight <= 1)", "generatorWeight (crucial for embedded events)"),
-            Weight(self.scale_factors(),"Custom embedded TnP scale factors"),
-            Weight(self.eta_correction(),"eta_correction"),
+            Weight(self.embedding_stitchingweight(),
+                   "Stitching weight (embedding)"),
+            Weight("generatorWeight*(generatorWeight <= 1)",
+                   "generatorWeight (crucial for embedded events)"),
+            Weight(self.scale_factors(), "Custom embedded TnP scale factors"),
+            Weight(self.eta_correction(), "eta_correction"),
             Weight("(1.0)", "zPtReweightWeight")
 
             # Weights for corrections
@@ -308,19 +315,19 @@ class ZTTEmbeddedEstimation(EstimationMethod):
         )
 
     def get_files(self):
-        query = {"process" : "Embedding2016(B|C|D|E|F|G|H)", "embedded" : True}
+        query = {"process": "Embedding2016(B|C|D|E|F|G|H)", "embedded": True}
         #query = {"process" : "Embedding2017(B|C|D|E|F)", "embedded" : True}
-        if self.channel.name  == "mt":
-           query["campaign"] = "MuTauFinalState"
-           query["scenario"] = ".*v2"
+        if self.channel.name == "mt":
+            query["campaign"] = "MuTauFinalState"
+            query["scenario"] = ".*v2"
         elif self.channel.name == "et":
-           query["campaign"] = "ElTauFinalState"
-           query["scenario"] = ".*v2"
+            query["campaign"] = "ElTauFinalState"
+            query["scenario"] = ".*v2"
         elif self.channel.name == "tt":
-           query["campaign"] = "TauTauFinalState"
-           query["scenario"] = ".*(v2|v3)"
+            query["campaign"] = "TauTauFinalState"
+            query["scenario"] = ".*(v2|v3)"
         elif self.channel.name == "em":
-           query["campaign"] = "ElMuFinalState"
+            query["campaign"] = "ElMuFinalState"
         files = self.era.datasets_helper.get_nicks_with_query(query)
         log_query(self.name, query, files)
         return self.artus_file_names(files)
@@ -336,7 +343,8 @@ class ZTTEmbeddedEstimation(EstimationMethod):
             ztt_genmatch_cut = Cut("(gen_match_1>2) && (gen_match_2>3)",
                                    "ztt_genmatch")
         return Cuts(ztt_genmatch_cut)
-        
+
+
 class ZLLEstimation(ZTTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(ZTTEstimation, self).__init__(
@@ -471,8 +479,7 @@ class ZLEstimationET(ZLEstimationMT):
 class ZJEstimationTT(ZJEstimationMT):
     def get_cuts(self):
         return Cuts(
-            Cut("(gen_match_2 == 6 || gen_match_1 == 6)",
-                "zj_genmatch_tt"))
+            Cut("(gen_match_2 == 6 || gen_match_1 == 6)", "zj_genmatch_tt"))
 
 
 class ZLEstimationTT(ZLEstimationMT):
@@ -524,9 +531,9 @@ class WTEstimation(WEstimation):
             friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
+
     def get_cuts(self):
-        return Cuts(
-            Cut("gen_match_1==3||gen_match_1==4", "wt_genmatch"))
+        return Cuts(Cut("gen_match_1==3||gen_match_1==4", "wt_genmatch"))
 
 
 class WLEstimation(WEstimation):
@@ -539,9 +546,9 @@ class WLEstimation(WEstimation):
             friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
+
     def get_cuts(self):
-        return Cuts(
-            Cut("!(gen_match_1==3||gen_match_1==4)", "wl_genmatch"))
+        return Cuts(Cut("!(gen_match_1==3||gen_match_1==4)", "wl_genmatch"))
 
 
 class TTEstimation(EstimationMethod):
@@ -586,7 +593,8 @@ class TTTEstimationMT(TTEstimation):
 
     def get_cuts(self):
         return Cuts(Cut("gen_match_2==5", "ttt_genmatch_mt"))
-        
+
+
 class TTTNoTauTauEstimationMT(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
@@ -599,7 +607,11 @@ class TTTNoTauTauEstimationMT(TTEstimation):
             mc_campaign="RunIISummer16MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(Cut("gen_match_2==5","genmatch"),Cut("!((gen_match_1==4)&&(gen_match_2==5))","ttbar->tau tau veto for embedded events"))
+        return Cuts(
+            Cut("gen_match_2==5", "genmatch"),
+            Cut("!((gen_match_1==4)&&(gen_match_2==5))",
+                "ttbar->tau tau veto for embedded events"))
+
 
 class TTTauTauEstimationMT(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -613,7 +625,10 @@ class TTTauTauEstimationMT(TTEstimation):
             mc_campaign="RunIISummer16MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(Cut("((gen_match_1 == 4) && (gen_match_2 == 5))","select ttbar->tau tau events"))
+        return Cuts(
+            Cut("((gen_match_1 == 4) && (gen_match_2 == 5))",
+                "select ttbar->tau tau events"))
+
 
 class TTJEstimationMT(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -633,6 +648,7 @@ class TTJEstimationMT(TTEstimation):
 class TTTEstimationET(TTTEstimationMT):
     pass
 
+
 class TTTNoTauTauEstimationET(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
@@ -645,7 +661,11 @@ class TTTNoTauTauEstimationET(TTEstimation):
             mc_campaign="RunIISummer16MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(Cut("gen_match_2==5","genmatch"),Cut("!((gen_match_1==3)&&(gen_match_2==5))","ttbar->tau tau veto for embedded events"))
+        return Cuts(
+            Cut("gen_match_2==5", "genmatch"),
+            Cut("!((gen_match_1==3)&&(gen_match_2==5))",
+                "ttbar->tau tau veto for embedded events"))
+
 
 class TTTauTauEstimationET(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -659,7 +679,10 @@ class TTTauTauEstimationET(TTEstimation):
             mc_campaign="RunIISummer16MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(Cut("((gen_match_1 == 3) && (gen_match_2 == 5))","select ttbar->tau tau events"))
+        return Cuts(
+            Cut("((gen_match_1 == 3) && (gen_match_2 == 5))",
+                "select ttbar->tau tau events"))
+
 
 class TTJEstimationET(TTJEstimationMT):
     pass
@@ -671,6 +694,7 @@ class TTTEstimationTT(TTTEstimationMT):
 
 class TTJEstimationTT(TTJEstimationMT):
     pass
+
 
 class TTTNoTauTauEstimationTT(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -684,7 +708,11 @@ class TTTNoTauTauEstimationTT(TTEstimation):
             mc_campaign="RunIISummer16MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(Cut("gen_match_2==5","genmatch"),Cut("!((gen_match_1==5)&&(gen_match_2==5))","ttbar->tau tau veto for embedded events"))
+        return Cuts(
+            Cut("gen_match_2==5", "genmatch"),
+            Cut("!((gen_match_1==5)&&(gen_match_2==5))",
+                "ttbar->tau tau veto for embedded events"))
+
 
 class TTTauTauEstimationTT(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -698,7 +726,10 @@ class TTTauTauEstimationTT(TTEstimation):
             mc_campaign="RunIISummer16MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(Cut("((gen_match_1 == 5) && (gen_match_2 == 5))","select ttbar->tau tau events"))
+        return Cuts(
+            Cut("((gen_match_1 == 5) && (gen_match_2 == 5))",
+                "select ttbar->tau tau events"))
+
 
 class EWKEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):

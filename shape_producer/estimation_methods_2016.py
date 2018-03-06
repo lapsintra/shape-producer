@@ -282,9 +282,9 @@ class ZTTEmbeddedEstimation(EstimationMethod):
             return "1.0"
     def scale_factors(self):
         if self.channel.name=="mt":
-            return "idisoweight_1*(idisoweight_1<1.1)*trigweight_1*(trigweight_1<1.1)"
+            return "idWeight_1*(idWeight_1<2.0)*trigWeight_1*(trigWeight_1<2.0)*isoWeight_1*(isoWeight_1<2.0)"
         elif self.channel.name=="et":
-            return "idisoweight_1*(idisoweight_1<1.1)*trigweight_1*(trigweight_1<1.1)"
+            return "idWeight_1*(idWeight_1<2.0)*trigWeight_1*(trigWeight_1<2.0)*isoWeight_1*(isoWeight_1<2.0)"
         elif self.channel.name=="tt":
             return "1.0"
         elif self.channel.name=="em":

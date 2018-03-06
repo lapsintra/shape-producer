@@ -210,7 +210,6 @@ class ZTTEmbeddedEstimation(EstimationMethod):
             runF = "+((run >= 277772) && (run < 278820))*" + comp_eff_F
             runG = "+((run >= 278820) && (run < 280919))*" + comp_eff_G
             runH = "+((run >= 280919) && (run < 284045))*" + comp_eff_H
-            print "(" + runB + runC + runD + runE + runF + runG + runH + ")"
             return "(" + runB + runC + runD + runE + runF + runG + runH + ")"
         elif self.channel.name == 'et':
             comp_eff_B = "(1.0/0.902)"

@@ -47,8 +47,8 @@ class HTTEstimation(EstimationMethod):
     def get_weights(self):
         return Weights(
             Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
-                   "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
-            self.era.lumi_weight)
+                   "hadronic_tau_sf"),
+            Weight("eventWeight", "eventWeight"), self.era.lumi_weight)
 
     def get_files(self):
         query = {
@@ -173,9 +173,7 @@ class ZTTEstimation(EstimationMethod):
 
 class ZTTEstimationTT(ZTTEstimation):
     def get_cuts(self):
-        return Cuts(
-            Cut("(gen_match_1==5&&gen_match_2==5)",
-                "ztt_genmatch_tt"))
+        return Cuts(Cut("(gen_match_1==5&&gen_match_2==5)", "ztt_genmatch_tt"))
 
 
 class ZTTEstimationLL(ZTTEstimation):
@@ -319,8 +317,7 @@ class ZLEstimationET(ZLEstimationMT):
 class ZJEstimationTT(ZJEstimationMT):
     def get_cuts(self):
         return Cuts(
-            Cut("(gen_match_2 == 6 || gen_match_1 == 6)",
-                "zj_genmatch_tt"))
+            Cut("(gen_match_2 == 6 || gen_match_1 == 6)", "zj_genmatch_tt"))
 
 
 class ZLEstimationTT(ZLEstimationMT):
@@ -347,8 +344,8 @@ class WEstimation(EstimationMethod):
                 "(((npartons == 0 || npartons >= 5)*7.09390278348407e-4) + ((npartons == 1)*1.90063898596475e-4) + ((npartons == 2)*5.8529964471165e-5) + ((npartons == 3)*1.9206444928444e-5) + ((npartons == 4)*1.923548021385e-5))/(numberGeneratedEventsWeight*crossSectionPerEventWeight*sampleStitchingWeight)",
                 "wj_stitching_weight"),
             Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
-                   "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
-            self.era.lumi_weight)
+                   "hadronic_tau_sf"),
+            Weight("eventWeight", "eventWeight"), self.era.lumi_weight)
 
     def get_files(self):
         query = {
@@ -372,9 +369,9 @@ class WTEstimation(WEstimation):
             friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
+
     def get_cuts(self):
-        return Cuts(
-            Cut("gen_match_1==3||gen_match_1==4", "wt_genmatch"))
+        return Cuts(Cut("gen_match_1==3||gen_match_1==4", "wt_genmatch"))
 
 
 class WLEstimation(WEstimation):
@@ -387,9 +384,9 @@ class WLEstimation(WEstimation):
             friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
+
     def get_cuts(self):
-        return Cuts(
-            Cut("!(gen_match_1==3||gen_match_1==4)", "wl_genmatch"))
+        return Cuts(Cut("!(gen_match_1==3||gen_match_1==4)", "wl_genmatch"))
 
 
 class TTEstimation(EstimationMethod):
@@ -481,8 +478,8 @@ class EWKEstimation(EstimationMethod):
     def get_weights(self):
         return Weights(
             Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
-                   "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
-            self.era.lumi_weight)
+                   "hadronic_tau_sf"),
+            Weight("eventWeight", "eventWeight"), self.era.lumi_weight)
 
     def get_files(self):
         query = {
@@ -512,8 +509,8 @@ class VVEstimation(EstimationMethod):
     def get_weights(self):
         return Weights(
             Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
-                   "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
-            self.era.lumi_weight)
+                   "hadronic_tau_sf"),
+            Weight("eventWeight", "eventWeight"), self.era.lumi_weight)
 
     def get_files(self):
         query = {

@@ -186,7 +186,9 @@ class SStoOSEstimationMethod(EstimationMethod):
         final_shape = copy.deepcopy(shape)
         # Saving shape in ss region
         shape._result = final_shape.result.Clone()
-        shape.name = systematic.name.replace(systematic.category._name,systematic._qcd_systematics[0].category._name)
+        shape.name = systematic.name.replace(
+            systematic.category._name,
+            systematic._qcd_systematics[0].category._name)
         shape._result.Write()
         # Scale shape with extrapolation factor
         final_shape.result.Scale(self._extrapolation_factor)
@@ -318,7 +320,8 @@ class ABCDEstimationMethod(EstimationMethod):
         D_yield = D_shapes.pop(self._data_process.name).result - sum(
             [s.result for s in D_shapes.values()])
         extrapolation_factor = C_yield / D_yield
-        logger.debug("D to C extrapolation factor: %s",str(extrapolation_factor))
+        logger.debug("D to C extrapolation factor: %s",
+                     str(extrapolation_factor))
 
         # Derive final shape
         derived_shape = B_shapes.pop(self._data_process.name)
@@ -341,17 +344,16 @@ class ABCDEstimationMethod(EstimationMethod):
     def get_weights(self):
         raise NotImplementedError
 
+
 class SumUpEstimationMethod(EstimationMethod):
-    def __init__(
-            self,
-            name,
-            folder,
-            era,
-            directory,
-            channel,
-            processes,
-            friend_directory=None
-    ):
+    def __init__(self,
+                 name,
+                 folder,
+                 era,
+                 directory,
+                 channel,
+                 processes,
+                 friend_directory=None):
         super(SumUpEstimationMethod, self).__init__(
             name=name,
             folder=folder,
@@ -398,7 +400,7 @@ class SumUpEstimationMethod(EstimationMethod):
                 derived_shape = shape
             else:
                 derived_shape.result.Add(shape.result)
-        
+
         # Rename root object accordingly
         derived_shape.name = systematic.name
 

@@ -195,7 +195,7 @@ class SStoOSEstimationMethod(EstimationMethod):
 
         # Rename root object accordingly
         final_shape.name = systematic.name
-        print systematic.name
+      
         # Replace negative entries by zeros and renormalize shape
         shape.replace_negative_entries_and_renormalize(tolerance=10.05)
 

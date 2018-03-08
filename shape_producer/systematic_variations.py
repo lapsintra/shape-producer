@@ -87,6 +87,7 @@ class SquareAndRemoveWeight(SystematicVariation):
                     "weights"]().remove(self._weight_name)
         return h_settings
 
+
 class Relabel(SystematicVariation):
     # TODO: Do this with super?
     def __init__(self, name, direction=None):
@@ -105,6 +106,7 @@ class Relabel(SystematicVariation):
 
     def shifted_root_objects(self, h_settings):
         return h_settings
+
 
 class ReplaceWeight(SystematicVariation):
     def __init__(self, name, weight_name, new_weight, direction):

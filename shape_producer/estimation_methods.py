@@ -344,6 +344,7 @@ class ABCDEstimationMethod(EstimationMethod):
     def get_weights(self):
         raise NotImplementedError
 
+
 class AddHistogramEstimationMethod(EstimationMethod):
     def __init__(self, name, folder, era, directory, channel, add_processes,
                  add_weights):
@@ -404,6 +405,7 @@ class AddHistogramEstimationMethod(EstimationMethod):
 
     def get_weights(self):
         raise NotImplementedError
+
 
 class SumUpEstimationMethod(EstimationMethod):
     def __init__(self,

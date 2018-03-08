@@ -305,7 +305,6 @@ class ZTTEmbeddedEstimation(EstimationMethod):
             Weight("generatorWeight*(generatorWeight <= 1)",
                    "generatorWeight (crucial for embedded events)"),
             Weight(self.scale_factors(), "Custom embedded TnP scale factors"),
-            Weight(self.eta_correction(), "eta_correction"),
             Weight("(1.0)", "zPtReweightWeight")
 
             # Weights for corrections
@@ -690,7 +689,7 @@ class TTJEstimationET(TTJEstimationMT):
 class TTTEstimationTT(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
-            name="TTTauTau",
+            name="TTT",
             folder="nominal",
             era=era,
             directory=directory,

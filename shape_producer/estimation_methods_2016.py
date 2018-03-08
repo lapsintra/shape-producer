@@ -183,7 +183,7 @@ class ZTTEstimationLL(ZTTEstimation):
                 "ztt_genmatch_ll"))
 
 
-class ZTTEmbeddedEstimation(EstimationMethod):
+class ZTTEmbedded2016Estimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(ZTTEmbeddedEstimation, self).__init__(
             name="ZTT",
@@ -594,7 +594,7 @@ class TTTEstimationMT(TTEstimation):
         return Cuts(Cut("gen_match_2==5", "ttt_genmatch_mt"))
 
 
-class TTTNoTauTauEstimationMT(TTEstimation):
+class TTMTEstimationMT(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
             name="TTT",
@@ -612,7 +612,7 @@ class TTTNoTauTauEstimationMT(TTEstimation):
                 "ttbar->tau tau veto for embedded events"))
 
 
-class TTTauTauEstimationMT(TTEstimation):
+class TTTTEstimationMT(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
             name="TTTauTau",
@@ -648,7 +648,7 @@ class TTTEstimationET(TTTEstimationMT):
     pass
 
 
-class TTTNoTauTauEstimationET(TTEstimation):
+class TTETEstimationET(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
             name="TTT",
@@ -666,7 +666,7 @@ class TTTNoTauTauEstimationET(TTEstimation):
                 "ttbar->tau tau veto for embedded events"))
 
 
-class TTTauTauEstimationET(TTEstimation):
+class TTTTEstimationET(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
             name="TTTauTau",
@@ -687,15 +687,24 @@ class TTJEstimationET(TTJEstimationMT):
     pass
 
 
-class TTTEstimationTT(TTTEstimationMT):
-    pass
+class TTTEstimationTT(TTEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(TTEstimation, self).__init__(
+            name="TTTauTau",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(
+            Cut("((gen_match_1 == 5) && (gen_match_2 == 5))",
+                "select ttbar->tau tau events"))
 
 
-class TTJEstimationTT(TTJEstimationMT):
-    pass
-
-
-class TTTNoTauTauEstimationTT(TTEstimation):
+class TTJEstimationTT(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
             name="TTT",
@@ -711,23 +720,6 @@ class TTTNoTauTauEstimationTT(TTEstimation):
             Cut("gen_match_2==5", "genmatch"),
             Cut("!((gen_match_1==5)&&(gen_match_2==5))",
                 "ttbar->tau tau veto for embedded events"))
-
-
-class TTTauTauEstimationTT(TTEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(TTEstimation, self).__init__(
-            name="TTTauTau",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            mc_campaign="RunIISummer16MiniAODv2")
-
-    def get_cuts(self):
-        return Cuts(
-            Cut("((gen_match_1 == 5) && (gen_match_2 == 5))",
-                "select ttbar->tau tau events"))
 
 
 class EWKEstimation(EstimationMethod):

@@ -593,10 +593,11 @@ class TTTEstimationMT(TTEstimation):
         return Cuts(Cut("gen_match_2==5", "ttt_genmatch_mt"))
 
 
-class TTMTEstimationMT(TTEstimation):
+class TTLEstimationMT(TTEstimation):
+    # L refering to a prompt t-quark to lepton decay as opposed to t->tau->lepton (important for embedded events)
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
-            name="TTT",
+            name="TTL",
             folder="nominal",
             era=era,
             directory=directory,
@@ -612,9 +613,10 @@ class TTMTEstimationMT(TTEstimation):
 
 
 class TTTTEstimationMT(TTEstimation):
+    # true tt->tautau
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
-            name="TTTauTau",
+            name="TTTT",
             folder="nominal",
             era=era,
             directory=directory,
@@ -647,10 +649,10 @@ class TTTEstimationET(TTTEstimationMT):
     pass
 
 
-class TTETEstimationET(TTEstimation):
+class TTLEstimationET(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
-            name="TTT",
+            name="TTL",
             folder="nominal",
             era=era,
             directory=directory,
@@ -668,7 +670,7 @@ class TTETEstimationET(TTEstimation):
 class TTTTEstimationET(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
-            name="TTTauTau",
+            name="TTTT",
             folder="nominal",
             era=era,
             directory=directory,
@@ -701,6 +703,23 @@ class TTTEstimationTT(TTEstimation):
         return Cuts(
             Cut("((gen_match_1 == 5) && (gen_match_2 == 5))",
                 "select ttbar->tau tau events"))
+
+
+class TTLEstimationTT(TTEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(TTEstimation, self).__init__(
+            name="TTL",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(
+            Cut("(1==0)", "Empty Process"
+                ))  # All ttbar->real tau events are vetoed for embedded events
 
 
 class TTJEstimationTT(TTEstimation):

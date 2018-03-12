@@ -345,6 +345,68 @@ class ABCDEstimationMethod(EstimationMethod):
         raise NotImplementedError
 
 
+class AddHistogramEstimationMethod(EstimationMethod):
+    def __init__(self, name, folder, era, directory, channel, add_processes,
+                 add_weights):
+        super(AddHistogramEstimationMethod, self).__init__(
+            name=name,
+            folder=folder,
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign=None)
+        self._add_processes = [copy.deepcopy(p) for p in add_processes]
+        self._add_weights = copy.deepcopy(add_weights)
+
+    def create_root_objects(self, systematic):
+
+        root_objects = []
+        systematic._add_systematics = []
+        for process in self._add_processes:
+            s = Systematic(
+                category=systematic.category,
+                process=process,
+                analysis=systematic.analysis,
+                era=self.era,
+                variation=systematic.variation,
+                mass=125)
+            systematic._add_systematics.append(s)
+            s.create_root_objects()
+            root_objects += s.root_objects
+        return root_objects
+
+    def do_estimation(self, systematic):
+        print systematic
+
+        # Create shapes
+        for s in systematic._add_systematics:
+            s.do_estimation()
+
+        # First shape
+        shape = systematic._add_systematics[0].shape
+
+        # Add/subtract additional shapes from first shape
+        for s in systematic._add_systematics[1:]:
+            shape.result.Add(s.shape.result, self._add_weights[-1])
+
+        final_shape = copy.deepcopy(shape)
+
+        # Rename root object accordingly (hacky part)
+        final_shape.name = systematic.name
+        if "ZTTpTTTauTauUp" in final_shape.name:
+            final_shape.name = systematic.name.replace("ZTTpTTTauTauUp", "ZTT")
+        elif "ZTTpTTTauTauDown" in final_shape.name:
+            final_shape.name = systematic.name.replace("ZTTpTTTauTauDown",
+                                                       "ZTT")
+        return final_shape
+
+    def get_files(self):
+        raise NotImplementedError
+
+    def get_weights(self):
+        raise NotImplementedError
+
+
 class SumUpEstimationMethod(EstimationMethod):
     def __init__(self,
                  name,

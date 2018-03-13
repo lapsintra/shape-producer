@@ -263,16 +263,6 @@ class ZTTEmbeddedEstimation(EstimationMethod):
             log.error("Embedded currently not implemented for channel \"%s\"!"
                       % self.channel.name)
 
-    def embedding_normalization(self):
-        if self.channel.name == "mt":
-            return "1.171"
-        elif self.channel.name == "et":
-            return "1.15"
-        elif self.channel.name == "tt":
-            return "2.2"
-        elif self.channel.name == "em":
-            return "1.14"
-
     def eta_correction(self):
         if self.channel.name == "mt":
             return "(1+((eta_2<-0.18)&&(eta_2>-0.3))*0.2+((eta_2>0.18)&&(eta_2<0.3))*0.2)"
@@ -289,16 +279,12 @@ class ZTTEmbeddedEstimation(EstimationMethod):
         elif self.channel.name == "et":
             return "idWeight_1*(idWeight_1<2.0)*trgWeight_1*(trgWeight_1<2.0)*isoWeight_1*(isoWeight_1<2.0)*muonEffEmbeddedIDWeight_1*muonEffEmbeddedIDWeight_2*muonEffVVLIsoWeight_1*muonEffVVLIsoWeight_2*(((eta_1<=1.2)*(eta_1>=-1.2))*1.128668+((eta_1>1.2)||(eta_1<-1.2))*1.199)"
         elif self.channel.name == "tt":
-            return "(triggerWeight_1*triggerWeight_2*muonEffEmbeddedIDWeight_1*muonEffEmbeddedIDWeight_2*muonEffVVLIsoWeight_1*muonEffVVLIsoWeight_2*(((eta_1<=1.2)*(eta_1>=-1.2))*1.128668+((eta_1>1.2)||(eta_1<-1.2))*1.199)"
+            return "1.5*triggerWeight_1*triggerWeight_2*muonEffEmbeddedIDWeight_1*muonEffEmbeddedIDWeight_2*muonEffVVLIsoWeight_1*muonEffVVLIsoWeight_2*(((eta_1<=1.2)*(eta_1>=-1.2))*1.128668+((eta_1>1.2)||(eta_1<-1.2))*1.199)"
         elif self.channel.name == "em":
             return "1.0"
 
     def get_weights(self):
         return Weights(
-            # Stitching weights
-
-            # Channel-dependent normalization
-            #~ Constant(self.embedding_normalization(), "Normalization to MC"),
             # Embedded weights
             Weight(self.embedding_stitchingweight(),
                    "Stitching weight (embedding)"),
@@ -306,10 +292,6 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                    "generatorWeight (crucial for embedded events)"),
             Weight(self.scale_factors(), "Custom embedded TnP scale factors"),
             Weight("(1.0)", "zPtReweightWeight")
-
-            # Weights for corrections
-
-            # Data related scale-factors
         )
 
     def get_files(self):

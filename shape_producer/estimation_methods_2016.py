@@ -285,11 +285,11 @@ class ZTTEmbeddedEstimation(EstimationMethod):
 
     def scale_factors(self):
         if self.channel.name == "mt":
-            return "idWeight_1*(idWeight_1<2.0)*trigWeight_1*(trigWeight_1<2.0)*isoWeight_1*(isoWeight_1<2.0)"
+            return "idWeight_1*(idWeight_1<2.0)*trgWeight_1*(trgWeight_1<2.0)*isoWeight_1*(isoWeight_1<2.0)*muonEffEmbeddedIDWeight_1*muonEffEmbeddedIDWeight_2*muonEffVVLIsoWeight_1*muonEffVVLIsoWeight_2*(((eta_1<=1.2)*(eta_1>=-1.2))*1.128668+((eta_1>1.2)||(eta_1<-1.2))*1.199)"
         elif self.channel.name == "et":
-            return "idWeight_1*(idWeight_1<2.0)*trigWeight_1*(trigWeight_1<2.0)*isoWeight_1*(isoWeight_1<2.0)"
+            return "idWeight_1*(idWeight_1<2.0)*trgWeight_1*(trgWeight_1<2.0)*isoWeight_1*(isoWeight_1<2.0)*muonEffEmbeddedIDWeight_1*muonEffEmbeddedIDWeight_2*muonEffVVLIsoWeight_1*muonEffVVLIsoWeight_2*(((eta_1<=1.2)*(eta_1>=-1.2))*1.128668+((eta_1>1.2)||(eta_1<-1.2))*1.199)"
         elif self.channel.name == "tt":
-            return "1.0"
+            return "(triggerWeight_1*triggerWeight_2*muonEffEmbeddedIDWeight_1*muonEffEmbeddedIDWeight_2*muonEffVVLIsoWeight_1*muonEffVVLIsoWeight_2*(((eta_1<=1.2)*(eta_1>=-1.2))*1.128668+((eta_1>1.2)||(eta_1<-1.2))*1.199)"
         elif self.channel.name == "em":
             return "1.0"
 
@@ -298,7 +298,7 @@ class ZTTEmbeddedEstimation(EstimationMethod):
             # Stitching weights
 
             # Channel-dependent normalization
-            Constant(self.embedding_normalization(), "Normalization to MC"),
+            #~ Constant(self.embedding_normalization(), "Normalization to MC"),
             # Embedded weights
             Weight(self.embedding_stitchingweight(),
                    "Stitching weight (embedding)"),
@@ -718,7 +718,7 @@ class TTLEstimationTT(TTEstimation):
 
     def get_cuts(self):
         return Cuts(
-            Cut("(1==0)", "Empty Process"
+            Cut("((gen_match_1 == 5) && (gen_match_2 == 5))*!((gen_match_1 == 5) && (gen_match_2 == 5))", "Empty Process"
                 ))  # All ttbar->real tau events are vetoed for embedded events
 
 

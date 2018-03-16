@@ -263,40 +263,17 @@ class ZTTEmbeddedEstimation(EstimationMethod):
             log.error("Embedded currently not implemented for channel \"%s\"!"
                       % self.channel.name)
 
-    def eta_correction(self):
-        if self.channel.name == "mt":
-            return "(1+((eta_2<-0.18)&&(eta_2>-0.3))*0.2+((eta_2>0.18)&&(eta_2<0.3))*0.2)"
-        elif self.channel.name == "et":
-            return "(1+((eta_2<-0.18)&&(eta_2>-0.3))*0.2+((eta_2>0.18)&&(eta_2<0.3))*0.2)"
-        elif self.channel.name == "tt":
-            return "(1.0)"
-        elif self.channel.name == "em":
-            return "1.0"
-
-    def scale_factors(self):
-        if self.channel.name == "mt":
-            return "idWeight_1*(idWeight_1<2.0)*trgWeight_1*(trgWeight_1<2.0)*isoWeight_1*(isoWeight_1<2.0)*muonEffEmbeddedIDWeight_1*muonEffEmbeddedIDWeight_2*muonEffVVLIsoWeight_1*muonEffVVLIsoWeight_2*(((eta_1<=1.2)*(eta_1>=-1.2))*1.128668+((eta_1>1.2)||(eta_1<-1.2))*1.199)"
-        elif self.channel.name == "et":
-            return "idWeight_1*(idWeight_1<2.0)*trgWeight_1*(trgWeight_1<2.0)*isoWeight_1*(isoWeight_1<2.0)*muonEffEmbeddedIDWeight_1*muonEffEmbeddedIDWeight_2*muonEffVVLIsoWeight_1*muonEffVVLIsoWeight_2*(((eta_1<=1.2)*(eta_1>=-1.2))*1.128668+((eta_1>1.2)||(eta_1<-1.2))*1.199)"
-        elif self.channel.name == "tt":
-            return "1.5*triggerWeight_1*triggerWeight_2*muonEffEmbeddedIDWeight_1*muonEffEmbeddedIDWeight_2*muonEffVVLIsoWeight_1*muonEffVVLIsoWeight_2*(((eta_1<=1.2)*(eta_1>=-1.2))*1.128668+((eta_1>1.2)||(eta_1<-1.2))*1.199)"
-        elif self.channel.name == "em":
-            return "1.0"
-
     def get_weights(self):
         return Weights(
             # Embedded weights
             Weight(self.embedding_stitchingweight(),
                    "Stitching weight (embedding)"),
-            Weight("generatorWeight*(generatorWeight <= 1)",
-                   "generatorWeight (crucial for embedded events)"),
-            Weight(self.scale_factors(), "Custom embedded TnP scale factors"),
-            Weight("(1.0)", "zPtReweightWeight")
-        )
+            Weight("eventWeight", "eventWeight"),
+            #eventWeight for embedded events made from following weights:                   #(eleTauFakeRateWeight*generatorWeight*(generatorWeight<=1.0)*hltPrescaleWeight*identificationWeight_1*idweight_1*isoweight_1*muTauFakeRateWeight*muonEffEmbeddedIDWeight_1*muonEffEmbeddedIDWeight_2*muonEffTrgWeight_1*muonEffVVLIsoWeight_1*muonEffVVLIsoWeight_2*triggerweight_1) for mt/et                    #(eleTauFakeRateWeight*generatorWeight*(generatorWeight<=1.0)*hltPrescaleWeight*identificationWeight_1*muTauFakeRateWeight*muonEffEmbeddedIDWeight_1*muonEffEmbeddedIDWeight_2*muonEffTrgWeight_1*muonEffVVLIsoWeight_1*muonEffVVLIsoWeight_2*triggerWeight_1*triggerWeight_2) for tt
+            Weight("(1.0)", "zPtReweightWeight"))
 
     def get_files(self):
         query = {"process": "Embedding2016(B|C|D|E|F|G|H)", "embedded": True}
-        #query = {"process" : "Embedding2017(B|C|D|E|F)", "embedded" : True}
         if self.channel.name == "mt":
             query["campaign"] = "MuTauFinalState"
             query["scenario"] = ".*v2"
@@ -579,7 +556,7 @@ class TTLEstimationMT(TTEstimation):
     # L refering to a prompt t-quark to lepton decay as opposed to t->tau->lepton (important for embedded events)
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
-            name="TTL",
+            name="TTT",
             folder="nominal",
             era=era,
             directory=directory,
@@ -634,7 +611,7 @@ class TTTEstimationET(TTTEstimationMT):
 class TTLEstimationET(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
-            name="TTL",
+            name="TTT",
             folder="nominal",
             era=era,
             directory=directory,
@@ -690,7 +667,7 @@ class TTTEstimationTT(TTEstimation):
 class TTLEstimationTT(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
-            name="TTL",
+            name="TTT",
             folder="nominal",
             era=era,
             directory=directory,
@@ -700,8 +677,9 @@ class TTLEstimationTT(TTEstimation):
 
     def get_cuts(self):
         return Cuts(
-            Cut("((gen_match_1 == 5) && (gen_match_2 == 5))*!((gen_match_1 == 5) && (gen_match_2 == 5))", "Empty Process"
-                ))  # All ttbar->real tau events are vetoed for embedded events
+            Cut("((gen_match_1 == 5) && (gen_match_2 == 5))*!((gen_match_1 == 5) && (gen_match_2 == 5))",
+                "Empty Process")
+        )  # All ttbar->real tau events are vetoed for embedded events
 
 
 class TTJEstimationTT(TTEstimation):

@@ -269,7 +269,6 @@ class ZTTEmbeddedEstimation(EstimationMethod):
             Weight(self.embedding_stitchingweight(),
                    "Stitching weight (embedding)"),
             Weight("eventWeight", "eventWeight"),
-            #eventWeight for embedded events made from following weights:                   #(eleTauFakeRateWeight*generatorWeight*(generatorWeight<=1.0)*hltPrescaleWeight*identificationWeight_1*idweight_1*isoweight_1*muTauFakeRateWeight*muonEffEmbeddedIDWeight_1*muonEffEmbeddedIDWeight_2*muonEffTrgWeight_1*muonEffVVLIsoWeight_1*muonEffVVLIsoWeight_2*triggerweight_1) for mt/et                    #(eleTauFakeRateWeight*generatorWeight*(generatorWeight<=1.0)*hltPrescaleWeight*identificationWeight_1*muTauFakeRateWeight*muonEffEmbeddedIDWeight_1*muonEffEmbeddedIDWeight_2*muonEffTrgWeight_1*muonEffVVLIsoWeight_1*muonEffVVLIsoWeight_2*triggerWeight_1*triggerWeight_2) for tt
             Weight("(1.0)", "zPtReweightWeight"))
 
     def get_files(self):

@@ -415,6 +415,7 @@ class SumUpEstimationMethod(EstimationMethod):
                  directory,
                  channel,
                  processes,
+                 factors=None,
                  friend_directory=None):
         super(SumUpEstimationMethod, self).__init__(
             name=name,
@@ -425,12 +426,20 @@ class SumUpEstimationMethod(EstimationMethod):
             channel=channel,
             mc_campaign=None)
         self._processes = [copy.deepcopy(p) for p in processes]
+        if factors!=None:
+            if len(processes)!=len(factors):
+                logger.fatal(
+                    "In SumUpEstimationMethod, number of factors must match number of processes!")
+                raise Exception
+            self._factors = factors
+        else:
+            self._factors = [1.0] * len(processes)
 
     def create_root_objects(self, systematic):
         root_objects = []
         systematic._sumUp_systematics = []
         sum_category = copy.deepcopy(systematic.category)
-        sum_category._name += "_sum"
+        sum_category._name += "_sum"+self._name
         for process in self._processes:
             s = Systematic(
                 category=sum_category,
@@ -457,11 +466,12 @@ class SumUpEstimationMethod(EstimationMethod):
             s.do_estimation()
             shapes.append(s.shape)
         derived_shape = None
-        for shape in shapes:
+        for shape, factor in zip(shapes, self._factors):
             if derived_shape == None:
                 derived_shape = shape
+                derived_shape.result.Scale(factor)
             else:
-                derived_shape.result.Add(shape.result)
+                derived_shape.result.Add(shape.result, factor)
 
         # Rename root object accordingly
         derived_shape.name = systematic.name

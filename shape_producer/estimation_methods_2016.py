@@ -46,8 +46,9 @@ class HTTEstimation(EstimationMethod):
 
     def get_weights(self):
         return Weights(
-            Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
-                   "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
+            Weight(
+                "(((gen_match_1 == 5)*0.95 + (gen_match_1 != 5))*(((gen_match_1 == 5)*0.95 + (gen_match_1 != 5))*((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))))",
+                "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
             self.era.lumi_weight)
 
     def get_files(self):
@@ -146,8 +147,9 @@ class ZTTEstimation(EstimationMethod):
         return Weights(
             Weight("eventWeight", "eventWeight"),
             Weight("zPtReweightWeight", "zPtReweightWeight"),
-            Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
-                   "hadronic_tau_sf"),
+            Weight(
+                "(((gen_match_1 == 5)*0.95 + (gen_match_1 != 5))*((gen_match_2 == 5)*0.95 + (gen_match_2 != 5)))",
+                "hadronic_tau_sf"),
             Weight(
                 "((((genbosonmass >= 150.0 && (npartons == 0 || npartons >= 5))*3.95423374e-5) + ((genbosonmass >= 150.0 && npartons == 1)*1.27486147e-5) + ((genbosonmass >= 150.0 && npartons == 2)*1.3012785e-5) + ((genbosonmass >= 150.0 && npartons == 3)*1.33802133e-5) + ((genbosonmass >= 150.0 && npartons == 4)*1.09698723e-5)+((genbosonmass >= 50.0 && genbosonmass < 150.0 && (npartons == 0 || npartons >= 5))*3.95423374e-5) + ((genbosonmass >= 50.0 && genbosonmass < 150.0 && npartons == 1)*1.27486147e-5) + ((genbosonmass >= 50.0 && genbosonmass < 150.0 && npartons == 2)*1.3012785e-5) + ((genbosonmass >= 50.0 && genbosonmass < 150.0 && npartons == 3)*1.33802133e-5) + ((genbosonmass >= 50.0 && genbosonmass < 150.0 && npartons == 4)*1.09698723e-5)+((genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight))/(numberGeneratedEventsWeight*crossSectionPerEventWeight*sampleStitchingWeight))",
                 "z_stitching_weight"), self.era.lumi_weight)
@@ -461,8 +463,9 @@ class WEstimation(EstimationMethod):
             Weight(
                 "(((npartons == 0 || npartons >= 5)*7.09390278348407e-4) + ((npartons == 1)*1.90063898596475e-4) + ((npartons == 2)*5.8529964471165e-5) + ((npartons == 3)*1.9206444928444e-5) + ((npartons == 4)*1.923548021385e-5))/(numberGeneratedEventsWeight*crossSectionPerEventWeight*sampleStitchingWeight)",
                 "wj_stitching_weight"),
-            Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
-                   "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
+            Weight(
+                "(((gen_match_1 == 5)*0.95 + (gen_match_1 != 5))*((gen_match_2 == 5)*0.95 + (gen_match_2 != 5)))",
+                "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
             self.era.lumi_weight)
 
     def get_files(self):
@@ -522,8 +525,9 @@ class TTEstimation(EstimationMethod):
         return Weights(
             Weight("topPtReweightWeight", "topPtReweightWeight"),
             Weight("eventWeight", "eventWeight"),
-            Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
-                   "hadronic_tau_sf"), self.era.lumi_weight)
+            Weight(
+                "(((gen_match_1 == 5)*0.95 + (gen_match_1 != 5))*((gen_match_2 == 5)*0.95 + (gen_match_2 != 5)))",
+                "hadronic_tau_sf"), self.era.lumi_weight)
 
     def get_files(self):
         query = {
@@ -694,9 +698,8 @@ class TTJEstimationTT(TTEstimation):
 
     def get_cuts(self):
         return Cuts(
-            Cut("gen_match_2==5", "genmatch"),
             Cut("!((gen_match_1==5)&&(gen_match_2==5))",
-                "ttbar->tau tau veto for embedded events"))
+                "ttbar->tau tau veto"))
 
 
 class EWKEstimation(EstimationMethod):
@@ -712,8 +715,9 @@ class EWKEstimation(EstimationMethod):
 
     def get_weights(self):
         return Weights(
-            Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
-                   "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
+            Weight(
+                "(((gen_match_1 == 5)*0.95 + (gen_match_1 != 5))*((gen_match_2 == 5)*0.95 + (gen_match_2 != 5)))",
+                "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
             self.era.lumi_weight)
 
     def get_files(self):
@@ -743,8 +747,9 @@ class VVEstimation(EstimationMethod):
 
     def get_weights(self):
         return Weights(
-            Weight("((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))",
-                   "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
+            Weight(
+                "(((gen_match_1 == 5)*0.95 + (gen_match_1 != 5))*((gen_match_2 == 5)*0.95 + (gen_match_2 != 5)))",
+                "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
             self.era.lumi_weight)
 
     def get_files(self):

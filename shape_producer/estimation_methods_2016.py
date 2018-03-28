@@ -47,7 +47,7 @@ class HTTEstimation(EstimationMethod):
     def get_weights(self):
         return Weights(
             Weight(
-                "(((gen_match_1 == 5)*0.95 + (gen_match_1 != 5))*((gen_match_2 == 5)*0.95 + (gen_match_2 != 5))))",
+                "(((gen_match_1 == 5)*0.95 + (gen_match_1 != 5))*((gen_match_2 == 5)*0.95 + (gen_match_2 != 5)))",
                 "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
             self.era.lumi_weight)
 

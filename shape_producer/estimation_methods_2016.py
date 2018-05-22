@@ -86,6 +86,62 @@ class ggHEstimation(HTTEstimation):
         return self.artus_file_names(files)
 
 
+class ggHEstimation_0J(ggHEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="ggH_0J",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+    def get_cuts(self):
+        return Cuts(Cut("htxs_stage1cat==103", "htxs_match"))
+
+
+class ggHEstimation_1J(ggHEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="ggH_1J",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+    def get_cuts(self):
+        return Cuts(Cut("(htxs_stage1cat>=104&&htxs_stage1cat<=107)", "htxs_match"))
+
+
+class ggHEstimation_GE2J(ggHEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="ggH_GE2J",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+    def get_cuts(self):
+        return Cuts(Cut("(htxs_stage1cat>=108&&htxs_stage1cat<=111)", "htxs_match"))
+
+
+class ggHEstimation_VBFTOPO(ggHEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="ggH_VBFTOPO",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+    def get_cuts(self):
+        return Cuts(Cut("(htxs_stage1cat==101||htxs_stage1cat==102)", "htxs_match"))
+
+
 class qqHEstimation(HTTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(HTTEstimation, self).__init__(
@@ -107,6 +163,62 @@ class qqHEstimation(HTTEstimation):
         files = self.era.datasets_helper.get_nicks_with_query(query)
         log_query(self.name, query, files)
         return self.artus_file_names(files)
+
+
+class qqHEstimation_VBFTOPO_JET3VETO(qqHEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="qqH_VBFTOPO_JET3VETO",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+    def get_cuts(self):
+        return Cuts(Cut("htxs_stage1cat==201", "htxs_match"))
+
+
+class qqHEstimation_VBFTOPO_JET3(qqHEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="qqH_VBFTOPO_JET3",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+    def get_cuts(self):
+        return Cuts(Cut("htxs_stage1cat==202", "htxs_match"))
+
+
+class qqHEstimation_REST(qqHEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="qqH_REST",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+    def get_cuts(self):
+        return Cuts(Cut("(htxs_stage1cat==203||htxs_stage1cat==204)", "htxs_match"))
+
+
+class qqHEstimation_PTJET1_GT200(qqHEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="qqH_PTJET1_GT200",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+    def get_cuts(self):
+        return Cuts(Cut("htxs_stage1cat==205", "htxs_match"))
 
 
 class VHEstimation(HTTEstimation):

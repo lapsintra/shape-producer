@@ -467,11 +467,21 @@ class SumUpEstimationMethod(EstimationMethod):
             shapes.append(s.shape)
         derived_shape = None
         for shape, factor in zip(shapes, self._factors):
-            if derived_shape == None:
-                derived_shape = shape
-                derived_shape.result.Scale(factor)
+            if isinstance(shape, Histogram):
+                if derived_shape == None:
+                    derived_shape = shape
+                    derived_shape.result.Scale(factor)
+                else:
+                    derived_shape.result.Add(shape.result, factor)
+            elif isinstance(shape, Count):
+                if derived_shape == None:
+                    derived_shape = shape
+                    derived_shape._result *= factor 
+                else:
+                    derived_shape._result += shape.result * factor
             else:
-                derived_shape.result.Add(shape.result, factor)
+                logger.fatal("SumUpEstimationMethod expects Histogram or Count")
+                raise Exception
 
         # Rename root object accordingly
         derived_shape.name = systematic.name

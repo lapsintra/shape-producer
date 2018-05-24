@@ -3,9 +3,10 @@
 import copy
 import os
 
-from estimation_methods import EstimationMethod, SStoOSEstimationMethod, ABCDEstimationMethod
+from estimation_methods import EstimationMethod, SStoOSEstimationMethod, ABCDEstimationMethod, SumUpEstimationMethod
 from histogram import *
 from cutstring import *
+from process import *
 from systematics import *
 from systematic_variations import *
 from era import log_query
@@ -559,9 +560,77 @@ class ZLEstimationTT(ZLEstimationMT):
                 "zl_genmatch_tt"))
 
 
-class WEstimation(EstimationMethod):
+class EWKWpEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
-        super(WEstimation, self).__init__(
+        super(EWKWpEstimation, self).__init__(
+            name="EWKWp",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_weights(self):
+        return Weights(
+            Weight(
+                "(((gen_match_1 == 5)*0.95 + (gen_match_1 != 5))*((gen_match_2 == 5)*0.95 + (gen_match_2 != 5)))",
+                "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
+            Weight(
+                "(5.190747826298e-6)/(numberGeneratedEventsWeight*crossSectionPerEventWeight)",
+                "EWKWp_stitching_weight"),
+            self.era.lumi_weight)
+
+    def get_files(self):
+        query = {
+            "process": "^EWKWPlus",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "madgraph\-pythia8"
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
+
+class EWKWmEstimation(EstimationMethod):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(EWKWmEstimation, self).__init__(
+            name="EWKWm",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_weights(self):
+        return Weights(
+            Weight(
+                "(((gen_match_1 == 5)*0.95 + (gen_match_1 != 5))*((gen_match_2 == 5)*0.95 + (gen_match_2 != 5)))",
+                "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
+            Weight(
+                "(4.200367267668e-6)/(numberGeneratedEventsWeight*crossSectionPerEventWeight)",
+                "EWKW_stitching_weight"),
+            self.era.lumi_weight)
+
+    def get_files(self):
+        query = {
+            "process": "^EWKWMinus",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "madgraph\-pythia8"
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
+
+class WEstimationRaw(EstimationMethod):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(WEstimationRaw, self).__init__(
             name="W",
             folder="nominal",
             era=era,
@@ -590,6 +659,22 @@ class WEstimation(EstimationMethod):
         files = self.era.datasets_helper.get_nicks_with_query(query)
         log_query(self.name, query, files)
         return self.artus_file_names(files)
+
+
+class WEstimation(SumUpEstimationMethod):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(WEstimation, self).__init__(
+            name="W",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            processes=[
+                Process("W", WEstimationRaw(era, directory, channel, friend_directory=friend_directory)),
+                Process("EWKWp", EWKWpEstimation(era, directory, channel, friend_directory=friend_directory)),
+                Process("EWKWm", EWKWmEstimation(era, directory, channel, friend_directory=friend_directory))
+            ])
 
 
 class WTEstimation(WEstimation):
@@ -814,10 +899,10 @@ class TTJEstimationTT(TTEstimation):
                 "ttbar->tau tau veto"))
 
 
-class EWKEstimation(EstimationMethod):
+class EWKZllEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKEstimation, self).__init__(
-            name="EWK",
+        super(EWKZllEstimation, self).__init__(
+            name="EWKZll",
             folder="nominal",
             era=era,
             directory=directory,
@@ -829,21 +914,72 @@ class EWKEstimation(EstimationMethod):
         return Weights(
             Weight(
                 "(((gen_match_1 == 5)*0.95 + (gen_match_1 != 5))*((gen_match_2 == 5)*0.95 + (gen_match_2 != 5)))",
-                "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
+                "hadronic_tau_sf"),
+            Weight(
+                "(3.989190065346e-6)/(numberGeneratedEventsWeight*crossSectionPerEventWeight)",
+                "EWKZll_stitching_weight"), Weight("eventWeight", "eventWeight"),
             self.era.lumi_weight)
 
     def get_files(self):
         query = {
-            "process": "^EWKZ",
+            "process": "^EWKZ2Jets.",
             "data": False,
             "campaign": self._mc_campaign,
-            "generator": "madgraph\-pythia8",
-            "extension": "ext2"
+            "generator": "madgraph\-pythia8"
         }
         files = self.era.datasets_helper.get_nicks_with_query(query)
 
         log_query(self.name, query, files)
         return self.artus_file_names(files)
+
+
+class EWKZnnEstimation(EstimationMethod):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(EWKZnnEstimation, self).__init__(
+            name="EWKZnn",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_weights(self):
+        return Weights(
+            Weight(
+                "(((gen_match_1 == 5)*0.95 + (gen_match_1 != 5))*((gen_match_2 == 5)*0.95 + (gen_match_2 != 5)))",
+                "hadronic_tau_sf"),
+            Weight(
+                "(3.35561920393e-6)/(numberGeneratedEventsWeight*crossSectionPerEventWeight)",
+                "EWKZnn_stitching_weight"), Weight("eventWeight", "eventWeight"),
+            self.era.lumi_weight)
+
+    def get_files(self):
+        query = {
+            "process": "^EWKZ2Jets$",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "madgraph\-pythia8"
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
+
+class EWKZEstimation(SumUpEstimationMethod):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(EWKZEstimation, self).__init__(
+            name="EWKZ",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            processes=[
+                Process("EWKZll", EWKZllEstimation(era, directory, channel, friend_directory=friend_directory)),
+                Process("EWKZnn", EWKZnnEstimation(era, directory, channel, friend_directory=friend_directory))
+            ])
 
 
 class VVEstimation(EstimationMethod):

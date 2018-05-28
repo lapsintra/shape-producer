@@ -197,7 +197,7 @@ class SStoOSEstimationMethod(EstimationMethod):
         final_shape.name = systematic.name
 
         # Replace negative entries by zeros and renormalize shape
-        final_shape.replace_negative_entries_and_renormalize(tolerance=0.05)
+        final_shape.replace_negative_entries_and_renormalize(tolerance=100.05)
 
         return final_shape
 
@@ -333,7 +333,7 @@ class ABCDEstimationMethod(EstimationMethod):
         derived_shape.name = systematic.name
 
         # Replace negative entries by zeros and renormalize shape
-        derived_shape.replace_negative_entries_and_renormalize(tolerance=0.05)
+        derived_shape.replace_negative_entries_and_renormalize(tolerance=100.05)
 
         return derived_shape
 

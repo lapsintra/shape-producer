@@ -10,6 +10,12 @@ logger = logging.getLogger(__name__)
 """
 
 
+# Helper function to use multiprocessing.Pool with class methods
+def systematic_create_root_objects(systematic):
+    systematic.create_root_objects()
+    return systematic
+
+
 class Systematic(object):
     def __init__(self, category, process, analysis, era, variation, mass):
         self._category = category
@@ -123,12 +129,17 @@ class Systematic(object):
 
 # holder class for systematics
 class Systematics(object):
-    def __init__(self, output_file, num_threads=1, backend="classic"):
+    def __init__(self,
+                 output_file,
+                 num_threads=1,
+                 backend="classic",
+                 find_unique_objects=False):
         # member holding the systematics
         self._systematics = []
         self._backend = backend
         self._output_file = output_file
         self._num_threads = num_threads
+        self._find_unique_objects = find_unique_objects
 
     def add(self, systematic):
         self._systematics.append(systematic)
@@ -149,15 +160,35 @@ class Systematics(object):
     def create_histograms(self):
         # collect ROOT objects
         self._root_objects_holder = RootObjects(self._output_file)
+
+        if self._num_threads == 1:
+            for systematic in self._systematics:
+                logger.debug("Create ROOT objects for systematic %s.",
+                             systematic.name)
+                systematic.create_root_objects()
+        else:
+            logger.debug("Create ROOT objects for all systematics.")
+
+            from pathos.multiprocessing import ProcessPool
+            pool = ProcessPool(nodes=self._num_threads)
+
+            systematics_new = pool.map(systematic_create_root_objects,
+                                       [s for s in self._systematics])
+            pool.close()
+            pool.join()
+
+            # Because the new objects have different addresses in memory,
+            # the result objects have to be copied.
+            for i_sys in range(len(systematics_new)):
+                self._systematics[i_sys] = systematics_new[i_sys]
         for systematic in self._systematics:
-            logger.debug("Create ROOT objects for systematic %s.",
-                         systematic.name)
-            systematic.create_root_objects()
-            self._root_objects_holder.add(systematic.root_objects)
-            self._root_objects_holder.add_unique(systematic.root_objects)
+            if self._find_unique_objects:
+                self._root_objects_holder.add_unique(systematic.root_objects)
+            else:
+                self._root_objects_holder.add(systematic.root_objects)
         #self._root_objects_holder.check_duplicates() # TODO: Implement this if needed
 
-        # produce unique ROOT objects (in parallel)
+        # produce ROOT objects (in parallel)
         logger.debug("Produce ROOT objects using the %s backend.",
                      self._backend)
         if self._backend == "classic":
@@ -169,7 +200,8 @@ class Systematics(object):
             raise Exception
 
         # set duplicates to the produced ROOT objects
-        self._root_objects_holder.set_duplicates()
+        if self._find_unique_objects:
+            self._root_objects_holder.set_duplicates()
 
     # to the actual estimations. Currently do not run in parallel due to expected very low runtime, can in principle be parallelized
     def do_estimations(self):

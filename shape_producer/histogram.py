@@ -277,7 +277,6 @@ def root_object_create_result(root_object):
 class RootObjects(object):
     def __init__(self, output_filename):
         self._root_objects = []
-        self._unique_root_objects = []
         self._counts = []
         self._produced = False
         self._output_filename = output_filename
@@ -305,25 +304,25 @@ class RootObjects(object):
             if isinstance(root_object, list):
                 for r in root_object:
                     add_object = True
-                    for ur in self._unique_root_objects:
+                    for ur in self._root_objects:
                         if r == ur:
                             self._duplicate_root_objects.setdefault(
                                 ur, []).append(r)
                             add_object = False
                             break
                     if add_object:
-                        self._unique_root_objects.append(r)
+                        self._root_objects.append(r)
 
             else:
                 add_object = True
-                for ur in self._unique_root_objects:
+                for ur in self._root_objects:
                     if r == ur:
                         self._duplicate_root_objects.setdefault(ur,
                                                                 []).append(r)
                         add_object = False
                         break
                 if add_object:
-                    self._unique_root_objects.append(r)
+                    self._root_objects.append(r)
 
     def new_histogram(self, **kwargs):
         self.add(Histogram(**kwargs))
@@ -355,8 +354,7 @@ class RootObjects(object):
         self.create_output_file()
         self._produced = True
         # determine how many data frames have to be created; sort by inputfiles and trees
-        files_folders = self.get_combinations(self._unique_root_objects,
-                                              self._counts)
+        files_folders = self.get_combinations(self._root_objects, self._counts)
 
         for files_folder in files_folders:
             # create the dataframe
@@ -364,7 +362,7 @@ class RootObjects(object):
                 str(files_folder[1]), str(files_folder[0][0]))
             # loop over the corresponding histograms and create an own dataframe for each histogram -> TODO
             for h in [
-                    h for h in self._unique_root_objects
+                    h for h in self._root_objects
                     if h.files_folders() == files_folder
             ]:
                 # find overlapping cut selections -> dummy atm
@@ -373,7 +371,7 @@ class RootObjects(object):
                 h.create_result(dataframe=special_dataframe)
             # create the histograms
             for h in [
-                    h for h in self._unique_root_objects
+                    h for h in self._root_objects
                     if h.files_folders() == files_folder
             ]:
                 h.update()
@@ -383,14 +381,13 @@ class RootObjects(object):
         self.create_output_file()
         self._produced = True
         if num_threads == 1:
-            for ro in self._unique_root_objects:
+            for ro in self._root_objects:
                 ro.create_result()
         else:
             from multiprocessing import Pool
             pool = Pool(processes=num_threads)
-            root_objects_new = pool.map(
-                root_object_create_result,
-                [ro for ro in self._unique_root_objects])
+            root_objects_new = pool.map(root_object_create_result,
+                                        [ro for ro in self._root_objects])
             pool.close()
             pool.join()
 
@@ -398,17 +395,17 @@ class RootObjects(object):
             # the result objects have to be copied.
             # Otherwise, the systematic's root_object has no result associated.
             for i_ro in range(len(root_objects_new)):
-                self._unique_root_objects[i_ro]._result = root_objects_new[
+                self._root_objects[i_ro]._result = root_objects_new[
                     i_ro]._result
 
-        for h in self._unique_root_objects:  # write sequentially to prevent race conditions
+        for h in self._root_objects:  # write sequentially to prevent race conditions
             h.save(self._output_tree)
         return self
 
     def set_duplicates(self):
         logger.debug(
             "Setting duplicates to the corresponding produced ROOT objects")
-        for ro in self._unique_root_objects:
+        for ro in self._root_objects:
             if ro in self._duplicate_root_objects:
                 logger.debug(
                     "Setting following duplicates for produced object %s with address %s",

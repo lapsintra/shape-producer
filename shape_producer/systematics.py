@@ -129,12 +129,17 @@ class Systematic(object):
 
 # holder class for systematics
 class Systematics(object):
-    def __init__(self, output_file, num_threads=1, backend="classic"):
+    def __init__(self,
+                 output_file,
+                 num_threads=1,
+                 backend="classic",
+                 find_unique_objects=False):
         # member holding the systematics
         self._systematics = []
         self._backend = backend
         self._output_file = output_file
         self._num_threads = num_threads
+        self._find_unique_objects = find_unique_objects
 
     def add(self, systematic):
         self._systematics.append(systematic)
@@ -177,11 +182,13 @@ class Systematics(object):
             for i_sys in range(len(systematics_new)):
                 self._systematics[i_sys] = systematics_new[i_sys]
         for systematic in self._systematics:
-            self._root_objects_holder.add(systematic.root_objects)
-            self._root_objects_holder.add_unique(systematic.root_objects)
+            if self._find_unique_objects:
+                self._root_objects_holder.add_unique(systematic.root_objects)
+            else:
+                self._root_objects_holder.add(systematic.root_objects)
         #self._root_objects_holder.check_duplicates() # TODO: Implement this if needed
 
-        # produce unique ROOT objects (in parallel)
+        # produce ROOT objects (in parallel)
         logger.debug("Produce ROOT objects using the %s backend.",
                      self._backend)
         if self._backend == "classic":
@@ -193,7 +200,8 @@ class Systematics(object):
             raise Exception
 
         # set duplicates to the produced ROOT objects
-        self._root_objects_holder.set_duplicates()
+        if self._find_unique_objects:
+            self._root_objects_holder.set_duplicates()
 
     # to the actual estimations. Currently do not run in parallel due to expected very low runtime, can in principle be parallelized
     def do_estimations(self):

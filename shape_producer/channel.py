@@ -73,6 +73,23 @@ class MT(Channel):
             Cut("trg_singlemuon==1", "trg_singlemuon"))
 
 
+class MTMSSM2017(Channel):
+    def __init__(self):
+        self._name = "mt"
+        self._cuts = Cuts(
+            Cut("extraelec_veto<0.5", "extraelec_veto"),
+            Cut("extramuon_veto<0.5", "extramuon_veto"),
+            Cut("dilepton_veto<0.5", "dilepton_veto"),
+            Cut("againstMuonTight3_2>0.5", "againstMuonDiscriminator"),
+            Cut("againstElectronVLooseMVA6_2>0.5",
+                "againstElectronDiscriminator"),
+            Cut("rerunDiscriminationByIsolationMVAOldDMrun2v1Tight2017_2>0.5", "tau_iso"),
+            Cut("iso_1<0.15", "muon_iso"),
+            Cut("q_1*q_2<0", "os"),
+            #Cut("(trg_singlemuon) || (trg_singlemuon_lowpt) || (trg_muontau_lowptmu)", "trg_selection"))
+            Cut("(trg_singlemuon) || (trg_singlemuon_lowpt) || (trg_singlemuon_lowpt)", "trg_selection"))
+
+
 class MTSM(Channel):
     def __init__(self):
         self._name = "mt"
@@ -106,6 +123,23 @@ class ET(Channel):
             Cut("iso_1<0.1", "ele_iso"),
             Cut("q_1*q_2<0", "os"),
             Cut("trg_singleelectron==1", "trg_singleelectron"))
+
+
+class ETMSSM2017(Channel):
+    def __init__(self):
+        self._name = "et"
+        self._cuts = Cuts(
+            Cut("extraelec_veto<0.5", "extraelec_veto"),
+            Cut("extramuon_veto<0.5", "extramuon_veto"),
+            Cut("dilepton_veto<0.5", "dilepton_veto"),
+            Cut("againstMuonLoose3_2>0.5", "againstMuonDiscriminator"),
+            Cut("againstElectronTightMVA6_2>0.5",
+                "againstElectronDiscriminator"),
+            Cut("rerunDiscriminationByIsolationMVAOldDMrun2v1Tight2017_2>0.5", "tau_iso"),
+            Cut("iso_1<0.1", "ele_iso"),
+            Cut("q_1*q_2<0", "os"),
+            #Cut("(trg_singleelectron) || (trg_singleelectron_lowpt) || (trg_electrontau)", "trg_selection"))
+            Cut("(trg_singleelectron) || (trg_singleelectron_lowpt) || (trg_singleelectron_lowpt)", "trg_selection"))
 
 
 class ETSM(Channel):
@@ -160,6 +194,22 @@ class TTSM(Channel):
             Cut("(trg_doubletau==1 && pt_1>50 && pt_2>40)", "trg_doubletau"))
 
 
+class TTMSSM2017(Channel):
+    def __init__(self):
+        self._name = "tt"
+        self._cuts = Cuts(
+            Cut("extraelec_veto<0.5", "extraelec_veto"),
+            Cut("extramuon_veto<0.5", "extramuon_veto"),
+            Cut("dilepton_veto<0.5", "dilepton_veto"),
+            Cut("againstMuonLoose3_1>0.5 && againstMuonLoose3_2>0.5",
+                "againstMuonDiscriminator"),
+            Cut("againstElectronVLooseMVA6_1>0.5 && againstElectronVLooseMVA6_2>0.5",
+                "againstElectronDiscriminator"),
+            Cut("rerunDiscriminationByIsolationMVAOldDMrun2v1Tight2017_1>0.5", "tau_1_iso"),
+            Cut("rerunDiscriminationByIsolationMVAOldDMrun2v1Tight2017_2>0.5", "tau_2_iso"),
+            Cut("q_1*q_2<0", "os"), Cut("(trg_doubletau) || (trg_doubletau_mediso) || (trg_doubletau_lowpt)", "trg_selection"))
+
+
 class EM(Channel):
     def __init__(self):
         self._name = "em"
@@ -171,6 +221,19 @@ class EM(Channel):
             Cut("iso_2<0.2", "muon_iso"),
             Cut("q_1*q_2<0", "os"),
             Cut("trg_muonelectron==1", "trg_muonelectron"))
+
+
+class EMMSSM2017(Channel):
+    def __init__(self):
+        self._name = "em"
+        self._cuts = Cuts(
+            Cut("extraelec_veto<0.5", "extraelec_veto"),
+            Cut("extramuon_veto<0.5", "extramuon_veto"),
+            Cut("dilepton_veto<0.5", "dilepton_veto"),
+            Cut("iso_1<0.15", "ele_iso"),
+            Cut("iso_2<0.2", "muon_iso"),
+            Cut("q_1*q_2<0", "os"),
+            Cut("(trg_muonelectron_lowptmu) || (trg_muonelectron_lowpte) || (trg_muonelectron_lowpte)", "trg_selection"))
 
 
 class PU(Channel):

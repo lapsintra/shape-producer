@@ -1324,7 +1324,7 @@ class WEstimationWithQCD(EstimationMethod):
         wjets_shape.name = systematic.name
 
         # Replace negative entries by zeros and renormalize shape
-        wjets_shape.replace_negative_entries_and_renormalize(tolerance=0.05)
+        wjets_shape.replace_negative_entries_and_renormalize(tolerance=100.5)
 
         return wjets_shape
 
@@ -1557,7 +1557,7 @@ class QCDEstimationWithW(EstimationMethod):
         qcd_shape.name = systematic.name
 
         # Replace negative entries by zeros and renormalize shape
-        qcd_shape.replace_negative_entries_and_renormalize(tolerance=0.05)
+        qcd_shape.replace_negative_entries_and_renormalize(tolerance=100.5)
 
         return qcd_shape
 

@@ -174,9 +174,9 @@ class Histogram(TTreeContent):
                 norm_positive += this_bin
             norm_all += this_bin
 
-        if norm_all == 0.0:
+        if norm_all == 0.0 and norm_positive != 0.0:
             logger.fatal(
-                "Aborted renormalization because initial normalization is zero."
+                "Aborted renormalization because initial normalization is zero, but positive normalization not."
             )
             raise Exception
 
@@ -186,10 +186,10 @@ class Histogram(TTreeContent):
                 norm_all)
             raise Exception
 
-        if abs(norm_all - norm_positive) / norm_all > tolerance:
+        if abs(norm_all - norm_positive) > tolerance * norm_all:
             logger.fatal(
                 "Renormalization failed because the normalization changed by %f, which is above the tolerance %f.",
-                abs(norm_all - norm_positive) / norm_all, tolerance)
+                abs(norm_all - norm_positive) , tolerance*norm_all)
             raise Exception
 
         # Renormalize histogram if negative entries are found

@@ -1267,6 +1267,8 @@ class WEstimationWithQCD(EstimationMethod):
         wjets_integral_low_mt_os = wjets_low_mt_os_cr_count.result
         wjets_integral_high_mt_os = wjets_high_mt_os_cr_counts.pop(
             self._w_process.name).result
+        logger.debug("Integral of WJets MC in low mt OS region: %s",str(wjets_integral_low_mt_os))
+        logger.debug("Integral of WJets MC in high mt OS region: %s",str(wjets_integral_high_mt_os))
 
         R_high_to_low_mt_os = wjets_integral_low_mt_os / wjets_integral_high_mt_os
         R_high_to_low_mt_ss = wjets_low_mt_ss_cr_count.result / wjets_high_mt_ss_cr_counts.pop(
@@ -1279,23 +1281,23 @@ class WEstimationWithQCD(EstimationMethod):
                      str(R_high_to_low_mt_ss))
 
         # Determine yields in wjets CRs
-        #print "Data yield in ss high mt region:",wjets_high_mt_ss_cr_counts[self._data_process.name].result
+        logger.debug("Data yield in ss high mt region: %s",str(wjets_high_mt_ss_cr_counts[self._data_process.name].result))
         high_mt_ss_yield = wjets_high_mt_ss_cr_counts.pop(
             self._data_process.name).result - sum(
                 [s.result for s in wjets_high_mt_ss_cr_counts.values()])
         sum_mc = sum([s.result for s in wjets_high_mt_ss_cr_counts.values()])
-        #print "MC yield to be subtracted:",sum_mc
-        #for name,s in wjets_high_mt_ss_cr_counts.items():
-        #    print name,":",s.result/sum_mc
+        logger.debug("MC yield to be subtracted: %s",str(sum_mc))
+        for name,s in wjets_high_mt_ss_cr_counts.items():
+            logger.debug(name+" : "+str(s.result/sum_mc))
 
-        #print "Data yield in os high mt region:",wjets_high_mt_os_cr_counts[self._data_process.name].result
+        logger.debgug("Data yield in os high mt region: %s",str(wjets_high_mt_os_cr_counts[self._data_process.name].result))
         high_mt_os_yield = wjets_high_mt_os_cr_counts.pop(
             self._data_process.name).result - sum(
                 [s.result for s in wjets_high_mt_os_cr_counts.values()])
         sum_mc = sum([s.result for s in wjets_high_mt_os_cr_counts.values()])
-        #print "MC yield to be subtracted:",sum_mc
-        #for name,s in wjets_high_mt_os_cr_counts.items():
-        #    print name,":",s.result/sum_mc
+        logger.debug("MC yield to be subtracted: %s",sum_mc))
+        for name,s in wjets_high_mt_os_cr_counts.items():
+            logger.debug(name+" : "+str(s.result/sum_mc))
 
         logger.debug("WJets + QCD yield in ss high mt region: %s",
                      str(high_mt_ss_yield))
@@ -1545,7 +1547,6 @@ class QCDEstimationWithW(EstimationMethod):
         for s in systematic._WandQCD_systematics:
             if s.category.name.endswith("ss_for_qcd"):
                 ss_category_name = s.category._name
-        print ss_category_name
         qcd_ss_shape.name = systematic.name.replace(systematic.category._name,
                                                     ss_category_name)
         qcd_ss_shape._result.Write()

@@ -300,7 +300,7 @@ class DYJetsToLLEstimation(EstimationMethod):
             "version": "v2" # to be used if only one inclusive sample is desired
         }
         queryM50 = {
-            "process": "(DYJetsToLL_M10to50|DY(1|2|3|4)JetsToLL_M50)",
+            "process": "(DY(|1|2|3|4)JetsToLL_M50)",
             #"process": "DYJetsToLL_M50",
             "data": False,
             "campaign": self._mc_campaign,

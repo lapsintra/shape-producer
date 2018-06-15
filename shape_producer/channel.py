@@ -83,7 +83,7 @@ class MTMSSM2017(Channel):
             Cut("againstMuonTight3_2>0.5", "againstMuonDiscriminator"),
             Cut("againstElectronVLooseMVA6_2>0.5",
                 "againstElectronDiscriminator"),
-            Cut("rerunDiscriminationByIsolationMVAOldDMrun2v1Tight2017_2>0.5", "tau_iso"),
+            Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5", "tau_iso"),
             Cut("iso_1<0.15", "muon_iso"),
             Cut("q_1*q_2<0", "os"),
             #Cut("(trg_singlemuon) || (trg_singlemuon_lowpt) || (trg_muontau_lowptmu)", "trg_selection"))
@@ -135,7 +135,7 @@ class ETMSSM2017(Channel):
             Cut("againstMuonLoose3_2>0.5", "againstMuonDiscriminator"),
             Cut("againstElectronTightMVA6_2>0.5",
                 "againstElectronDiscriminator"),
-            Cut("rerunDiscriminationByIsolationMVAOldDMrun2v1Tight2017_2>0.5", "tau_iso"),
+            Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5", "tau_iso"),
             Cut("iso_1<0.1", "ele_iso"),
             Cut("q_1*q_2<0", "os"),
             #Cut("(trg_singleelectron) || (trg_singleelectron_lowpt) || (trg_electrontau)", "trg_selection"))
@@ -205,9 +205,11 @@ class TTMSSM2017(Channel):
                 "againstMuonDiscriminator"),
             Cut("againstElectronVLooseMVA6_1>0.5 && againstElectronVLooseMVA6_2>0.5",
                 "againstElectronDiscriminator"),
-            Cut("rerunDiscriminationByIsolationMVAOldDMrun2v1Tight2017_1>0.5", "tau_1_iso"),
-            Cut("rerunDiscriminationByIsolationMVAOldDMrun2v1Tight2017_2>0.5", "tau_2_iso"),
-            Cut("q_1*q_2<0", "os"), Cut("(trg_doubletau) || (trg_doubletau_mediso) || (trg_doubletau_lowpt)", "trg_selection"))
+            Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5", "tau_1_iso"),
+            Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5", "tau_2_iso"),
+            Cut("q_1*q_2<0", "os"),
+            Cut("(trg_doubletau) || (trg_doubletau_mediso) || (trg_doubletau_lowpt)", "trg_selection")
+            )
 
 
 class EM(Channel):

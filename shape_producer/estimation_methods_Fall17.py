@@ -23,19 +23,18 @@ def get_triggerweight_for_channel(channel):
 def get_singlelepton_triggerweight_for_channel(channel):
     weight = Weight("1.0","triggerweight")
     if "mt" in channel or "et" in channel:
-        weight = Weight("singleTriggerDataEfficiencyWeight_1/singleTriggerMCEfficiencyWeight_1","triggerweight")
+        weight = Weight("singleTriggerDataEfficiencyWeightKIT_1/singleTriggerMCEfficiencyWeightKIT_1","triggerweight")
     elif "tt" in channel:
-        weight = Weight("(crossTriggerDataEfficiencyWeight_1*crossTriggerDataEfficiencyWeight_2)/(crossTriggerMCEfficiencyWeight_1*crossTriggerMCEfficiencyWeight_2)","triggerweight")
+        weight = Weight("(crossTriggerDataEfficiencyWeight_1*crossTriggerDataEfficiencyWeight_2)/(crossTriggerMCEfficiencyWeight_1*crossTriggerMCEfficiencyWeight_2)*(byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5 && byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5) + (byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5 && byTightIsolationMVArun2017v2DBoldDMwLT2017_2 < 0.5) + (crossTriggerDataEfficiencyWeight_1/crossTriggerMCEfficiencyWeight_1)*(byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5 && byTightIsolationMVArun2017v2DBoldDMwLT2017_2 < 0.5) + (crossTriggerDataEfficiencyWeight_2/crossTriggerMCEfficiencyWeight_2)*(byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5 && byTightIsolationMVArun2017v2DBoldDMwLT2017_1 < 0.5)","triggerweight")
     return weight
 
 def get_tauByIsoIdWeight_for_channel(channel):
     # WPs: VLoose 0.85, Loose 0.89, Medium 0.89, Tight 0.87, VTight 0.85, VVTight 0.82. Currently used: SR mt,et Tight; SR tt Tight, anti-iso CR tt Loose
     weight = Weight("1.0","taubyIsoIdWeight")
     if "mt" in channel or "et" in channel:
-        #weight = Weight("((gen_match_2 == 5)*(0.87*(rerunDiscriminationByIsolationMVAOldDMrun2v1Tight2017_2>0.5)+0.89*(rerunDiscriminationByIsolationMVAOldDMrun2v1Tight2017_2<0.5 && rerunDiscriminationByIsolationMVAOldDMrun2v1Loose2017_2>0.5)) + (gen_match_2 != 5))", "taubyIsoIdWeight")
         weight = Weight("((gen_match_2 == 5)*0.87 + (gen_match_2 != 5))", "taubyIsoIdWeight")
     elif "tt" in channel:
-        weight = Weight("((gen_match_1 == 5)*(0.87*(rerunDiscriminationByIsolationMVAOldDMrun2v1Tight2017_1>0.5)+0.89*(rerunDiscriminationByIsolationMVAOldDMrun2v1Tight2017_1<0.5 && rerunDiscriminationByIsolationMVAOldDMrun2v1Loose2017_1>0.5)) + (gen_match_1 != 5))*((gen_match_2 == 5)*(0.87*(rerunDiscriminationByIsolationMVAOldDMrun2v1Tight2017_2>0.5)+0.89*(rerunDiscriminationByIsolationMVAOldDMrun2v1Tight2017_2<0.5 && rerunDiscriminationByIsolationMVAOldDMrun2v1Loose2017_2>0.5)) + (gen_match_2 != 5))", "taubyIsoIdWeight")
+        weight = Weight("((gen_match_1 == 5)*(0.87*(byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)+0.89*(byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5 && byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)) + (gen_match_1 != 5))*((gen_match_2 == 5)*(0.87*(byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5)+0.89*(byTightIsolationMVArun2017v2DBoldDMwLT2017_2<0.5 && byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5)) + (gen_match_2 != 5))", "taubyIsoIdWeight")
     return weight
 
 def get_eleHLTZvtxWeight_for_channel(channel):
@@ -85,13 +84,12 @@ class QCDEstimation_ABCD_TT_ISO2(ABCDEstimationMethod):
             bg_processes=bg_processes,
             data_process=data_process,
             AC_cut_names=[ # cuts applied in AC, which should be removed in the BD control regions
-                "tau_2_iso"
+                "tau_2_iso",
             ],
             BD_cuts=[      # cuts to be applied instead of cuts removed above
-                Cut("rerunDiscriminationByIsolationMVAOldDMrun2v1Tight2017_2<0.5", "tau_2_iso"),
-                #Cut("byMediumIsolationMVArun2v1DBoldDMwLT_2<0.5", "tau_2_iso"),
-                Cut("rerunDiscriminationByIsolationMVAOldDMrun2v1Loose2017_2>0.5",
-                    "tau_2_iso_loose")
+                Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2<0.5", "tau_2_iso"),
+                Cut("byVVLooseIsolationMVArun2017v2DBoldDMwLT2017_2>0.5",
+                    "tau_2_iso_loose"),
             ],
             AB_cut_names=[ # cuts applied in AB, which should be removed in the CD control regions
                 "os"
@@ -116,10 +114,9 @@ class QCDEstimation_ABCD_TT_ISO2_TRANSPOSED(ABCDEstimationMethod):
                 "tau_2_iso"
             ],
             CD_cuts=[      # cuts to be applied instead of cuts removed above
-                Cut("byTightIsolationMVArun2v1DBoldDMwLT_2<0.5", "tau_2_iso"),
-                #Cut("byMediumIsolationMVArun2v1DBoldDMwLT_2<0.5", "tau_2_iso"),
-                Cut("byLooseIsolationMVArun2v1DBoldDMwLT_2>0.5",
-                    "tau_2_iso_loose")
+                Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2<0.5", "tau_2_iso"),
+                Cut("byVVLooseIsolationMVArun2017v2DBoldDMwLT2017_2>0.5",
+                    "tau_2_iso_loose"),
             ],
             AC_cut_names=[ # cuts applied in AC, which should be removed in the BD control regions
                 "os"
@@ -166,7 +163,7 @@ class VVEstimation(EstimationMethod):
             era=era,
             directory=directory,
             channel=channel,
-            mc_campaign="RunIIFall17MiniAOD")
+            mc_campaign="RunIIFall17MiniAODv2")
 
     def get_weights(self):
         return Weights(
@@ -178,9 +175,12 @@ class VVEstimation(EstimationMethod):
             Weight("crossSectionPerEventWeight", "crossSectionPerEventWeight"),
 
             # Weights for corrections
+            Weight("puweight", "puweight"),
+            Weight("idWeight_1*idWeight_2","idweight"),
+            Weight("isoWeight_1*isoWeight_2","isoweight"),
+            Weight("trackWeight_1*trackWeight_2","trackweight"),
             #get_triggerweight_for_channel(self.channel.name),
             get_singlelepton_triggerweight_for_channel(self.channel.name),
-            Weight("puweight", "puweight"),
             Weight("eleTauFakeRateWeight*muTauFakeRateWeight", "leptonTauFakeRateWeight"),
             get_tauByIsoIdWeight_for_channel(self.channel.name),
             get_eleHLTZvtxWeight_for_channel(self.channel.name),
@@ -204,7 +204,6 @@ class VVEstimation(EstimationMethod):
             "campaign": self._mc_campaign
         }
         files += self.era.datasets_helper.get_nicks_with_query(query)
-
         log_query(self.name, query, files)
         return self.artus_file_names(files)
 
@@ -218,7 +217,7 @@ class EWKEstimation(EstimationMethod):
             directory=directory,
             friend_directory=friend_directory,
             channel=channel,
-            mc_campaign="RunIIFall17MiniAOD")
+            mc_campaign="RunIIFall17MiniAODv2")
 
     def get_weights(self):
         return Weights(
@@ -231,6 +230,9 @@ class EWKEstimation(EstimationMethod):
 
             # Weights for corrections
             Weight("puweight", "puweight"),
+            Weight("idWeight_1*idWeight_2","idweight"),
+            Weight("isoWeight_1*isoWeight_2","isoweight"),
+            Weight("trackWeight_1*trackWeight_2","trackweight"),
             #get_triggerweight_for_channel(self.channel.name),
             get_singlelepton_triggerweight_for_channel(self.channel.name),
             Weight("eleTauFakeRateWeight*muTauFakeRateWeight", "leptonTauFakeRateWeight"),
@@ -248,7 +250,6 @@ class EWKEstimation(EstimationMethod):
             "generator": "madgraph\-pythia8",
         }
         files = self.era.datasets_helper.get_nicks_with_query(query)
-
         log_query(self.name, query, files)
         return self.artus_file_names(files)
 
@@ -261,7 +262,7 @@ class DYJetsToLLEstimation(EstimationMethod):
             era=era,
             directory=directory,
             channel=channel,
-            mc_campaign="RunIIFall17MiniAOD")
+            mc_campaign="RunIIFall17MiniAODv2")
 
     def get_weights(self):
         return Weights(
@@ -271,11 +272,14 @@ class DYJetsToLLEstimation(EstimationMethod):
             #Weight("numberGeneratedEventsWeight","numberGeneratedEventsWeight"), # to be used only for one inclusive sample
             #Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
             Weight(
-                "(((genbosonmass >= 50.0 && (npartons == 0 || npartons >= 4))*5.94801691e-05) + ((genbosonmass >= 50.0 && npartons == 1)*1.35840903e-05) + ((genbosonmass >= 50.0 && npartons == 2)*1.39144195e-05) + ((genbosonmass >= 50.0 && npartons == 3)*1.49539992e-05) + ((genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight))",
+                "(((genbosonmass >= 50.0 && (npartons == 0 || npartons >= 5))*5.89503542e-05) + ((genbosonmass >= 50.0 && npartons == 1)*2.14832024e-05) + ((genbosonmass >= 50.0 && npartons == 2)*2.36744541e-05) + ((genbosonmass >= 50.0 && npartons == 3)*3.7496288e-05) + ((genbosonmass >= 50.0 && npartons == 4)*1.17409282e-05) + ((genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight))",
                 "z_stitching_weight"),
 
             # Weights for corrections
             Weight("puweight", "puweight"),
+            Weight("idWeight_1*idWeight_2","idweight"),
+            Weight("isoWeight_1*isoWeight_2","isoweight"),
+            Weight("trackWeight_1*trackWeight_2","trackweight"),
             #get_triggerweight_for_channel(self.channel._name),
             get_singlelepton_triggerweight_for_channel(self.channel.name),
             Weight("eleTauFakeRateWeight*muTauFakeRateWeight", "leptonTauFakeRateWeight"),
@@ -287,17 +291,26 @@ class DYJetsToLLEstimation(EstimationMethod):
             self.era.lumi_weight)
 
     def get_files(self):
-        query = {
-            "process": "(DYJetsToLL_M10to50|DY(1|2|3|)JetsToLL_M50)",
-            #"process": "(DYJetsToLL_M10to50|DYJetsToLL_M50)",
+        queryM10 = {
+            "process": "DYJetsToLL_M10to50",
+            "data": False,
+            "campaign": "RunIIFall17MiniAOD$",
+            "generator": "madgraph\-pythia8",
+            "extension": "^$",
+            "version": "v2" # to be used if only one inclusive sample is desired
+        }
+        queryM50 = {
+            "process": "(DYJetsToLL_M10to50|DY(1|2|3|4)JetsToLL_M50)",
+            #"process": "DYJetsToLL_M50",
             "data": False,
             "campaign": self._mc_campaign,
             "generator": "madgraph\-pythia8",
             #"extension": "^$",
             #"version": "v1" # to be used if only one inclusive sample is desired
         }
-        files = self.era.datasets_helper.get_nicks_with_query(query)
-        log_query(self.name, query, files)
+        files = self.era.datasets_helper.get_nicks_with_query(queryM50) + self.era.datasets_helper.get_nicks_with_query(queryM10)
+        log_query(self.name, queryM50, files)
+        log_query(self.name, queryM10, files)
         return self.artus_file_names(files)
 
 
@@ -309,7 +322,7 @@ class ZTTEstimation(DYJetsToLLEstimation):
             era=era,
             directory=directory,
             channel=channel,
-            mc_campaign="RunIIFall17MiniAOD")
+            mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
 
@@ -333,7 +346,7 @@ class ZLLEstimation(DYJetsToLLEstimation):
             era=era,
             directory=directory,
             channel=channel,
-            mc_campaign="RunIIFall17MiniAOD")
+            mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
         zll_genmatch_cut = Cut("1 == 1", "zll_genmatch")
@@ -482,7 +495,7 @@ class WEstimation(EstimationMethod):
             era=era,
             directory=directory,
             channel=channel,
-            mc_campaign="RunIISummer17MiniAOD")
+            mc_campaign="RunIIFall17MiniAODv2")
 
     def get_weights(self):
         return Weights(
@@ -492,11 +505,14 @@ class WEstimation(EstimationMethod):
             #Weight("numberGeneratedEventsWeight","numberGeneratedEventsWeight"), # to be used only for one inclusive sample
             #Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
             Weight(
-                "(((npartons == 0 || npartons >= 5)*2.36006270e-3) + ((npartons == 1)*2.34817764e-4) + ((npartons == 2)*1.31144867e-4) + ((npartons == 3)*1.39177532e-4) + ((npartons == 4)*6.46064804e-5))",
+                "(((npartons <= 1 || npartons >= 5)*2.28776768e-03) + ((npartons == 2)*4.80760317e-04) + ((npartons == 3)*5.76963935e-05) + ((npartons == 4)*5.11566146e-05))",
                 "wj_stitching_weight"),
 
             # Weights for corrections
             Weight("puweight", "puweight"),
+            Weight("idWeight_1*idWeight_2","idweight"),
+            Weight("isoWeight_1*isoWeight_2","isoweight"),
+            Weight("trackWeight_1*trackWeight_2","trackweight"),
             #get_triggerweight_for_channel(self.channel._name),
             get_singlelepton_triggerweight_for_channel(self.channel.name),
             Weight("eleTauFakeRateWeight*muTauFakeRateWeight", "leptonTauFakeRateWeight"),
@@ -527,7 +543,7 @@ class TTEstimation(EstimationMethod):
             era=era,
             directory=directory,
             channel=channel,
-            mc_campaign="RunIIFall17MiniAOD")
+            mc_campaign="RunIIFall17MiniAODv2")
 
     def get_weights(self):
         return Weights(
@@ -537,16 +553,17 @@ class TTEstimation(EstimationMethod):
             Weight("numberGeneratedEventsWeight",
                    "numberGeneratedEventsWeight"),
             Weight("crossSectionPerEventWeight", "crossSectionPerEventWeight"),
-            #Weight("0.5", "tt_stitching_weight"),
 
             # Weights for corrections
             Weight("puweight", "puweight"),
+            Weight("idWeight_1*idWeight_2","idweight"),
+            Weight("isoWeight_1*isoWeight_2","isoweight"),
+            Weight("trackWeight_1*trackWeight_2","trackweight"),
             #get_triggerweight_for_channel(self.channel._name),
             get_singlelepton_triggerweight_for_channel(self.channel.name),
             Weight("eleTauFakeRateWeight*muTauFakeRateWeight", "leptonTauFakeRateWeight"),
             get_tauByIsoIdWeight_for_channel(self.channel.name),
             get_eleHLTZvtxWeight_for_channel(self.channel.name),
-            #Weight("topPtReweightWeight", "topPtReweightWeight"),
 
             # Data related scale-factors
             self.era.lumi_weight)
@@ -556,7 +573,6 @@ class TTEstimation(EstimationMethod):
             "process": "TTTo.*",
             "data": False,
             "campaign": self._mc_campaign,
-            #"version": "v1" # to be used if only one inclusive sample is desired
         }
         files = self.era.datasets_helper.get_nicks_with_query(query)
         log_query(self.name, query, files)

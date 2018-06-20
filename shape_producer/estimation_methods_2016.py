@@ -97,6 +97,7 @@ class ggHEstimation_0J(ggHEstimation):
             friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
+
     def get_cuts(self):
         return Cuts(Cut("htxs_stage1cat==103", "htxs_match"))
 
@@ -111,8 +112,10 @@ class ggHEstimation_1J(ggHEstimation):
             friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
+
     def get_cuts(self):
-        return Cuts(Cut("(htxs_stage1cat>=104&&htxs_stage1cat<=107)", "htxs_match"))
+        return Cuts(
+            Cut("(htxs_stage1cat>=104&&htxs_stage1cat<=107)", "htxs_match"))
 
 
 class ggHEstimation_GE2J(ggHEstimation):
@@ -125,8 +128,10 @@ class ggHEstimation_GE2J(ggHEstimation):
             friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
+
     def get_cuts(self):
-        return Cuts(Cut("(htxs_stage1cat>=108&&htxs_stage1cat<=111)", "htxs_match"))
+        return Cuts(
+            Cut("(htxs_stage1cat>=108&&htxs_stage1cat<=111)", "htxs_match"))
 
 
 class ggHEstimation_VBFTOPO(ggHEstimation):
@@ -139,8 +144,10 @@ class ggHEstimation_VBFTOPO(ggHEstimation):
             friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
+
     def get_cuts(self):
-        return Cuts(Cut("(htxs_stage1cat==101||htxs_stage1cat==102)", "htxs_match"))
+        return Cuts(
+            Cut("(htxs_stage1cat==101||htxs_stage1cat==102)", "htxs_match"))
 
 
 class qqHEstimation(HTTEstimation):
@@ -176,6 +183,7 @@ class qqHEstimation_VBFTOPO_JET3VETO(qqHEstimation):
             friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
+
     def get_cuts(self):
         return Cuts(Cut("htxs_stage1cat==201", "htxs_match"))
 
@@ -190,6 +198,7 @@ class qqHEstimation_VBFTOPO_JET3(qqHEstimation):
             friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
+
     def get_cuts(self):
         return Cuts(Cut("htxs_stage1cat==202", "htxs_match"))
 
@@ -204,8 +213,10 @@ class qqHEstimation_REST(qqHEstimation):
             friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
+
     def get_cuts(self):
-        return Cuts(Cut("(htxs_stage1cat==203||htxs_stage1cat==204)", "htxs_match"))
+        return Cuts(
+            Cut("(htxs_stage1cat==203||htxs_stage1cat==204)", "htxs_match"))
 
 
 class qqHEstimation_PTJET1_GT200(qqHEstimation):
@@ -218,6 +229,7 @@ class qqHEstimation_PTJET1_GT200(qqHEstimation):
             friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
+
     def get_cuts(self):
         return Cuts(Cut("htxs_stage1cat==205", "htxs_match"))
 
@@ -294,7 +306,8 @@ class ZTTEstimationTT(ZTTEstimation):
 class ZTTEstimationLL(ZTTEstimation):
     def get_cuts(self):
         return Cuts(
-            Cut("(gen_match_1==3||gen_match_1==4)&&(gen_match_2==3||gen_match_2==4)",
+            Cut(
+                "(gen_match_1==3||gen_match_1==4)&&(gen_match_2==3||gen_match_2==4)",
                 "ztt_genmatch_ll"))
 
 
@@ -539,7 +552,8 @@ class ZJEstimationLL(ZTTEstimation):
 
     def get_cuts(self):
         return Cuts(
-            Cut("!(((gen_match_1==3||gen_match_1==4)&&(gen_match_2==3||gen_match_2==4))||((gen_match_1==1||gen_match_1==2)&&(gen_match_1==gen_match_2)))",
+            Cut(
+                "!(((gen_match_1==3||gen_match_1==4)&&(gen_match_2==3||gen_match_2==4))||((gen_match_1==1||gen_match_1==2)&&(gen_match_1==gen_match_2)))",
                 "zj_genmatch_ll"))
 
 
@@ -556,7 +570,8 @@ class ZJEstimationTT(ZJEstimationMT):
 class ZLEstimationTT(ZLEstimationMT):
     def get_cuts(self):
         return Cuts(
-            Cut("(gen_match_1<6&&gen_match_2<6&&!(gen_match_1==5&&gen_match_2==5))",
+            Cut(
+                "(gen_match_1<6&&gen_match_2<6&&!(gen_match_1==5&&gen_match_2==5))",
                 "zl_genmatch_tt"))
 
 
@@ -578,8 +593,7 @@ class EWKWpEstimation(EstimationMethod):
                 "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
             Weight(
                 "(5.190747826298e-6)/(numberGeneratedEventsWeight*crossSectionPerEventWeight)",
-                "EWKWp_stitching_weight"),
-            self.era.lumi_weight)
+                "EWKWp_stitching_weight"), self.era.lumi_weight)
 
     def get_files(self):
         query = {
@@ -612,8 +626,7 @@ class EWKWmEstimation(EstimationMethod):
                 "hadronic_tau_sf"), Weight("eventWeight", "eventWeight"),
             Weight(
                 "(4.200367267668e-6)/(numberGeneratedEventsWeight*crossSectionPerEventWeight)",
-                "EWKW_stitching_weight"),
-            self.era.lumi_weight)
+                "EWKW_stitching_weight"), self.era.lumi_weight)
 
     def get_files(self):
         query = {
@@ -671,9 +684,27 @@ class WEstimation(SumUpEstimationMethod):
             friend_directory=friend_directory,
             channel=channel,
             processes=[
-                Process("W", WEstimationRaw(era, directory, channel, friend_directory=friend_directory)),
-                Process("EWKWp", EWKWpEstimation(era, directory, channel, friend_directory=friend_directory)),
-                Process("EWKWm", EWKWmEstimation(era, directory, channel, friend_directory=friend_directory))
+                Process(
+                    "W",
+                    WEstimationRaw(
+                        era,
+                        directory,
+                        channel,
+                        friend_directory=friend_directory)),
+                Process(
+                    "EWKWp",
+                    EWKWpEstimation(
+                        era,
+                        directory,
+                        channel,
+                        friend_directory=friend_directory)),
+                Process(
+                    "EWKWm",
+                    EWKWmEstimation(
+                        era,
+                        directory,
+                        channel,
+                        friend_directory=friend_directory))
             ])
 
 
@@ -877,7 +908,8 @@ class TTLEstimationTT(TTEstimation):
 
     def get_cuts(self):
         return Cuts(
-            Cut("((gen_match_1 == 5) && (gen_match_2 == 5))*!((gen_match_1 == 5) && (gen_match_2 == 5))",
+            Cut(
+                "((gen_match_1 == 5) && (gen_match_2 == 5))*!((gen_match_1 == 5) && (gen_match_2 == 5))",
                 "Empty Process")
         )  # All ttbar->real tau events are vetoed for embedded events
 
@@ -917,8 +949,8 @@ class EWKZllEstimation(EstimationMethod):
                 "hadronic_tau_sf"),
             Weight(
                 "(3.989190065346e-6)/(numberGeneratedEventsWeight*crossSectionPerEventWeight)",
-                "EWKZll_stitching_weight"), Weight("eventWeight", "eventWeight"),
-            self.era.lumi_weight)
+                "EWKZll_stitching_weight"),
+            Weight("eventWeight", "eventWeight"), self.era.lumi_weight)
 
     def get_files(self):
         query = {
@@ -951,8 +983,8 @@ class EWKZnnEstimation(EstimationMethod):
                 "hadronic_tau_sf"),
             Weight(
                 "(3.35561920393e-6)/(numberGeneratedEventsWeight*crossSectionPerEventWeight)",
-                "EWKZnn_stitching_weight"), Weight("eventWeight", "eventWeight"),
-            self.era.lumi_weight)
+                "EWKZnn_stitching_weight"),
+            Weight("eventWeight", "eventWeight"), self.era.lumi_weight)
 
     def get_files(self):
         query = {
@@ -977,8 +1009,20 @@ class EWKZEstimation(SumUpEstimationMethod):
             friend_directory=friend_directory,
             channel=channel,
             processes=[
-                Process("EWKZll", EWKZllEstimation(era, directory, channel, friend_directory=friend_directory)),
-                Process("EWKZnn", EWKZnnEstimation(era, directory, channel, friend_directory=friend_directory))
+                Process(
+                    "EWKZll",
+                    EWKZllEstimation(
+                        era,
+                        directory,
+                        channel,
+                        friend_directory=friend_directory)),
+                Process(
+                    "EWKZnn",
+                    EWKZnnEstimation(
+                        era,
+                        directory,
+                        channel,
+                        friend_directory=friend_directory))
             ])
 
 
@@ -1267,8 +1311,10 @@ class WEstimationWithQCD(EstimationMethod):
         wjets_integral_low_mt_os = wjets_low_mt_os_cr_count.result
         wjets_integral_high_mt_os = wjets_high_mt_os_cr_counts.pop(
             self._w_process.name).result
-        logger.debug("Integral of WJets MC in low mt OS region: %s",str(wjets_integral_low_mt_os))
-        logger.debug("Integral of WJets MC in high mt OS region: %s",str(wjets_integral_high_mt_os))
+        logger.debug("Integral of WJets MC in low mt OS region: %s",
+                     str(wjets_integral_low_mt_os))
+        logger.debug("Integral of WJets MC in high mt OS region: %s",
+                     str(wjets_integral_high_mt_os))
 
         R_high_to_low_mt_os = wjets_integral_low_mt_os / wjets_integral_high_mt_os
         R_high_to_low_mt_ss = wjets_low_mt_ss_cr_count.result / wjets_high_mt_ss_cr_counts.pop(
@@ -1281,23 +1327,27 @@ class WEstimationWithQCD(EstimationMethod):
                      str(R_high_to_low_mt_ss))
 
         # Determine yields in wjets CRs
-        logger.debug("Data yield in ss high mt region: %s",str(wjets_high_mt_ss_cr_counts[self._data_process.name].result))
+        logger.debug(
+            "Data yield in ss high mt region: %s",
+            str(wjets_high_mt_ss_cr_counts[self._data_process.name].result))
         high_mt_ss_yield = wjets_high_mt_ss_cr_counts.pop(
             self._data_process.name).result - sum(
                 [s.result for s in wjets_high_mt_ss_cr_counts.values()])
         sum_mc = sum([s.result for s in wjets_high_mt_ss_cr_counts.values()])
-        logger.debug("MC yield to be subtracted: %s",str(sum_mc))
-        for name,s in wjets_high_mt_ss_cr_counts.items():
-            logger.debug(name+" : "+str(s.result/sum_mc))
+        logger.debug("MC yield to be subtracted: %s", str(sum_mc))
+        for name, s in wjets_high_mt_ss_cr_counts.items():
+            logger.debug(name + " : " + str(s.result / sum_mc))
 
-        logger.debgug("Data yield in os high mt region: %s",str(wjets_high_mt_os_cr_counts[self._data_process.name].result))
+        logger.debgug(
+            "Data yield in os high mt region: %s",
+            str(wjets_high_mt_os_cr_counts[self._data_process.name].result))
         high_mt_os_yield = wjets_high_mt_os_cr_counts.pop(
             self._data_process.name).result - sum(
                 [s.result for s in wjets_high_mt_os_cr_counts.values()])
         sum_mc = sum([s.result for s in wjets_high_mt_os_cr_counts.values()])
-        logger.debug("MC yield to be subtracted: %s",sum_mc))
-        for name,s in wjets_high_mt_os_cr_counts.items():
-            logger.debug(name+" : "+str(s.result/sum_mc))
+        logger.debug("MC yield to be subtracted: %s", str(sum_mc))
+        for name, s in wjets_high_mt_os_cr_counts.items():
+            logger.debug(name + " : " + str(s.result / sum_mc))
 
         logger.debug("WJets + QCD yield in ss high mt region: %s",
                      str(high_mt_ss_yield))

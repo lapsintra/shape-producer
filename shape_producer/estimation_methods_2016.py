@@ -1089,6 +1089,70 @@ class VVEstimation(EstimationMethod):
         return self.artus_file_names(files)
 
 
+class VVTEstimationLT(VVEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(VVEstimation, self).__init__(
+            name="TTT",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("gen_match_2==5", "vvt_genmatch_lt"))
+
+
+class VVJEstimationLT(VVEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(VVEstimation, self).__init__(
+            name="VVJ",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("gen_match_2!=5", "vvj_genmatch_lt"))
+    
+
+class VVTEstimationTT(VVEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(VVEstimation, self).__init__(
+            name="VVT",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(
+            Cut("((gen_match_1 == 5) && (gen_match_2 == 5))",
+                "vvt_genmatch_tt"))
+
+
+class VVJEstimationTT(VVEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(VVEstimation, self).__init__(
+            name="VVJ",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(
+            Cut("!((gen_match_1==5)&&(gen_match_2==5))",
+                "vvj_genmatch_tt"))
+
+
 class QCDEstimationET(SStoOSEstimationMethod):
     def __init__(self,
                  era,

@@ -86,8 +86,7 @@ class MTMSSM2017(Channel):
             Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5", "tau_iso"),
             Cut("iso_1<0.15", "muon_iso"),
             Cut("q_1*q_2<0", "os"),
-            #Cut("(trg_singlemuon) || (trg_singlemuon_lowpt) || (trg_muontau_lowptmu)", "trg_selection"))
-            Cut("(trg_singlemuon) || (trg_singlemuon_lowpt) || (trg_singlemuon_lowpt)", "trg_selection"))
+            Cut("(trg_singlemuon == 1) || (trg_singlemuon_lowpt == 1) || (trg_muontau_lowptmu == 1)", "trg_selection"))
 
 
 class MTSM(Channel):
@@ -138,8 +137,7 @@ class ETMSSM2017(Channel):
             Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5", "tau_iso"),
             Cut("iso_1<0.1", "ele_iso"),
             Cut("q_1*q_2<0", "os"),
-            #Cut("(trg_singleelectron) || (trg_singleelectron_lowpt) || (trg_electrontau)", "trg_selection"))
-            Cut("(trg_singleelectron) || (trg_singleelectron_lowpt) || (trg_singleelectron_lowpt)", "trg_selection"))
+            Cut("(trg_singleelectron == 1) || (trg_singleelectron_lowpt == 1) || (trg_electrontau == 1)", "trg_selection"))
 
 
 class ETSM(Channel):
@@ -208,8 +206,7 @@ class TTMSSM2017(Channel):
             Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5", "tau_1_iso"),
             Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5", "tau_2_iso"),
             Cut("q_1*q_2<0", "os"),
-            Cut("(trg_doubletau) || (trg_doubletau_mediso) || (trg_doubletau_lowpt)", "trg_selection")
-            )
+            Cut("(trg_doubletau == 1) || (trg_doubletau_lowpt == 1) || (trg_doubletau_mediso == 1)", "trg_selection"))
 
 
 class EM(Channel):
@@ -235,7 +232,7 @@ class EMMSSM2017(Channel):
             Cut("iso_1<0.15", "ele_iso"),
             Cut("iso_2<0.2", "muon_iso"),
             Cut("q_1*q_2<0", "os"),
-            Cut("(trg_muonelectron_lowptmu) || (trg_muonelectron_lowpte) || (trg_muonelectron_lowpte)", "trg_selection"))
+            Cut("(trg_muonelectron_lowptmu == 1) || (trg_muonelectron_lowpte == 1)", "trg_selection"))
 
 
 class PU(Channel):

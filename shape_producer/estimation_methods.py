@@ -376,7 +376,6 @@ class AddHistogramEstimationMethod(EstimationMethod):
         return root_objects
 
     def do_estimation(self, systematic):
-        print systematic
 
         # Create shapes
         for s in systematic._add_systematics:

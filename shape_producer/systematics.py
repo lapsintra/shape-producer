@@ -169,13 +169,14 @@ class Systematics(object):
         else:
             logger.debug("Create ROOT objects for all systematics.")
 
-            from pathos.multiprocessing import ProcessPool
-            pool = ProcessPool(nodes=self._num_threads)
+            from pathos.multiprocessing import Pool
+            pool = Pool(processes=self._num_threads)
 
             systematics_new = pool.map(systematic_create_root_objects,
                                        [s for s in self._systematics])
             pool.close()
             pool.join()
+            del pool
 
             # Because the new objects have different addresses in memory,
             # the result objects have to be copied.

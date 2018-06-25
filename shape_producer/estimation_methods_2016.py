@@ -1402,7 +1402,7 @@ class WEstimationWithQCD(EstimationMethod):
         for name, s in wjets_high_mt_ss_cr_counts.items():
             logger.debug(name + " : " + str(s.result / sum_mc))
 
-        logger.debgug(
+        logger.debug(
             "Data yield in os high mt region: %s",
             str(wjets_high_mt_os_cr_counts[self._data_process.name].result))
         high_mt_os_yield = wjets_high_mt_os_cr_counts.pop(

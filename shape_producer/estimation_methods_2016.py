@@ -34,6 +34,51 @@ class DataEstimation(EstimationMethod):
         return Cuts()
 
 
+class FakeEstimationLT(DataEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(DataEstimation, self).__init__(
+            name="fakes",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign=None)
+        self._channel = channel
+
+    def get_weights(self):
+        return Weights(Weight("ff2_nom", "fake_factor"))
+    
+    def create_root_objects(self, systematic):
+        aiso_systematic = copy.deepcopy(systematic)
+        aiso_systematic.category.cuts.remove("tau_iso")
+        aiso_systematic.category.cuts.add(Cut("byTightIsolationMVArun2v1DBoldDMwLT_2<0.5&&byVLooseIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_aiso"))
+        return super(FakeEstimationLT, self).create_root_objects(aiso_systematic)
+
+
+class FakeEstimationTT(DataEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(DataEstimation, self).__init__(
+            name="fakes",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign=None)
+        self._channel = channel
+
+    def get_weights(self):
+        return Weights(Weight("(0.5*ff1_nom*(byTightIsolationMVArun2v1DBoldDMwLT_1<0.5)+0.5*ff1_nom*(byTightIsolationMVArun2v1DBoldDMwLT_1<0.5))", "fake_factor"))
+    
+    def create_root_objects(self, systematic):
+        aiso_systematic = copy.deepcopy(systematic)
+        aiso_systematic.category.cuts.remove("tau_1_iso")
+        aiso_systematic.category.cuts.remove("tau_2_iso")
+        aiso_systematic.category.cuts.add(Cut("(byTightIsolationMVArun2v1DBoldDMwLT_2>0.5&&byTightIsolationMVArun2v1DBoldDMwLT_1<0.5&&byVLooseIsolationMVArun2v1DBoldDMwLT_1>0.5)||(byTightIsolationMVArun2v1DBoldDMwLT_1>0.5&&byTightIsolationMVArun2v1DBoldDMwLT_2<0.5&&byVLooseIsolationMVArun2v1DBoldDMwLT_2>0.5)", "tau_aiso"))
+        return super(FakeEstimationLT, self).create_root_objects(aiso_systematic)
+
+
 class HTTEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(HTTEstimation, self).__init__(

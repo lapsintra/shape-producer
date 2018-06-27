@@ -18,12 +18,13 @@ class TTreeContent(object):
                  folder,
                  cuts,
                  weights,
-                 friend_inputfiles=None):  # empty histogram
+                 friend_inputfiles_collection=None):  # empty histogram
         self._name = name
         self._inputfiles = [inputfiles] if isinstance(inputfiles,
                                                       str) else inputfiles
-        self._friend_inputfiles = [friend_inputfiles] if isinstance(
-            friend_inputfiles, str) else friend_inputfiles
+        self._friend_inputfiles_collection = [([friend_inputfiles] if isinstance(
+            friend_inputfiles, str) else friend_inputfiles)
+            for friend_inputfiles in friend_inputfiles_collection]
 
         self._cuts = cuts
         self._weights = weights
@@ -92,7 +93,7 @@ class Histogram(TTreeContent):
                  cuts,
                  weights,
                  variable,
-                 friend_inputfiles=None):  # empty histogram
+                 friend_inputfiles_collection=None):  # empty histogram
         self._variable = variable
         super(Histogram, self).__init__(
             name,
@@ -100,7 +101,7 @@ class Histogram(TTreeContent):
             folder,
             cuts,
             weights,
-            friend_inputfiles=friend_inputfiles)
+            friend_inputfiles_collection=friend_inputfiles_collection)
 
     def create_result(self, dataframe=False):
         if dataframe:
@@ -118,11 +119,12 @@ class Histogram(TTreeContent):
             for inputfile in self._inputfiles:
                 tree.Add(inputfile + "/" + self._folder)
             # repeat this for friends if applicable
-            if self._friend_inputfiles != None:
-                friend_tree = ROOT.TChain()
-                for friend_inputfile in self._friend_inputfiles:
-                    friend_tree.Add(friend_inputfile + "/" + self._folder)
-                tree.AddFriend(friend_tree)
+            if self._friend_inputfiles_collection != None:
+                for friend_inputfiles in self._friend_inputfiles_collection:
+                    friend_tree = ROOT.TChain()
+                    for friend_inputfile in friend_inputfiles:
+                        friend_tree.Add(friend_inputfile + "/" + self._folder)
+                    tree.AddFriend(friend_tree)
 
             # create unfilled template histogram
             hist = ROOT.TH1F(self._name, self._name,
@@ -213,14 +215,14 @@ class Count(TTreeContent):
                  folder,
                  cuts,
                  weights,
-                 friend_inputfiles=None):
+                 friend_inputfiles_collection=None):
         super(Count, self).__init__(
             name,
             inputfiles,
             folder,
             cuts,
             weights,
-            friend_inputfiles=friend_inputfiles)
+            friend_inputfiles_collection=friend_inputfiles_collection)
         self._inputfiles = [inputfiles] if isinstance(inputfiles,
                                                       str) else inputfiles
 
@@ -236,11 +238,12 @@ class Count(TTreeContent):
             for inputfile in self._inputfiles:
                 tree.Add(inputfile + "/" + self._folder)
             # repeat this for friends if applicable
-            if self._friend_inputfiles != None:
-                friend_tree = ROOT.TChain()
-                for friend_inputfile in self._friend_inputfiles:
-                    friend_tree.Add(friend_inputfile + "/" + self._folder)
-                tree.AddFriend(friend_tree)
+            if self._friend_inputfiles_collection != None:
+                for friend_inputfiles in self._friend_inputfiles_collection:
+                    friend_tree = ROOT.TChain()
+                    for friend_inputfile in friend_inputfiles:
+                        friend_tree.Add(friend_inputfile + "/" + self._folder)
+                    tree.AddFriend(friend_tree)
 
             tree.Draw("1>>" + self._name + "(1)",
                       self._cuts.expand() + "*" + self._weights.extract(),

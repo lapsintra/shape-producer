@@ -26,7 +26,8 @@ class EstimationMethod(object):
         self._mc_campaign = mc_campaign
         self._channel = channel
         self._era = era
-        self._friend_directory = friend_directory
+        self._friend_directories = [friend_directory] if isinstance(
+            friend_directory, str) else friend_directory
 
     def get_path(self, systematic, folder):
         return systematic.category.channel.name + "_" + folder + "/ntuple"
@@ -60,10 +61,10 @@ class EstimationMethod(object):
         raise NotImplementedError
 
     def get_friend_files(self):
-        return [
-            filename.replace(self._directory, self._friend_directory)
-            for filename in self.get_files()
-        ]
+        return [[
+            filename.replace(self._directory, friend_directory)
+            for filename in self.get_files()]
+            for friend_directory in self._friend_directories]
 
     def artus_file_names(self, files):
         return [os.path.join(self._directory, f, "%s.root" % f) for f in files]
@@ -88,8 +89,8 @@ class EstimationMethod(object):
         })
         if systematic.category.variable != None:
             histogram_settings[-1]["variable"] = systematic.category.variable
-        if self._friend_directory != None:
-            histogram_settings[-1]["friend_inputfiles"] = self.get_friend_files
+        if self._friend_directories != None:
+            histogram_settings[-1]["friend_inputfiles_collection"] = self.get_friend_files
         return histogram_settings
 
     # TODO: Make this less magic

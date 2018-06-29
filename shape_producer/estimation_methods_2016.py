@@ -69,7 +69,7 @@ class FakeEstimationTT(DataEstimation):
         self._channel = channel
 
     def get_weights(self):
-        return Weights(Weight("(0.5*ff1_nom*(byTightIsolationMVArun2v1DBoldDMwLT_1<0.5)+0.5*ff1_nom*(byTightIsolationMVArun2v1DBoldDMwLT_1<0.5))", "fake_factor"))
+        return Weights(Weight("(0.5*ff1_nom*(byTightIsolationMVArun2v1DBoldDMwLT_1<0.5)+0.5*ff2_nom*(byTightIsolationMVArun2v1DBoldDMwLT_2<0.5))", "fake_factor"))
     
     def create_root_objects(self, systematic):
         aiso_systematic = copy.deepcopy(systematic)

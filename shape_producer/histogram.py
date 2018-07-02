@@ -22,9 +22,11 @@ class TTreeContent(object):
         self._name = name
         self._inputfiles = [inputfiles] if isinstance(inputfiles,
                                                       str) else inputfiles
-        self._friend_inputfiles_collection = [([friend_inputfiles] if isinstance(
-            friend_inputfiles, str) else friend_inputfiles)
-            for friend_inputfiles in friend_inputfiles_collection]
+        self._friend_inputfiles_collection = [
+            ([friend_inputfiles]
+             if isinstance(friend_inputfiles, str) else friend_inputfiles)
+            for friend_inputfiles in friend_inputfiles_collection
+        ]
 
         self._cuts = cuts
         self._weights = weights
@@ -191,7 +193,7 @@ class Histogram(TTreeContent):
         if abs(norm_all - norm_positive) > tolerance * norm_all:
             logger.fatal(
                 "Renormalization failed because the normalization changed by %f, which is above the tolerance %f.",
-                abs(norm_all - norm_positive) , tolerance*norm_all)
+                abs(norm_all - norm_positive), tolerance * norm_all)
             raise Exception
 
         # Renormalize histogram if negative entries are found

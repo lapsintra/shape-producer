@@ -63,8 +63,8 @@ class EstimationMethod(object):
     def get_friend_files(self):
         return [[
             filename.replace(self._directory, friend_directory)
-            for filename in self.get_files()]
-            for friend_directory in self._friend_directories]
+            for filename in self.get_files()
+        ] for friend_directory in self._friend_directories]
 
     def artus_file_names(self, files):
         return [os.path.join(self._directory, f, "%s.root" % f) for f in files]
@@ -90,7 +90,8 @@ class EstimationMethod(object):
         if systematic.category.variable != None:
             histogram_settings[-1]["variable"] = systematic.category.variable
         if self._friend_directories != None:
-            histogram_settings[-1]["friend_inputfiles_collection"] = self.get_friend_files
+            histogram_settings[-1][
+                "friend_inputfiles_collection"] = self.get_friend_files
         return histogram_settings
 
     # TODO: Make this less magic
@@ -334,7 +335,8 @@ class ABCDEstimationMethod(EstimationMethod):
         derived_shape.name = systematic.name
 
         # Replace negative entries by zeros and renormalize shape
-        derived_shape.replace_negative_entries_and_renormalize(tolerance=100.05)
+        derived_shape.replace_negative_entries_and_renormalize(
+            tolerance=100.05)
 
         return derived_shape
 
@@ -426,10 +428,11 @@ class SumUpEstimationMethod(EstimationMethod):
             channel=channel,
             mc_campaign=None)
         self._processes = [copy.deepcopy(p) for p in processes]
-        if factors!=None:
-            if len(processes)!=len(factors):
+        if factors != None:
+            if len(processes) != len(factors):
                 logger.fatal(
-                    "In SumUpEstimationMethod, number of factors must match number of processes!")
+                    "In SumUpEstimationMethod, number of factors must match number of processes!"
+                )
                 raise Exception
             self._factors = factors
         else:
@@ -439,7 +442,7 @@ class SumUpEstimationMethod(EstimationMethod):
         root_objects = []
         systematic._sumUp_systematics = []
         sum_category = copy.deepcopy(systematic.category)
-        sum_category._name += "_sum"+self._name
+        sum_category._name += "_sum" + self._name
         for process in self._processes:
             s = Systematic(
                 category=sum_category,
@@ -476,11 +479,12 @@ class SumUpEstimationMethod(EstimationMethod):
             elif isinstance(shape, Count):
                 if derived_shape == None:
                     derived_shape = shape
-                    derived_shape._result *= factor 
+                    derived_shape._result *= factor
                 else:
                     derived_shape._result += shape.result * factor
             else:
-                logger.fatal("SumUpEstimationMethod expects Histogram or Count")
+                logger.fatal(
+                    "SumUpEstimationMethod expects Histogram or Count")
                 raise Exception
 
         # Rename root object accordingly

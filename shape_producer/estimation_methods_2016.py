@@ -48,12 +48,15 @@ class FakeEstimationLT(DataEstimation):
 
     def get_weights(self):
         return Weights(Weight("ff2_nom", "fake_factor"))
-    
+
     def create_root_objects(self, systematic):
         aiso_systematic = copy.deepcopy(systematic)
         aiso_systematic.category.cuts.remove("tau_iso")
-        aiso_systematic.category.cuts.add(Cut("byTightIsolationMVArun2v1DBoldDMwLT_2<0.5&&byVLooseIsolationMVArun2v1DBoldDMwLT_2>0.5", "tau_aiso"))
-        return super(FakeEstimationLT, self).create_root_objects(aiso_systematic)
+        aiso_systematic.category.cuts.add(
+            Cut("byTightIsolationMVArun2v1DBoldDMwLT_2<0.5&&byVLooseIsolationMVArun2v1DBoldDMwLT_2>0.5",
+                "tau_aiso"))
+        return super(FakeEstimationLT,
+                     self).create_root_objects(aiso_systematic)
 
 
 class FakeEstimationTT(DataEstimation):
@@ -69,14 +72,20 @@ class FakeEstimationTT(DataEstimation):
         self._channel = channel
 
     def get_weights(self):
-        return Weights(Weight("(0.5*ff1_nom*(byTightIsolationMVArun2v1DBoldDMwLT_1<0.5)+0.5*ff2_nom*(byTightIsolationMVArun2v1DBoldDMwLT_2<0.5))", "fake_factor"))
-    
+        return Weights(
+            Weight(
+                "(0.5*ff1_nom*(byTightIsolationMVArun2v1DBoldDMwLT_1<0.5)+0.5*ff2_nom*(byTightIsolationMVArun2v1DBoldDMwLT_2<0.5))",
+                "fake_factor"))
+
     def create_root_objects(self, systematic):
         aiso_systematic = copy.deepcopy(systematic)
         aiso_systematic.category.cuts.remove("tau_1_iso")
         aiso_systematic.category.cuts.remove("tau_2_iso")
-        aiso_systematic.category.cuts.add(Cut("(byTightIsolationMVArun2v1DBoldDMwLT_2>0.5&&byTightIsolationMVArun2v1DBoldDMwLT_1<0.5&&byVLooseIsolationMVArun2v1DBoldDMwLT_1>0.5)||(byTightIsolationMVArun2v1DBoldDMwLT_1>0.5&&byTightIsolationMVArun2v1DBoldDMwLT_2<0.5&&byVLooseIsolationMVArun2v1DBoldDMwLT_2>0.5)", "tau_aiso"))
-        return super(FakeEstimationLT, self).create_root_objects(aiso_systematic)
+        aiso_systematic.category.cuts.add(
+            Cut("(byTightIsolationMVArun2v1DBoldDMwLT_2>0.5&&byTightIsolationMVArun2v1DBoldDMwLT_1<0.5&&byVLooseIsolationMVArun2v1DBoldDMwLT_1>0.5)||(byTightIsolationMVArun2v1DBoldDMwLT_1>0.5&&byTightIsolationMVArun2v1DBoldDMwLT_2<0.5&&byVLooseIsolationMVArun2v1DBoldDMwLT_2>0.5)",
+                "tau_aiso"))
+        return super(FakeEstimationLT,
+                     self).create_root_objects(aiso_systematic)
 
 
 class HTTEstimation(EstimationMethod):
@@ -351,8 +360,7 @@ class ZTTEstimationTT(ZTTEstimation):
 class ZTTEstimationLL(ZTTEstimation):
     def get_cuts(self):
         return Cuts(
-            Cut(
-                "(gen_match_1==3||gen_match_1==4)&&(gen_match_2==3||gen_match_2==4)",
+            Cut("(gen_match_1==3||gen_match_1==4)&&(gen_match_2==3||gen_match_2==4)",
                 "ztt_genmatch_ll"))
 
 
@@ -597,8 +605,7 @@ class ZJEstimationLL(ZTTEstimation):
 
     def get_cuts(self):
         return Cuts(
-            Cut(
-                "!(((gen_match_1==3||gen_match_1==4)&&(gen_match_2==3||gen_match_2==4))||((gen_match_1==1||gen_match_1==2)&&(gen_match_1==gen_match_2)))",
+            Cut("!(((gen_match_1==3||gen_match_1==4)&&(gen_match_2==3||gen_match_2==4))||((gen_match_1==1||gen_match_1==2)&&(gen_match_1==gen_match_2)))",
                 "zj_genmatch_ll"))
 
 
@@ -615,8 +622,7 @@ class ZJEstimationTT(ZJEstimationMT):
 class ZLEstimationTT(ZLEstimationMT):
     def get_cuts(self):
         return Cuts(
-            Cut(
-                "(gen_match_1<6&&gen_match_2<6&&!(gen_match_1==5&&gen_match_2==5))",
+            Cut("(gen_match_1<6&&gen_match_2<6&&!(gen_match_1==5&&gen_match_2==5))",
                 "zl_genmatch_tt"))
 
 
@@ -729,27 +735,24 @@ class WEstimation(SumUpEstimationMethod):
             friend_directory=friend_directory,
             channel=channel,
             processes=[
-                Process(
-                    "W",
-                    WEstimationRaw(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory)),
-                Process(
-                    "EWKWp",
-                    EWKWpEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory)),
-                Process(
-                    "EWKWm",
-                    EWKWmEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory))
+                Process("W",
+                        WEstimationRaw(
+                            era,
+                            directory,
+                            channel,
+                            friend_directory=friend_directory)),
+                Process("EWKWp",
+                        EWKWpEstimation(
+                            era,
+                            directory,
+                            channel,
+                            friend_directory=friend_directory)),
+                Process("EWKWm",
+                        EWKWmEstimation(
+                            era,
+                            directory,
+                            channel,
+                            friend_directory=friend_directory))
             ])
 
 
@@ -953,8 +956,7 @@ class TTLEstimationTT(TTEstimation):
 
     def get_cuts(self):
         return Cuts(
-            Cut(
-                "((gen_match_1 == 5) && (gen_match_2 == 5))*!((gen_match_1 == 5) && (gen_match_2 == 5))",
+            Cut("((gen_match_1 == 5) && (gen_match_2 == 5))*!((gen_match_1 == 5) && (gen_match_2 == 5))",
                 "Empty Process")
         )  # All ttbar->real tau events are vetoed for embedded events
 
@@ -1054,20 +1056,18 @@ class EWKZEstimation(SumUpEstimationMethod):
             friend_directory=friend_directory,
             channel=channel,
             processes=[
-                Process(
-                    "EWKZll",
-                    EWKZllEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory)),
-                Process(
-                    "EWKZnn",
-                    EWKZnnEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory))
+                Process("EWKZll",
+                        EWKZllEstimation(
+                            era,
+                            directory,
+                            channel,
+                            friend_directory=friend_directory)),
+                Process("EWKZnn",
+                        EWKZnnEstimation(
+                            era,
+                            directory,
+                            channel,
+                            friend_directory=friend_directory))
             ])
 
 
@@ -1162,7 +1162,7 @@ class VVJEstimationLT(VVEstimation):
 
     def get_cuts(self):
         return Cuts(Cut("gen_match_2!=5", "vvj_genmatch_lt"))
-    
+
 
 class VVTEstimationTT(VVEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -1194,8 +1194,7 @@ class VVJEstimationTT(VVEstimation):
 
     def get_cuts(self):
         return Cuts(
-            Cut("!((gen_match_1==5)&&(gen_match_2==5))",
-                "vvj_genmatch_tt"))
+            Cut("!((gen_match_1==5)&&(gen_match_2==5))", "vvj_genmatch_tt"))
 
 
 class QCDEstimationET(SStoOSEstimationMethod):

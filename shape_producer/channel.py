@@ -93,6 +93,7 @@ class MTSM(Channel):
     def __init__(self):
         self._name = "mt"
         self._cuts = Cuts(
+            Cut("flagMETFilter==1", "met_filter"),
             Cut("extraelec_veto<0.5", "extraelec_veto"),
             Cut("extramuon_veto<0.5", "extramuon_veto"),
             Cut("dilepton_veto<0.5", "dilepton_veto"),
@@ -144,6 +145,7 @@ class ETSM(Channel):
     def __init__(self):
         self._name = "et"
         self._cuts = Cuts(
+            Cut("flagMETFilter==1", "met_filter"),
             Cut("extraelec_veto<0.5", "extraelec_veto"),
             Cut("extramuon_veto<0.5", "extramuon_veto"),
             Cut("dilepton_veto<0.5", "dilepton_veto"),
@@ -178,6 +180,7 @@ class TTSM(Channel):
     def __init__(self):
         self._name = "tt"
         self._cuts = Cuts(
+            Cut("flagMETFilter==1", "met_filter"),
             Cut("extraelec_veto<0.5", "extraelec_veto"),
             Cut("extramuon_veto<0.5", "extramuon_veto"),
             Cut("dilepton_veto<0.5", "dilepton_veto"),

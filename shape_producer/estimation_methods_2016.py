@@ -1137,7 +1137,7 @@ class VVEstimation(EstimationMethod):
 class VVTEstimationLT(VVEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(VVEstimation, self).__init__(
-            name="TTT",
+            name="VVT",
             folder="nominal",
             era=era,
             directory=directory,

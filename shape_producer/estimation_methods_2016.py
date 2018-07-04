@@ -84,7 +84,7 @@ class FakeEstimationTT(DataEstimation):
         aiso_systematic.category.cuts.add(
             Cut("(byTightIsolationMVArun2v1DBoldDMwLT_2>0.5&&byTightIsolationMVArun2v1DBoldDMwLT_1<0.5&&byVLooseIsolationMVArun2v1DBoldDMwLT_1>0.5)||(byTightIsolationMVArun2v1DBoldDMwLT_1>0.5&&byTightIsolationMVArun2v1DBoldDMwLT_2<0.5&&byVLooseIsolationMVArun2v1DBoldDMwLT_2>0.5)",
                 "tau_aiso"))
-        return super(FakeEstimationLT,
+        return super(FakeEstimationTT,
                      self).create_root_objects(aiso_systematic)
 
 

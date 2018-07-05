@@ -98,7 +98,7 @@ class Relabel(SystematicVariation):
     def name(self):
         name = self._name
         if self._direction:
-            name += "_" + self._direction
+            name += self._direction
         return name
 
     def change_histogram_name(self, h_settings, direction):

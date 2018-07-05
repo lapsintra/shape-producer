@@ -445,12 +445,36 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                       % self.channel.name)
 
     def get_weights(self):
-        return Weights(
-            # Embedded weights
-            Weight(self.embedding_stitchingweight(),
-                   "Stitching weight (embedding)"),
-            Weight("eventWeight", "eventWeight"),
-            Weight("(1.0)", "zPtReweightWeight"))
+        if self.channel.name in {"mt", "et"}:
+            return Weights(
+                Weight("generatorWeight*(generatorWeight<=1.0)",
+                       "simulation_sf"),
+                Weight("muonEffTrgWeight", "scale_factor"),
+                Weight(self.embedding_stitchingweight(),
+                       "2016 stitching weight"),
+                Weight("idWeight_1*triggerWeight_1*isoWeight_1", "leptopn_sf"),
+                Weight("embeddedDecayModeWeight", "decayMode_SF"))
+        elif self.channel.name == "tt":
+            return Weights(
+                Weight("generatorWeight*(generatorWeight<=1.0)",
+                       "simulation_sf"),
+                Weight("muonEffTrgWeight", "scale_factor"),
+                Weight(self.embedding_stitchingweight(),
+                       "2016 stitching weight"),
+                Weight(
+                    "TriggerDataEfficiencyWeight_1*TriggerDataEfficiencyWeight_2",
+                    "trg_sf"),
+                Weight(
+                    "(1.02*(gen_match_2==5)+(gen_match_2!=5))*(1.02*(gen_match_1==5)+(gen_match_1!=5))",
+                    "tau_id"), Weight("embeddedDecayModeWeight",
+                                      "decayMode_SF"))
+        elif self.channel.name == "em":
+            return Weights(
+                Weight("generatorWeight", "simulation_sf"),
+                Weight("muonEffTrgWeight", "scale_factor"),
+                # no trigger sf yet
+                Weight("idWeight_1*isoWeight_1*idWeight_2*isoWeight_2",
+                       "leptopn_sf"))
 
     def get_files(self):
         query = {"process": "Embedding2016(B|C|D|E|F|G|H)", "embedded": True}

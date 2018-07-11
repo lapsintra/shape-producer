@@ -133,8 +133,10 @@ class Systematics(object):
                  output_file,
                  num_threads=1,
                  backend="classic",
-                 find_unique_objects=False):
+                 find_unique_objects=False,
+                 skip_systematic_variations=False):
         # member holding the systematics
+        self._skip_systematic_variations = skip_systematic_variations
         self._systematics = []
         self._backend = backend
         self._output_file = output_file
@@ -225,6 +227,8 @@ class Systematics(object):
     # TODO: Make this nicer, too hacky
     # Enable application of multiple variations at once
     def add_systematic_variation(self, variation, **properties):
+        if self._skip_systematic_variations:
+            return
         new_systematics = []
         for systematic in self._systematics:
             # consider only Nominal values for shifts

@@ -53,7 +53,8 @@ class FakeEstimationLT(DataEstimation):
         aiso_systematic = copy.deepcopy(systematic)
         aiso_systematic.category.cuts.remove("tau_iso")
         aiso_systematic.category.cuts.add(
-            Cut("byTightIsolationMVArun2v1DBoldDMwLT_2<0.5&&byVLooseIsolationMVArun2v1DBoldDMwLT_2>0.5",
+            Cut(
+                "byTightIsolationMVArun2v1DBoldDMwLT_2<0.5&&byVLooseIsolationMVArun2v1DBoldDMwLT_2>0.5",
                 "tau_aiso"))
         return super(FakeEstimationLT,
                      self).create_root_objects(aiso_systematic)
@@ -82,7 +83,8 @@ class FakeEstimationTT(DataEstimation):
         aiso_systematic.category.cuts.remove("tau_1_iso")
         aiso_systematic.category.cuts.remove("tau_2_iso")
         aiso_systematic.category.cuts.add(
-            Cut("(byTightIsolationMVArun2v1DBoldDMwLT_2>0.5&&byTightIsolationMVArun2v1DBoldDMwLT_1<0.5&&byVLooseIsolationMVArun2v1DBoldDMwLT_1>0.5)||(byTightIsolationMVArun2v1DBoldDMwLT_1>0.5&&byTightIsolationMVArun2v1DBoldDMwLT_2<0.5&&byVLooseIsolationMVArun2v1DBoldDMwLT_2>0.5)",
+            Cut(
+                "(byTightIsolationMVArun2v1DBoldDMwLT_2>0.5&&byTightIsolationMVArun2v1DBoldDMwLT_1<0.5&&byVLooseIsolationMVArun2v1DBoldDMwLT_1>0.5)||(byTightIsolationMVArun2v1DBoldDMwLT_1>0.5&&byTightIsolationMVArun2v1DBoldDMwLT_2<0.5&&byVLooseIsolationMVArun2v1DBoldDMwLT_2>0.5)",
                 "tau_aiso"))
         return super(FakeEstimationTT,
                      self).create_root_objects(aiso_systematic)
@@ -141,6 +143,36 @@ class ggHEstimation(HTTEstimation):
         return self.artus_file_names(files)
 
 
+class ggHEstimation_VBFTOPO_JET3VETO(ggHEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="ggH_VBFTOPO_JET3VETO",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("htxs_stage1cat==101", "htxs_match"))
+
+
+class ggHEstimation_VBFTOPO_JET3(ggHEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="ggH_VBFTOPO_JET3",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("htxs_stage1cat==102", "htxs_match"))
+
+
 class ggHEstimation_0J(ggHEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(HTTEstimation, self).__init__(
@@ -156,10 +188,10 @@ class ggHEstimation_0J(ggHEstimation):
         return Cuts(Cut("htxs_stage1cat==103", "htxs_match"))
 
 
-class ggHEstimation_1J(ggHEstimation):
+class ggHEstimation_1J_PTH_0_60(ggHEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(HTTEstimation, self).__init__(
-            name="ggH_1J",
+            name="ggH_1J_PTH_0_60",
             folder="nominal",
             era=era,
             directory=directory,
@@ -168,14 +200,13 @@ class ggHEstimation_1J(ggHEstimation):
             mc_campaign="RunIISummer16MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(
-            Cut("(htxs_stage1cat>=104&&htxs_stage1cat<=107)", "htxs_match"))
+        return Cuts(Cut("htxs_stage1cat==104", "htxs_match"))
 
 
-class ggHEstimation_GE2J(ggHEstimation):
+class ggHEstimation_1J_PTH_60_120(ggHEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(HTTEstimation, self).__init__(
-            name="ggH_GE2J",
+            name="ggH_1J_PTH_60_120",
             folder="nominal",
             era=era,
             directory=directory,
@@ -184,14 +215,13 @@ class ggHEstimation_GE2J(ggHEstimation):
             mc_campaign="RunIISummer16MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(
-            Cut("(htxs_stage1cat>=108&&htxs_stage1cat<=111)", "htxs_match"))
+        return Cuts(Cut("htxs_stage1cat==105", "htxs_match"))
 
 
-class ggHEstimation_VBFTOPO(ggHEstimation):
+class ggHEstimation_1J_PTH_120_200(ggHEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(HTTEstimation, self).__init__(
-            name="ggH_VBFTOPO",
+            name="ggH_1J_PTH_120_200",
             folder="nominal",
             era=era,
             directory=directory,
@@ -200,8 +230,82 @@ class ggHEstimation_VBFTOPO(ggHEstimation):
             mc_campaign="RunIISummer16MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(
-            Cut("(htxs_stage1cat==101||htxs_stage1cat==102)", "htxs_match"))
+        return Cuts(Cut("htxs_stage1cat==106", "htxs_match"))
+
+
+class ggHEstimation_1J_PTH_GT200(ggHEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="ggH_1J_PTH_GT200",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("htxs_stage1cat==107", "htxs_match"))
+
+
+class ggHEstimation_GE2J_PTH_0_60(ggHEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="ggH_GE2J_PTH_0_60",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("htxs_stage1cat==108", "htxs_match"))
+
+
+class ggHEstimation_GE2J_PTH_60_120(ggHEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="ggH_GE2J_PTH_60_120",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("htxs_stage1cat==109", "htxs_match"))
+
+
+class ggHEstimation_GE2J_PTH_120_200(ggHEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="ggH_GE2J_PTH_120_200",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("htxs_stage1cat==110", "htxs_match"))
+
+
+class ggHEstimation_GE2J_PTH_GT200(ggHEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="ggH_GE2J_PTH_GT200",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("htxs_stage1cat==111", "htxs_match"))
 
 
 class qqHEstimation(HTTEstimation):
@@ -257,6 +361,21 @@ class qqHEstimation_VBFTOPO_JET3(qqHEstimation):
         return Cuts(Cut("htxs_stage1cat==202", "htxs_match"))
 
 
+class qqHEstimation_VH2JET(qqHEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="qqH_VH2JET",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("htxs_stage1cat==203", "htxs_match"))
+
+
 class qqHEstimation_REST(qqHEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(HTTEstimation, self).__init__(
@@ -269,8 +388,7 @@ class qqHEstimation_REST(qqHEstimation):
             mc_campaign="RunIISummer16MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(
-            Cut("(htxs_stage1cat==203||htxs_stage1cat==204)", "htxs_match"))
+        return Cuts(Cut("htxs_stage1cat==204", "htxs_match"))
 
 
 class qqHEstimation_PTJET1_GT200(qqHEstimation):
@@ -360,7 +478,8 @@ class ZTTEstimationTT(ZTTEstimation):
 class ZTTEstimationLL(ZTTEstimation):
     def get_cuts(self):
         return Cuts(
-            Cut("(gen_match_1==3||gen_match_1==4)&&(gen_match_2==3||gen_match_2==4)",
+            Cut(
+                "(gen_match_1==3||gen_match_1==4)&&(gen_match_2==3||gen_match_2==4)",
                 "ztt_genmatch_ll"))
 
 
@@ -629,7 +748,8 @@ class ZJEstimationLL(ZTTEstimation):
 
     def get_cuts(self):
         return Cuts(
-            Cut("!(((gen_match_1==3||gen_match_1==4)&&(gen_match_2==3||gen_match_2==4))||((gen_match_1==1||gen_match_1==2)&&(gen_match_1==gen_match_2)))",
+            Cut(
+                "!(((gen_match_1==3||gen_match_1==4)&&(gen_match_2==3||gen_match_2==4))||((gen_match_1==1||gen_match_1==2)&&(gen_match_1==gen_match_2)))",
                 "zj_genmatch_ll"))
 
 
@@ -646,7 +766,8 @@ class ZJEstimationTT(ZJEstimationMT):
 class ZLEstimationTT(ZLEstimationMT):
     def get_cuts(self):
         return Cuts(
-            Cut("(gen_match_1<6&&gen_match_2<6&&!(gen_match_1==5&&gen_match_2==5))",
+            Cut(
+                "(gen_match_1<6&&gen_match_2<6&&!(gen_match_1==5&&gen_match_2==5))",
                 "zl_genmatch_tt"))
 
 
@@ -759,24 +880,27 @@ class WEstimation(SumUpEstimationMethod):
             friend_directory=friend_directory,
             channel=channel,
             processes=[
-                Process("W",
-                        WEstimationRaw(
-                            era,
-                            directory,
-                            channel,
-                            friend_directory=friend_directory)),
-                Process("EWKWp",
-                        EWKWpEstimation(
-                            era,
-                            directory,
-                            channel,
-                            friend_directory=friend_directory)),
-                Process("EWKWm",
-                        EWKWmEstimation(
-                            era,
-                            directory,
-                            channel,
-                            friend_directory=friend_directory))
+                Process(
+                    "W",
+                    WEstimationRaw(
+                        era,
+                        directory,
+                        channel,
+                        friend_directory=friend_directory)),
+                Process(
+                    "EWKWp",
+                    EWKWpEstimation(
+                        era,
+                        directory,
+                        channel,
+                        friend_directory=friend_directory)),
+                Process(
+                    "EWKWm",
+                    EWKWmEstimation(
+                        era,
+                        directory,
+                        channel,
+                        friend_directory=friend_directory))
             ])
 
 
@@ -980,7 +1104,8 @@ class TTLEstimationTT(TTEstimation):
 
     def get_cuts(self):
         return Cuts(
-            Cut("((gen_match_1 == 5) && (gen_match_2 == 5))*!((gen_match_1 == 5) && (gen_match_2 == 5))",
+            Cut(
+                "((gen_match_1 == 5) && (gen_match_2 == 5))*!((gen_match_1 == 5) && (gen_match_2 == 5))",
                 "Empty Process")
         )  # All ttbar->real tau events are vetoed for embedded events
 
@@ -1080,18 +1205,20 @@ class EWKZEstimation(SumUpEstimationMethod):
             friend_directory=friend_directory,
             channel=channel,
             processes=[
-                Process("EWKZll",
-                        EWKZllEstimation(
-                            era,
-                            directory,
-                            channel,
-                            friend_directory=friend_directory)),
-                Process("EWKZnn",
-                        EWKZnnEstimation(
-                            era,
-                            directory,
-                            channel,
-                            friend_directory=friend_directory))
+                Process(
+                    "EWKZll",
+                    EWKZllEstimation(
+                        era,
+                        directory,
+                        channel,
+                        friend_directory=friend_directory)),
+                Process(
+                    "EWKZnn",
+                    EWKZnnEstimation(
+                        era,
+                        directory,
+                        channel,
+                        friend_directory=friend_directory))
             ])
 
 

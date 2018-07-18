@@ -34,7 +34,7 @@ def get_tauByIsoIdWeight_for_channel(channel):
     if "mt" in channel or "et" in channel:
         weight = Weight("((gen_match_2 == 5)*0.87 + (gen_match_2 != 5))", "taubyIsoIdWeight")
     elif "tt" in channel:
-        weight = Weight("((gen_match_1 == 5)*(0.87*(byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)+0.89*(byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5 && byVVLooseIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)) + (gen_match_1 != 5))*((gen_match_2 == 5)*(0.87*(byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5)+0.89*(byTightIsolationMVArun2017v2DBoldDMwLT2017_2<0.5 && byVVLooseIsolationMVArun2017v2DBoldDMwLT2017_2>0.5)) + (gen_match_2 != 5))", "taubyIsoIdWeight")
+        weight = Weight("((gen_match_1 == 5)*(0.87*(byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)+0.89*(byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5 && byMediumIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)) + (gen_match_1 != 5))*((gen_match_2 == 5)*(0.87*(byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5)+0.89*(byTightIsolationMVArun2017v2DBoldDMwLT2017_2<0.5 && byMediumIsolationMVArun2017v2DBoldDMwLT2017_2>0.5)) + (gen_match_2 != 5))", "taubyIsoIdWeight")
     return weight
 
 def get_eleHLTZvtxWeight_for_channel(channel):
@@ -88,7 +88,7 @@ class QCDEstimation_ABCD_TT_ISO2(ABCDEstimationMethod):
             ],
             BD_cuts=[      # cuts to be applied instead of cuts removed above
                 Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2<0.5", "tau_2_iso"),
-                Cut("byVVLooseIsolationMVArun2017v2DBoldDMwLT2017_2>0.5",
+                Cut("byMediumIsolationMVArun2017v2DBoldDMwLT2017_2>0.5",
                     "tau_2_iso_loose"),
             ],
             AB_cut_names=[ # cuts applied in AB, which should be removed in the CD control regions
@@ -115,7 +115,7 @@ class QCDEstimation_ABCD_TT_ISO2_TRANSPOSED(ABCDEstimationMethod):
             ],
             CD_cuts=[      # cuts to be applied instead of cuts removed above
                 Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2<0.5", "tau_2_iso"),
-                Cut("byVVLooseIsolationMVArun2017v2DBoldDMwLT2017_2>0.5",
+                Cut("byMediumIsolationMVArun2017v2DBoldDMwLT2017_2>0.5",
                     "tau_2_iso_loose"),
             ],
             AC_cut_names=[ # cuts applied in AC, which should be removed in the BD control regions
@@ -581,7 +581,7 @@ class TTTEstimation(TTEstimation):
             era=era,
             directory=directory,
             channel=channel,
-            mc_campaign="RunIIFall17MiniAOD")
+            mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
         return Cuts(
@@ -597,9 +597,138 @@ class TTJEstimation(TTEstimation):
             era=era,
             directory=directory,
             channel=channel,
-            mc_campaign="RunIIFall17MiniAOD")
+            mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
         return Cuts(
             Cut("!(gen_match_1 > 2 && gen_match_1 < 6) && (gen_match_1 > 2 && gen_match_2 < 6)",
                 "gen_match_genuine_taus"))
+
+class HTTEstimation(EstimationMethod):
+    def __init__(self, era, directory, channel):
+        super(HTTEstimation, self).__init__(
+            name="HTT",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_weights(self):
+        return Weights(
+            # MC related weights
+            Weight("generatorWeight", "generatorWeight"),
+            Weight("numberGeneratedEventsWeight",
+                   "numberGeneratedEventsWeight"),
+            Weight("crossSectionPerEventWeight", "crossSectionPerEventWeight"),
+
+            # Weights for corrections
+            Weight("puweight", "puweight"),
+            Weight("idWeight_1*idWeight_2","idweight"),
+            Weight("isoWeight_1*isoWeight_2","isoweight"),
+            Weight("trackWeight_1*trackWeight_2","trackweight"),
+            get_triggerweight_for_channel(self.channel._name),
+            #get_singlelepton_triggerweight_for_channel(self.channel.name),
+            Weight("eleTauFakeRateWeight*muTauFakeRateWeight", "leptonTauFakeRateWeight"),
+            get_tauByIsoIdWeight_for_channel(self.channel.name),
+            get_eleHLTZvtxWeight_for_channel(self.channel.name),
+
+            # Data related scale-factors
+            self.era.lumi_weight)
+
+    def get_files(self):
+        query = {
+            "process": "(VBF|GluGlu|Z|W).*HToTauTau_M125",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "powheg\-pythia8"
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
+class SUSYggHEstimation(EstimationMethod):
+    def __init__(self, era, directory, channel, mass):
+        super(SUSYggHEstimation, self).__init__(
+            name="_".join(["ggH",str(mass)]),
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
+        self.mass = mass
+
+    def get_weights(self):
+        return Weights(
+            # MC related weights
+            Weight("generatorWeight", "generatorWeight"),
+            Weight("numberGeneratedEventsWeight",
+                   "numberGeneratedEventsWeight"),
+            Weight("crossSectionPerEventWeight", "crossSectionPerEventWeight"),
+
+            # Weights for corrections
+            Weight("puweight", "puweight"),
+            Weight("idWeight_1*idWeight_2","idweight"),
+            Weight("isoWeight_1*isoWeight_2","isoweight"),
+            Weight("trackWeight_1*trackWeight_2","trackweight"),
+            get_triggerweight_for_channel(self.channel._name),
+            #get_singlelepton_triggerweight_for_channel(self.channel.name),
+            Weight("eleTauFakeRateWeight*muTauFakeRateWeight", "leptonTauFakeRateWeight"),
+            get_tauByIsoIdWeight_for_channel(self.channel.name),
+            get_eleHLTZvtxWeight_for_channel(self.channel.name),
+
+            # Data related scale-factors
+            self.era.lumi_weight)
+
+    def get_files(self):
+        query = {
+            "process": "^SUSYGluGluToHToTauTau_M{MASS}$".format(MASS=self.mass),
+            "data": False,
+            "campaign": self._mc_campaign
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
+class SUSYbbHEstimation(EstimationMethod):
+    def __init__(self, era, directory, channel, mass):
+        super(SUSYbbHEstimation, self).__init__(
+            name="_".join(["bbH",str(mass)]),
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
+        self.mass = mass
+
+    def get_weights(self):
+        return Weights(
+            # MC related weights
+            Weight("generatorWeight", "generatorWeight"),
+            Weight("numberGeneratedEventsWeight",
+                   "numberGeneratedEventsWeight"),
+            Weight("crossSectionPerEventWeight", "crossSectionPerEventWeight"),
+
+            # Weights for corrections
+            Weight("puweight", "puweight"),
+            Weight("idWeight_1*idWeight_2","idweight"),
+            Weight("isoWeight_1*isoWeight_2","isoweight"),
+            Weight("trackWeight_1*trackWeight_2","trackweight"),
+            get_triggerweight_for_channel(self.channel._name),
+            #get_singlelepton_triggerweight_for_channel(self.channel.name),
+            Weight("eleTauFakeRateWeight*muTauFakeRateWeight", "leptonTauFakeRateWeight"),
+            get_tauByIsoIdWeight_for_channel(self.channel.name),
+            get_eleHLTZvtxWeight_for_channel(self.channel.name),
+
+            # Data related scale-factors
+            self.era.lumi_weight)
+
+    def get_files(self):
+        query = {
+            "process": "^SUSYGluGluToBBHToTauTau_M{MASS}$".format(MASS=self.mass),
+            "data": False,
+            "campaign": self._mc_campaign
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)

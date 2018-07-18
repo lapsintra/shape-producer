@@ -151,7 +151,7 @@ class Run2017ReReco17Nov(Era):
 class Run2017ReReco31Mar(Era):
     def __init__(self, database_path):
         super(Run2017ReReco31Mar, self).__init__("Run2017ReReco31Mar",
-                                                 41.29 * 1000.0, database_path)
+                                                 41.529 * 1000.0, database_path)
 
     def data_files(self, channel):
         query = {

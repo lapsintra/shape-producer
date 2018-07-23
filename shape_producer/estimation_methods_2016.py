@@ -581,7 +581,7 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                 Weight(self.embedding_stitchingweight(),
                        "2016 stitching weight"),
                 Weight(
-                    "TriggerDataEfficiencyWeight_1*TriggerDataEfficiencyWeight_2",
+                    "TriggerDataEfficiencyWeight_1*TriggerDataEfficiencyWeight_2*doubleTauTrgWeight",
                     "trg_sf"),
                 Weight(
                     "(1.02*(gen_match_2==5)+(gen_match_2!=5))*(1.02*(gen_match_1==5)+(gen_match_1!=5))",

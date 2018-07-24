@@ -571,14 +571,24 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                       % self.channel.name)
 
     def get_weights(self):
-        if self.channel.name in {"mt", "et"}:
+        if self.channel.name == "mt":
             return Weights(
                 Weight("generatorWeight*(generatorWeight<=1.0)",
                        "simulation_sf"),
                 Weight("muonEffTrgWeight", "scale_factor"),
                 Weight(self.embedding_stitchingweight(),
                        "2016 stitching weight"),
-                Weight("idWeight_1*triggerWeight_1*isoWeight_1", "leptopn_sf"),
+                Weight("idWeight_1*triggerWeight_1*isoWeight_1", "lepton_sf"),
+                Weight("1.0", "mutau_crosstriggerweight"),
+                Weight("embeddedDecayModeWeight", "decayMode_SF"))
+        if self.channel.name == "et":
+            return Weights(
+                Weight("generatorWeight*(generatorWeight<=1.0)",
+                       "simulation_sf"),
+                Weight("muonEffTrgWeight", "scale_factor"),
+                Weight(self.embedding_stitchingweight(),
+                       "2016 stitching weight"),
+                Weight("idWeight_1*triggerWeight_1*isoWeight_1", "lepton_sf"),
                 Weight("embeddedDecayModeWeight", "decayMode_SF"))
         elif self.channel.name == "tt":
             return Weights(

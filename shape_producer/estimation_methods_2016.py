@@ -493,7 +493,7 @@ class ZTTEstimationLL(ZTTEstimation):
 class ZTTEmbeddedEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(ZTTEmbeddedEstimation, self).__init__(
-            name="ZTT",
+            name="EMB",
             folder="nominal",
             era=era,
             friend_directory=friend_directory,
@@ -1000,7 +1000,7 @@ class TTLEstimationMT(TTEstimation):
     # L refering to a prompt t-quark to lepton decay as opposed to t->tau->lepton (important for embedded events)
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
-            name="TTT",
+            name="TTL",
             folder="nominal",
             era=era,
             directory=directory,
@@ -1055,7 +1055,7 @@ class TTTEstimationET(TTTEstimationMT):
 class TTLEstimationET(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
-            name="TTT",
+            name="TTL",
             folder="nominal",
             era=era,
             directory=directory,
@@ -1111,7 +1111,7 @@ class TTTEstimationTT(TTEstimation):
 class TTLEstimationTT(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
-            name="TTT",
+            name="TTL",
             folder="nominal",
             era=era,
             directory=directory,

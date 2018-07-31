@@ -138,6 +138,8 @@ class Histogram(TTreeContent):
                       "goff")
             # write out result
             self._result = ROOT.gDirectory.Get(self._name)
+            # reset the chain to close the open files explicitely
+            tree.Reset()
         return self
 
     def update(self):
@@ -252,6 +254,9 @@ class Count(TTreeContent):
                       "goff")
 
             self._result = ROOT.gDirectory.Get(self._name).GetBinContent(1)
+
+            # reset the chain to close the open files explicitely
+            tree.Reset()
         return self
 
     def save(self, output_tree):

@@ -121,12 +121,14 @@ class Histogram(TTreeContent):
             for inputfile in self._inputfiles:
                 tree.Add(inputfile + "/" + self._folder)
             # repeat this for friends if applicable
+            friend_trees = []
             if self._friend_inputfiles_collection != None:
                 for friend_inputfiles in self._friend_inputfiles_collection:
                     friend_tree = ROOT.TChain()
                     for friend_inputfile in friend_inputfiles:
                         friend_tree.Add(friend_inputfile + "/" + self._folder)
                     tree.AddFriend(friend_tree)
+                    friend_trees.append(friend_tree)
 
             # create unfilled template histogram
             hist = ROOT.TH1F(self._name, self._name,
@@ -140,6 +142,9 @@ class Histogram(TTreeContent):
             self._result = ROOT.gDirectory.Get(self._name)
             # reset the chain to close the open files explicitely
             tree.Reset()
+            for ft in friend_trees:
+                ft.Reset()
+
         return self
 
     def update(self):
@@ -242,12 +247,14 @@ class Count(TTreeContent):
             for inputfile in self._inputfiles:
                 tree.Add(inputfile + "/" + self._folder)
             # repeat this for friends if applicable
+            friend_trees = []
             if self._friend_inputfiles_collection != None:
                 for friend_inputfiles in self._friend_inputfiles_collection:
                     friend_tree = ROOT.TChain()
                     for friend_inputfile in friend_inputfiles:
                         friend_tree.Add(friend_inputfile + "/" + self._folder)
                     tree.AddFriend(friend_tree)
+                    friend_trees.append(friend_tree)
 
             tree.Draw("1>>" + self._name + "(1)",
                       self._cuts.expand() + "*" + self._weights.extract(),
@@ -255,8 +262,11 @@ class Count(TTreeContent):
 
             self._result = ROOT.gDirectory.Get(self._name).GetBinContent(1)
 
-            # reset the chain to close the open files explicitely
+            # reset the chain and friend trees to close the open files explicitely
             tree.Reset()
+            for ft in friend_trees:
+                ft.Reset()
+
         return self
 
     def save(self, output_tree):

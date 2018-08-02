@@ -400,7 +400,9 @@ class RootObjects(object):
     def produce_classic(self, num_threads):
         self.create_output_file()
         self._produced = True
-        logger.info("Start to produce %u shapes in classic mode.", len(self._root_objects))
+        logger.info(
+            "Start to produce %u shapes in classic mode and %u processes.",
+            len(self._root_objects), num_threads)
         if num_threads == 1:
             for ro in self._root_objects:
                 ro.create_result()

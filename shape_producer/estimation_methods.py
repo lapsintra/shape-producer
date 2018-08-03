@@ -321,6 +321,12 @@ class ABCDEstimationMethod(EstimationMethod):
             [s.result for s in C_shapes.values()])
         D_yield = D_shapes.pop(self._data_process.name).result - sum(
             [s.result for s in D_shapes.values()])
+
+        if not D_yield > 0.0:
+            logger.fatal("D_yield in ABCD method for systematic %s is %f.",
+                         systematic.name, D_yield)
+            raise Exception
+
         extrapolation_factor = C_yield / D_yield
         logger.debug("D to C extrapolation factor: %s",
                      str(extrapolation_factor))

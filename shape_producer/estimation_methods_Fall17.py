@@ -61,6 +61,7 @@ class QCDEstimation_SStoOS_MTETEM(SStoOSEstimationMethod):
                  channel,
                  bg_processes,
                  data_process,
+                 friend_directory=None,
                  extrapolation_factor=1.0):
         super(QCDEstimation_SStoOS_MTETEM, self).__init__(
             name="QCD",
@@ -69,12 +70,13 @@ class QCDEstimation_SStoOS_MTETEM(SStoOSEstimationMethod):
             directory=directory,
             channel=channel,
             bg_processes=bg_processes,
+            friend_directory=friend_directory,
             data_process=data_process,
             extrapolation_factor=extrapolation_factor)
 
 
 class QCDEstimation_ABCD_TT_ISO2(ABCDEstimationMethod):
-    def __init__(self, era, directory, channel, bg_processes, data_process):
+    def __init__(self, era, directory, channel, bg_processes, data_process, friend_directory=None):
         super(QCDEstimation_ABCD_TT_ISO2, self).__init__(
             name="QCD",
             folder="nominal",
@@ -82,6 +84,7 @@ class QCDEstimation_ABCD_TT_ISO2(ABCDEstimationMethod):
             directory=directory,
             channel=channel,
             bg_processes=bg_processes,
+            friend_directory=friend_directory,
             data_process=data_process,
             AC_cut_names=[ # cuts applied in AC, which should be removed in the BD control regions
                 "tau_2_iso",
@@ -101,7 +104,7 @@ class QCDEstimation_ABCD_TT_ISO2(ABCDEstimationMethod):
 
 
 class QCDEstimation_ABCD_TT_ISO2_TRANSPOSED(ABCDEstimationMethod):
-    def __init__(self, era, directory, channel, bg_processes, data_process):
+    def __init__(self, era, directory, channel, bg_processes, data_process, friend_directory=None):
         super(QCDEstimation_ABCD_TT_ISO2_TRANSPOSED, self).__init__(
             name="QCD",
             folder="nominal",
@@ -109,6 +112,7 @@ class QCDEstimation_ABCD_TT_ISO2_TRANSPOSED(ABCDEstimationMethod):
             directory=directory,
             channel=channel,
             bg_processes=bg_processes,
+            friend_directory=friend_directory,
             data_process=data_process,
             AB_cut_names=[ # cuts applied in AB, which should be removed in the CD control regions
                 "tau_2_iso"
@@ -128,7 +132,7 @@ class QCDEstimation_ABCD_TT_ISO2_TRANSPOSED(ABCDEstimationMethod):
 
 
 class QCDEstimation_ABCD_TT_ISO1(ABCDEstimationMethod):
-    def __init__(self, era, directory, channel, bg_processes, data_process):
+    def __init__(self, era, directory, channel, bg_processes, data_process, friend_directory=None):
         super(QCDEstimation_ABCD_TT_ISO1, self).__init__(
             name="QCD",
             folder="nominal",
@@ -136,6 +140,7 @@ class QCDEstimation_ABCD_TT_ISO1(ABCDEstimationMethod):
             directory=directory,
             channel=channel,
             bg_processes=bg_processes,
+            friend_directory=friend_directory,
             data_process=data_process,
             AC_cut_names=[ # cuts applied in AC, which should be removed in the BD control regions
                 "tau_1_iso"
@@ -155,13 +160,14 @@ class QCDEstimation_ABCD_TT_ISO1(ABCDEstimationMethod):
 
 
 class VVEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(VVEstimation, self).__init__(
             name="VV",
             folder="nominal",
             era=era,
             directory=directory,
             channel=channel,
+            friend_directory=friend_directory,
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_weights(self):
@@ -252,13 +258,14 @@ class EWKEstimation(EstimationMethod):
 
 
 class DYJetsToLLEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(DYJetsToLLEstimation, self).__init__(
             name="DYJetsToLL",
             folder="nominal",
             era=era,
             directory=directory,
             channel=channel,
+            friend_directory=friend_directory,
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_weights(self):
@@ -311,13 +318,14 @@ class DYJetsToLLEstimation(EstimationMethod):
 
 
 class ZTTEstimation(DYJetsToLLEstimation):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(DYJetsToLLEstimation, self).__init__(
             name="ZTT",
             folder="nominal",
             era=era,
             directory=directory,
             channel=channel,
+            friend_directory=friend_directory,
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
@@ -335,13 +343,14 @@ class ZTTEstimation(DYJetsToLLEstimation):
 
 
 class ZLLEstimation(DYJetsToLLEstimation):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(DYJetsToLLEstimation, self).__init__(
             name="ZLL",
             folder="nominal",
             era=era,
             directory=directory,
             channel=channel,
+            friend_directory=friend_directory,
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
@@ -358,13 +367,14 @@ class ZLLEstimation(DYJetsToLLEstimation):
 
 
 class ZttEmbeddingEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(ZttEmbeddingEstimation, self).__init__(
             name="Ztt",
             folder="nominal",
             era=era,
             directory=directory,
             channel=channel,
+            friend_directory=friend_directory,
             mc_campaign=None)
 
     def get_weights(self):
@@ -484,13 +494,14 @@ class ZttEmbeddingEstimation_ScaledToMC(EstimationMethod):
 
 
 class WEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(WEstimation, self).__init__(
             name="W",
             folder="nominal",
             era=era,
             directory=directory,
             channel=channel,
+            friend_directory=friend_directory,
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_weights(self):
@@ -531,13 +542,14 @@ class WEstimation(EstimationMethod):
 
 
 class TTEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
             name="TT",
             folder="nominal",
             era=era,
             directory=directory,
             channel=channel,
+            friend_directory=friend_directory,
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_weights(self):
@@ -574,13 +586,14 @@ class TTEstimation(EstimationMethod):
 
 
 class TTTEstimation(TTEstimation):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
             name="TTT",
             folder="nominal",
             era=era,
             directory=directory,
             channel=channel,
+            friend_directory=friend_directory,
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
@@ -590,13 +603,14 @@ class TTTEstimation(TTEstimation):
 
 
 class TTJEstimation(TTEstimation):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
             name="TTJ",
             folder="nominal",
             era=era,
             directory=directory,
             channel=channel,
+            friend_directory=friend_directory,
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
@@ -605,13 +619,14 @@ class TTJEstimation(TTEstimation):
                 "gen_match_genuine_taus"))
 
 class HTTEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel):
+    def __init__(self, era, directory, channel, friend_directory=None):
         super(HTTEstimation, self).__init__(
             name="HTT",
             folder="nominal",
             era=era,
             directory=directory,
             channel=channel,
+            friend_directory=friend_directory,
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_weights(self):
@@ -648,13 +663,14 @@ class HTTEstimation(EstimationMethod):
         return self.artus_file_names(files)
 
 class SUSYggHEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, mass):
+    def __init__(self, era, directory, channel, mass, friend_directory=None):
         super(SUSYggHEstimation, self).__init__(
             name="_".join(["ggH",str(mass)]),
             folder="nominal",
             era=era,
             directory=directory,
             channel=channel,
+            friend_directory=friend_directory,
             mc_campaign="RunIIFall17MiniAODv2")
         self.mass = mass
 
@@ -691,13 +707,14 @@ class SUSYggHEstimation(EstimationMethod):
         return self.artus_file_names(files)
 
 class SUSYbbHEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, mass):
+    def __init__(self, era, directory, channel, mass, friend_directory=None):
         super(SUSYbbHEstimation, self).__init__(
             name="_".join(["bbH",str(mass)]),
             folder="nominal",
             era=era,
             directory=directory,
             channel=channel,
+            friend_directory=friend_directory,
             mc_campaign="RunIIFall17MiniAODv2")
         self.mass = mass
 

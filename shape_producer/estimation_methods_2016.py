@@ -1429,13 +1429,14 @@ class QCDEstimationTT(ABCDEstimationMethod):
 
 class WEstimationWithQCD(EstimationMethod):
     def __init__(self, era, directory, channel, bg_processes, data_process,
-                 w_process, qcd_ss_to_os_extrapolation_factor):
+                 w_process, qcd_ss_to_os_extrapolation_factor, friend_directory=None):
         super(WEstimationWithQCD, self).__init__(
             name="WJets",
             folder="nominal",
             era=era,
             directory=directory,
             channel=channel,
+            friend_directory=friend_directory,
             mc_campaign=None)
         self._bg_processes = bg_processes
         self._data_process = data_process
@@ -1666,13 +1667,14 @@ class WEstimationWithQCD(EstimationMethod):
 
 class QCDEstimationWithW(EstimationMethod):
     def __init__(self, era, directory, channel, bg_processes, data_process,
-                 w_process, qcd_ss_to_os_extrapolation_factor):
+                 w_process, qcd_ss_to_os_extrapolation_factor, friend_directory=None):
         super(QCDEstimationWithW, self).__init__(
             name="QCD",
             folder="nominal",
             era=era,
             directory=directory,
             channel=channel,
+            friend_directory=friend_directory,
             mc_campaign=None)
         self._bg_processes = bg_processes
         self._data_process = data_process

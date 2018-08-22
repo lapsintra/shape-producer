@@ -309,7 +309,7 @@ class DYJetsToLLEstimation(EstimationMethod):
             #Weight("numberGeneratedEventsWeight","numberGeneratedEventsWeight"), # to be used only for one inclusive sample
             #Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
             Weight(
-                "(((genbosonmass >= 50.0 && (npartons == 0 || npartons >= 5))*5.89503542e-05) + ((genbosonmass >= 50.0 && npartons == 1)*2.14832024e-05) + ((genbosonmass >= 50.0 && npartons == 2)*2.36744541e-05) + ((genbosonmass >= 50.0 && npartons == 3)*3.7496288e-05) + ((genbosonmass >= 50.0 && npartons == 4)*1.17409282e-05) + ((genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight))",
+                "(((genbosonmass >= 50.0 && (npartons == 0 || npartons >= 5))*5.89503542e-05) + ((genbosonmass >= 50.0 && npartons == 1)*1.85903435e-05) + ((genbosonmass >= 50.0 && npartons == 2)*2.14793428e-05) + ((genbosonmass >= 50.0 && npartons == 3)*3.77599269e-05) + ((genbosonmass >= 50.0 && npartons == 4)*9.22022070e-06) + ((genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight))",
                 "z_stitching_weight"),
 
             # Weights for corrections
@@ -545,7 +545,7 @@ class WEstimation(EstimationMethod):
             #Weight("numberGeneratedEventsWeight","numberGeneratedEventsWeight"), # to be used only for one inclusive sample
             #Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
             Weight(
-                "(((npartons <= 1 || npartons >= 5)*2.28776768e-03) + ((npartons == 2)*4.80760317e-04) + ((npartons == 3)*5.76963935e-05) + ((npartons == 4)*5.11566146e-05))",
+                "(((npartons <= 0 || npartons >= 5)*1.35708973e-03) + ((npartons == 1)*1.18095556e-03) + ((npartons == 2)*3.62031446e-04) + ((npartons == 3)*5.62123666e-05) + ((npartons == 4)*5.37175953e-05))",
                 "wj_stitching_weight"),
 
             # Weights for corrections

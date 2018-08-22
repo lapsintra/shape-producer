@@ -12,20 +12,54 @@ from era import log_query
 
 def get_triggerweight_for_channel(channel):
     weight = Weight("1.0","triggerweight")
+
+    singleMC = "singleTriggerMCEfficiencyWeightKIT_1"
+    crossMCL = "crossTriggerMCEfficiencyWeight_1"
+    MCTau_1 = "((byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5 && byMediumIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight__medium_1 || (byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight__tight_1)"
+    MCTau_2 = MCTau_1.replace("_1","_2")
+
     if "mt" in channel:
-        weight = Weight("((trg_singlemuon || trg_singlemuon_lowpt)*singleTriggerDataEfficiencyWeightKIT_1*(1-trg_muontau_lowptmu*crossTriggerDataEfficiencyWeight_2)+trg_muontau_lowptmu*crossTriggerDataEfficiencyWeight_1*crossTriggerDataEfficiencyWeight_2)/((trg_singlemuon || trg_singlemuon_lowpt)*singleTriggerMCEfficiencyWeightKIT_1*(1-trg_muontau_lowptmu*crossTriggerMCEfficiencyWeight_2)+trg_muontau_lowptmu*crossTriggerMCEfficiencyWeight_1*crossTriggerMCEfficiencyWeight_2)","triggerweight")
+        trig_sL = "(trg_singlemuon_27 || trg_singlemuon_24)"
+        trig_X = "trg_crossmuon_mu20tau27"
+
+        # Eff = Eff(singleL)*(1 - Eff(xTau)) + Eff(xL)*Eff(xTau)
+        MuTauMC = "*".join([trig_sL,singleMC,"(1-"+trig_X+"*"+crossMC+")"])+"+"+"*".join([trig_X,crossMCL,MCTau_2])
+        MuTauData = MuTauMC.replace("MC","Data")
+        MuTau = "("+MuTauData+")/("+MuTauMC+")"
+        weight = Weight(MuTau,"triggerweight")
+
     elif "et" in channel:
-        weight = Weight("((trg_singleelectron || trg_singleelectron_lowpt)*singleTriggerDataEfficiencyWeightKIT_1*(1-trg_electrontau*crossTriggerDataEfficiencyWeight_2)+trg_electrontau*crossTriggerDataEfficiencyWeight_1*crossTriggerDataEfficiencyWeight_2)/((trg_singleelectron || trg_singleelectron_lowpt)*singleTriggerMCEfficiencyWeightKIT_1*(1-trg_electrontau*crossTriggerMCEfficiencyWeight_2)+trg_electrontau*crossTriggerMCEfficiencyWeight_1*crossTriggerMCEfficiencyWeight_2)","triggerweight")
+        trig_sL = "(trg_singleelectron_32_fallback || trg_singleelectron_27)"
+        trig_X = "trg_crossele_ele24tau30"
+
+        # Eff = Eff(singleL)*(1 - Eff(xTau)) + Eff(xL)*Eff(xTau)
+        ElTauMC = "*".join([trig_sL,singleMC,"(1-"+trig_X+"*"+crossMC+")"])+"+"+"*".join([trig_X,crossMCL,MCTau_2])
+        ElTauData = ElTauMC.replace("MC","Data")
+        ElTau = "("+ElTauData+")/("+ElTauMC+")"
+        weight = Weight(ElTau,"triggerweight")
+
     elif "tt" in channel:
-        weight = Weight("(crossTriggerDataEfficiencyWeight_1*crossTriggerDataEfficiencyWeight_2)/(crossTriggerMCEfficiencyWeight_1*crossTriggerMCEfficiencyWeight_2)*(byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5 && byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5) + (byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5 && byTightIsolationMVArun2017v2DBoldDMwLT2017_2 < 0.5) + (crossTriggerDataEfficiencyWeight_1/crossTriggerMCEfficiencyWeight_1)*(byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5 && byTightIsolationMVArun2017v2DBoldDMwLT2017_2 < 0.5) + (crossTriggerDataEfficiencyWeight_2/crossTriggerMCEfficiencyWeight_2)*(byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5 && byTightIsolationMVArun2017v2DBoldDMwLT2017_1 < 0.5)","triggerweight")
+        DiTauMC = "*".join([MCTau_1,MCTau_2])
+        DiTauData = DiTauMC.replace("MC","Data")
+        DiTau = "("+DiTauData+")/("+DiTauMC+")"
+        weight = Weight(DiTau,"triggerweight")
+
     return weight
 
 def get_singlelepton_triggerweight_for_channel(channel):
     weight = Weight("1.0","triggerweight")
+
+    MCTau_1 = "((byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5 && byMediumIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight__medium_1 || (byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight__tight_1)"
+    MCTau_2 = MCTau_1.replace("_1","_2")
+
     if "mt" in channel or "et" in channel:
         weight = Weight("singleTriggerDataEfficiencyWeightKIT_1/singleTriggerMCEfficiencyWeightKIT_1","triggerweight")
     elif "tt" in channel:
-        weight = Weight("(crossTriggerDataEfficiencyWeight_1*crossTriggerDataEfficiencyWeight_2)/(crossTriggerMCEfficiencyWeight_1*crossTriggerMCEfficiencyWeight_2)*(byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5 && byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5) + (byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5 && byTightIsolationMVArun2017v2DBoldDMwLT2017_2 < 0.5) + (crossTriggerDataEfficiencyWeight_1/crossTriggerMCEfficiencyWeight_1)*(byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5 && byTightIsolationMVArun2017v2DBoldDMwLT2017_2 < 0.5) + (crossTriggerDataEfficiencyWeight_2/crossTriggerMCEfficiencyWeight_2)*(byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5 && byTightIsolationMVArun2017v2DBoldDMwLT2017_1 < 0.5)","triggerweight")
+        DiTauMC = "*".join([MCTau_1,MCTau_2])
+        DiTauData = DiTauMC.replace("MC","Data")
+        DiTau = "("+DiTauData+")/("+DiTauMC+")"
+        weight = Weight(DiTau,"triggerweight")
+
     return weight
 
 def get_tauByIsoIdWeight_for_channel(channel):
@@ -40,7 +74,7 @@ def get_tauByIsoIdWeight_for_channel(channel):
 def get_eleHLTZvtxWeight_for_channel(channel):
     weight = Weight("1.0","eleHLTZvtxWeight")
     if "et" in channel:
-        weight = Weight("(trg_singleelectron || trg_singleelectron_lowpt || trg_electrontau)*0.991 + (!(trg_singleelectron || trg_singleelectron_lowpt || trg_electrontau))*1.0", "eleHLTZvtxWeight")
+        weight = Weight("(trg_singleelectron_32_fallback || trg_singleelectron_27 || trg_crossele_ele24tau30)*0.991 + (!(trg_singleelectron_32_fallback || trg_singleelectron_27 || trg_crossele_ele24tau30))*1.0", "eleHLTZvtxWeight")
     return weight
 
 class DataEstimation(DataEstimation2016):

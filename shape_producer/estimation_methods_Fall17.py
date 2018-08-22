@@ -15,7 +15,7 @@ def get_triggerweight_for_channel(channel):
 
     singleMC = "singleTriggerMCEfficiencyWeightKIT_1"
     crossMCL = "crossTriggerMCEfficiencyWeight_1"
-    MCTau_1 = "((byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5 && byMediumIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight__medium_1 || (byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight__tight_1)"
+    MCTau_1 = "((byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5 && byMediumIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight_medium_1 || (byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight_tight_1)"
     MCTau_2 = MCTau_1.replace("_1","_2")
 
     if "mt" in channel:
@@ -23,7 +23,7 @@ def get_triggerweight_for_channel(channel):
         trig_X = "trg_crossmuon_mu20tau27"
 
         # Eff = Eff(singleL)*(1 - Eff(xTau)) + Eff(xL)*Eff(xTau)
-        MuTauMC = "*".join([trig_sL,singleMC,"(1-"+trig_X+"*"+crossMC+")"])+"+"+"*".join([trig_X,crossMCL,MCTau_2])
+        MuTauMC = "*".join([trig_sL,singleMC,"(1-"+trig_X+"*"+crossMCL+")"])+"+"+"*".join([trig_X,crossMCL,MCTau_2])
         MuTauData = MuTauMC.replace("MC","Data")
         MuTau = "("+MuTauData+")/("+MuTauMC+")"
         weight = Weight(MuTau,"triggerweight")
@@ -33,7 +33,7 @@ def get_triggerweight_for_channel(channel):
         trig_X = "trg_crossele_ele24tau30"
 
         # Eff = Eff(singleL)*(1 - Eff(xTau)) + Eff(xL)*Eff(xTau)
-        ElTauMC = "*".join([trig_sL,singleMC,"(1-"+trig_X+"*"+crossMC+")"])+"+"+"*".join([trig_X,crossMCL,MCTau_2])
+        ElTauMC = "*".join([trig_sL,singleMC,"(1-"+trig_X+"*"+crossMCL+")"])+"+"+"*".join([trig_X,crossMCL,MCTau_2])
         ElTauData = ElTauMC.replace("MC","Data")
         ElTau = "("+ElTauData+")/("+ElTauMC+")"
         weight = Weight(ElTau,"triggerweight")
@@ -49,7 +49,7 @@ def get_triggerweight_for_channel(channel):
 def get_singlelepton_triggerweight_for_channel(channel):
     weight = Weight("1.0","triggerweight")
 
-    MCTau_1 = "((byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5 && byMediumIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight__medium_1 || (byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight__tight_1)"
+    MCTau_1 = "((byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5 && byMediumIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight_medium_1 || (byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight_tight_1)"
     MCTau_2 = MCTau_1.replace("_1","_2")
 
     if "mt" in channel or "et" in channel:

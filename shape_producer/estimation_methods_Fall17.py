@@ -31,6 +31,7 @@ def get_triggerweight_for_channel(channel):
     elif "et" in channel:
         trig_sL = "(trg_singleelectron_32_fallback || trg_singleelectron_27)"
         trig_X = "trg_crossele_ele24tau30"
+        singleMC = "((singleTriggerMCEfficiencyWeightKIT_1 && pt_1 > 33.0) + !(pt_1 > 33.0))"
 
         # Eff = Eff(singleL)*(1 - Eff(xTau)) + Eff(xL)*Eff(xTau)
         ElTauMC = "*".join([trig_sL,singleMC,"(1-"+trig_X+"*"+crossMCL+")"])+"+"+"*".join([trig_X,crossMCL,MCTau_2])

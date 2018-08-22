@@ -133,6 +133,7 @@ class ETMSSM2017(Channel):
             Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5", "tau_iso"),
             Cut("iso_1<0.15", "ele_iso"), Cut("q_1*q_2<0", "os"),
             Cut("(trg_singleelectron_27 == 1) || (trg_singleelectron_32_fallback == 1) || (trg_crossele_ele24tau30 == 1)",
+            #Cut("(trg_singleelectron_35 == 1) || (trg_crossele_ele24tau30 == 1)", # better agreement, since proper trigger scale-factors are missing for single-ele 27 & 32
                 "trg_selection"))
 
 

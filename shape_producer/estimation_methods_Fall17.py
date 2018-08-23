@@ -193,7 +193,6 @@ class QCDEstimation_ABCD_TT_ISO1(ABCDEstimationMethod):
             ]
         )
 
-
 class VVEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(VVEstimation, self).__init__(
@@ -245,6 +244,20 @@ class VVEstimation(EstimationMethod):
         files += self.era.datasets_helper.get_nicks_with_query(query)
         log_query(self.name, query, files)
         return self.artus_file_names(files)
+
+class VVLEstimation(VVEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(VVEstimation, self).__init__(
+            name="VVL",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "vv_emb_veto"))
 
 
 class EWKEstimation(EstimationMethod):
@@ -400,39 +413,53 @@ class ZLLEstimation(DYJetsToLLEstimation):
                                    "zll_genmatch")
         return Cuts(zll_genmatch_cut)
 
-
-class ZttEmbeddingEstimation(EstimationMethod):
+class ZTTEmbeddedEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
-        super(ZttEmbeddingEstimation, self).__init__(
-            name="Ztt",
+        super(ZTTEmbeddedEstimation, self).__init__(
+            name="EMB",
             folder="nominal",
             era=era,
+            friend_directory=friend_directory,
             directory=directory,
             channel=channel,
-            friend_directory=friend_directory,
             mc_campaign=None)
 
     def get_weights(self):
-        return Weights(
-
-            # MC related weights
-            Weight("generatorWeight*(generatorWeight <= 1)",
-                   "generatorWeight"),
-
-            # Weights for corrections
-
-            # Data related scale-factors
-        )
+        if self.channel.name in ["mt","et"]:
+            return Weights(
+                Weight("generatorWeight",
+                       "simulation_sf"),
+                Weight("muonEffTrgWeight", "scale_factor"),
+                Weight("idWeight_1*(triggerWeight_1*(triggerWeight_1<1.8)+(triggerWeight_1>=1.8))*isoWeight_1", "lepton_sf"))
+                #~ Weight("1.0", "mutau_crosstriggerweight"),
+                #~ Weight("embeddedDecayModeWeight", "decayMode_SF"))
+        elif self.channel.name == "tt":
+            return Weights(
+                Weight("generatorWeight",
+                       "simulation_sf"),
+                Weight("muonEffTrgWeight", "scale_factor"),
+                Weight(
+                    "crossTriggerDataEfficiencyWeight_tight_1*crossTriggerDataEfficiencyWeight_tight_2",
+                    "trg_sf"))
+        elif self.channel.name == "em":
+            return Weights(
+                Weight("generatorWeight", "simulation_sf"),
+                Weight("muonEffTrgWeight", "scale_factor"),
+                # no trigger sf yet
+                Weight("idWeight_1*isoWeight_1*idWeight_2*isoWeight_2",
+                       "leptopn_sf"))
 
     def get_files(self):
-        query = {"process": "Embedding2017(B|C)", "embedded": True}
-        #query = {"process" : "Embedding2017(B|C|D|E|F)", "embedded" : True}
+        query = {"process": "Embedding2017(B|C|D|E|F)", "embedded": True}
         if self.channel.name == "mt":
             query["campaign"] = "MuTauFinalState"
+            query["scenario"] = ".*v2"
         elif self.channel.name == "et":
             query["campaign"] = "ElTauFinalState"
+            query["scenario"] = ".*v2"
         elif self.channel.name == "tt":
             query["campaign"] = "TauTauFinalState"
+            query["scenario"] = ".*(v2|v3)"
         elif self.channel.name == "em":
             query["campaign"] = "ElMuFinalState"
         files = self.era.datasets_helper.get_nicks_with_query(query)
@@ -450,6 +477,7 @@ class ZttEmbeddingEstimation(EstimationMethod):
             ztt_genmatch_cut = Cut("(gen_match_1>2) && (gen_match_2>3)",
                                    "ztt_genmatch")
         return Cuts(ztt_genmatch_cut)
+
 
 
 class ZttEmbeddingEstimation_ScaledToMC(EstimationMethod):
@@ -618,6 +646,22 @@ class TTEstimation(EstimationMethod):
         files = self.era.datasets_helper.get_nicks_with_query(query)
         log_query(self.name, query, files)
         return self.artus_file_names(files)
+
+class TTLEstimation(TTEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(TTEstimation, self).__init__(
+            name="TTL",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            friend_directory=friend_directory,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "tt_emb_veto"))
+
+
 
 
 class TTTEstimation(TTEstimation):

@@ -64,12 +64,13 @@ def get_singlelepton_triggerweight_for_channel(channel):
     return weight
 
 def get_tauByIsoIdWeight_for_channel(channel):
-    # WPs: VLoose 0.85, Loose 0.89, Medium 0.89, Tight 0.87, VTight 0.85, VVTight 0.82. Currently used: SR mt,et Tight; SR tt Tight, anti-iso CR tt Loose
+    # WPs: VLoose 0.88, Loose 0.89, Medium 0.89, Tight 0.89, VTight 0.86, VVTight 0.84. Currently used: SR mt,et Tight; SR tt Tight, anti-iso CR tt Medium; VVLoose is used for SF estimation and therefore not listed here.
+    # Source: https://indico.cern.ch/event/738043/contributions/3048471/attachments/1674773/2691664/TauId_26062018.pdf
     weight = Weight("1.0","taubyIsoIdWeight")
     if "mt" in channel or "et" in channel:
-        weight = Weight("((gen_match_2 == 5)*0.87 + (gen_match_2 != 5))", "taubyIsoIdWeight")
+        weight = Weight("((gen_match_2 == 5)*0.89 + (gen_match_2 != 5))", "taubyIsoIdWeight")
     elif "tt" in channel:
-        weight = Weight("((gen_match_1 == 5)*(0.87*(byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)+0.89*(byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5 && byMediumIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)) + (gen_match_1 != 5))*((gen_match_2 == 5)*(0.87*(byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5)+0.89*(byTightIsolationMVArun2017v2DBoldDMwLT2017_2<0.5 && byMediumIsolationMVArun2017v2DBoldDMwLT2017_2>0.5)) + (gen_match_2 != 5))", "taubyIsoIdWeight")
+        weight = Weight("((gen_match_1 == 5)*0.89 + (gen_match_1 != 5))*((gen_match_2 == 5)*0.89 + (gen_match_2 != 5))", "taubyIsoIdWeight")
     return weight
 
 def get_eleHLTZvtxWeight_for_channel(channel):

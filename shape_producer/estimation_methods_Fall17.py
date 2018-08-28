@@ -259,7 +259,62 @@ class VVLEstimation(VVEstimation):
     def get_cuts(self):
         return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "vv_emb_veto"))
 
+class VVTEstimationLT(VVEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(VVEstimation, self).__init__(
+            name="VVL",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
 
+    def get_cuts(self):
+        return Cuts(Cut("gen_match_2 == 5", "vv_genuine_tau"))
+
+class VVJEstimationLT(VVEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(VVEstimation, self).__init__(
+            name="VVL",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("gen_match_2 != 5", "vv_fake_tau"))
+
+class VVTEstimationTT(VVEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(VVEstimation, self).__init__(
+            name="VVL",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("(gen_match_1 == 5 && gen_match_2 == 5)", "vv_genuine_tau"))
+
+class VVJEstimationTT(VVEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(VVEstimation, self).__init__(
+            name="VVL",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("!(gen_match_1 == 5 && gen_match_2 == 5)", "vv_fake_tau"))
+        
 class EWKEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(EWKEstimation, self).__init__(
@@ -303,7 +358,6 @@ class EWKEstimation(EstimationMethod):
         files = self.era.datasets_helper.get_nicks_with_query(query)
         log_query(self.name, query, files)
         return self.artus_file_names(files)
-
 
 class DYJetsToLLEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -390,6 +444,11 @@ class ZTTEstimation(DYJetsToLLEstimation):
         return Cuts(ztt_genmatch_cut)
 
 
+class ZTTEstimationTT(ZTTEstimation):
+    def get_cuts(self):
+        return Cuts(Cut("(gen_match_1==5&&gen_match_2==5)", "ztt_genmatch_tt"))
+
+
 class ZLLEstimation(DYJetsToLLEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(DYJetsToLLEstimation, self).__init__(
@@ -412,6 +471,50 @@ class ZLLEstimation(DYJetsToLLEstimation):
             zll_genmatch_cut = Cut("(gen_match_1<3) || (gen_match_2<4)",
                                    "zll_genmatch")
         return Cuts(zll_genmatch_cut)
+
+class ZLEstimationLT(DYJetsToLLEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(DYJetsToLLEstimation, self).__init__(
+            name="ZL",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            friend_directory=friend_directory,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("gen_match_2<5", "zl_genmatch_mt"))
+
+class ZJEstimationLT(DYJetsToLLEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(DYJetsToLLEstimation, self).__init__(
+            name="ZJ",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            friend_directory=friend_directory,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("gen_match_2==6", "zj_genmatch_mt"))
+
+
+
+class ZJEstimationTT(ZJEstimationLT):
+    def get_cuts(self):
+        return Cuts(
+            Cut("(gen_match_2 == 6 || gen_match_1 == 6)", "zj_genmatch_tt"))
+
+
+class ZLEstimationTT(ZLEstimationLT):
+    def get_cuts(self):
+        return Cuts(
+            Cut(
+                "(gen_match_1<6&&gen_match_2<6&&!(gen_match_1==5&&gen_match_2==5))",
+                "zl_genmatch_tt"))
+
 
 class ZTTEmbeddedEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -664,7 +767,7 @@ class TTLEstimation(TTEstimation):
 
 
 
-class TTTEstimation(TTEstimation):
+class TTTEstimationLT(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
             name="TTT",
@@ -677,11 +780,11 @@ class TTTEstimation(TTEstimation):
 
     def get_cuts(self):
         return Cuts(
-            Cut("(gen_match_1 > 2 && gen_match_1 < 6) && (gen_match_1 > 2 && gen_match_2 < 6)",
+            Cut("gen_match_2 == 5",
                 "gen_match_genuine_taus"))
 
 
-class TTJEstimation(TTEstimation):
+class TTJEstimationLT(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
             name="TTJ",
@@ -694,7 +797,40 @@ class TTJEstimation(TTEstimation):
 
     def get_cuts(self):
         return Cuts(
-            Cut("!(gen_match_1 > 2 && gen_match_1 < 6) && (gen_match_1 > 2 && gen_match_2 < 6)",
+            Cut("gen_match_2 != 5",
+                "gen_match_genuine_taus"))
+
+class TTTEstimationTT(TTEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(TTEstimation, self).__init__(
+            name="TTT",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            friend_directory=friend_directory,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(
+            Cut("(gen_match_2 == 5 && gen_match_2 == 5)",
+                "gen_match_genuine_taus"))
+
+
+class TTJEstimationTT(TTEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(TTEstimation, self).__init__(
+            name="TTJ",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            friend_directory=friend_directory,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(
+            Cut("!(gen_match_2 == 5 && gen_match_2 == 5)",
                 "gen_match_genuine_taus"))
 
 class HTTEstimation(EstimationMethod):
@@ -828,3 +964,59 @@ class SUSYbbHEstimation(EstimationMethod):
         files = self.era.datasets_helper.get_nicks_with_query(query)
         log_query(self.name, query, files)
         return self.artus_file_names(files)
+
+class FakeEstimationLT(DataEstimation2016):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(DataEstimation2016, self).__init__(
+            name="fakes",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign=None)
+        self._channel = channel
+
+    def get_weights(self):
+        return Weights(Weight("ff2_nom", "fake_factor"))
+
+    def create_root_objects(self, systematic):
+        aiso_systematic = copy.deepcopy(systematic)
+        aiso_systematic.category.cuts.remove("tau_iso")
+        aiso_systematic.category.cuts.add(
+            Cut(
+                "byTightIsolationMVArun2017v2DBoldDMwLT2017_2<0.5&&byVLooseIsolationMVArun2017v2DBoldDMwLT2017_2>0.5",
+                "tau_aiso"))
+        return super(FakeEstimationLT,
+                     self).create_root_objects(aiso_systematic)
+
+
+class FakeEstimationTT(DataEstimation2016):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(DataEstimation2016, self).__init__(
+            name="fakes",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign=None)
+        self._channel = channel
+
+    def get_weights(self):
+        return Weights(
+            Weight(
+                "(0.5*ff1_nom*(byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5)+0.5*ff2_nom*(byTightIsolationMVArun2017v2DBoldDMwLT2017_2<0.5))",
+                "fake_factor"))
+
+    def create_root_objects(self, systematic):
+        aiso_systematic = copy.deepcopy(systematic)
+        aiso_systematic.category.cuts.remove("tau_1_iso")
+        aiso_systematic.category.cuts.remove("tau_2_iso")
+        aiso_systematic.category.cuts.add(
+            Cut(
+                "(byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5&&byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5&&byVLooseIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)||(byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5&&byTightIsolationMVArun2017v2DBoldDMwLT2017_2<0.5&&byVLooseIsolationMVArun2017v2DBoldDMwLT2017_2>0.5)",
+                "tau_aiso"))
+        return super(FakeEstimationTT,
+                     self).create_root_objects(aiso_systematic)
+

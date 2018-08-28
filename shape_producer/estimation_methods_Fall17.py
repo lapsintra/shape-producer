@@ -391,7 +391,7 @@ class DYJetsToLLEstimation(EstimationMethod):
             Weight("eleTauFakeRateWeight*muTauFakeRateWeight", "leptonTauFakeRateWeight"),
             get_tauByIsoIdWeight_for_channel(self.channel.name),
             get_eleHLTZvtxWeight_for_channel(self.channel.name),
-            #Weight("zPtReweightWeight", "zPtReweightWeight"),
+            Weight("zPtReweightWeight", "zPtReweightWeight"),
 
             # Data related scale-factors
             self.era.lumi_weight)
@@ -403,7 +403,7 @@ class DYJetsToLLEstimation(EstimationMethod):
             "campaign": "RunIIFall17MiniAOD$",
             "generator": "madgraph\-pythia8",
             "extension": "^$",
-            "version": "v2" # to be used if only one inclusive sample is desired
+            "version": "v2"
         }
         queryM50 = {
             "process": "(DY(|1|2|3|4)JetsToLL_M50)",

@@ -377,7 +377,7 @@ class DYJetsToLLEstimation(EstimationMethod):
             Weight("generatorWeight", "generatorWeight"),
             #Weight("numberGeneratedEventsWeight","numberGeneratedEventsWeight"), # to be used only for one inclusive sample
             #Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
-            Weight("((genbosonmass >= 50.0)*5.89503542e-05*((npartons == 0 || npartons >= 5)*1.0 + (npartons == 1)*0.32 + (npartons == 2)*0.36 + (npartons == 3)*0.64 + (npartons == 4)*0.21) + (genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight)",
+            Weight("((genbosonmass >= 50.0)*5.89503542e-05*((npartons == 0 || npartons >= 5)*1.0 + (npartons == 1)*0.3152 + (npartons == 2)*0.3634 + (npartons == 3)*0.6384 + (npartons == 4)*0.2097) + (genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight)",
                 "z_stitching_weight"), # xsec_NNLO [pb] = 5765.4, N_inclusive = 97800939,  xsec_NNLO/N_inclusive = 5.89503542e-05 [pb] weights: [1.0, 0.3152264560877219, 0.3634129397952724, 0.6383571409919083, 0.20970400388334687]
 
             # Weights for corrections
@@ -677,7 +677,7 @@ class WEstimation(EstimationMethod):
             Weight("generatorWeight", "generatorWeight"),
             #Weight("numberGeneratedEventsWeight","numberGeneratedEventsWeight"), # to be used only for one inclusive sample
             #Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
-            Weight("(1.35708973e-03*((npartons <= 0 || npartons >= 5)*1.0 + (npartons == 1)*0.87 + (npartons == 2)*0.26 + (npartons == 3)*0.04 + (npartons == 4)*0.04))",
+            Weight("(1.35708973e-03*((npartons <= 0 || npartons >= 5)*1.0 + (npartons == 1)*0.8692 + (npartons == 2)*0.2620 + (npartons == 3)*0.0406 + (npartons == 4)*0.0394))",
                 "wj_stitching_weight"), # xsec_NNLO [pb] = 61526.7, N_inclusive = 45337238, xsec_NNLO/N_inclusive = 1.35708973e-03 [pb] weights: [1.0, 0.8691509094676722, 0.2619981132261768, 0.040603231819572184, 0.03938985513682991]
 
             # Weights for corrections

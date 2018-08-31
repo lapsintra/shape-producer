@@ -533,9 +533,9 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                 Weight("generatorWeight",
                        "simulation_sf"),
                 Weight("muonEffTrgWeight", "scale_factor"),
-                Weight("idWeight_1*(triggerWeight_1*(triggerWeight_1<1.8)+(triggerWeight_1>=1.8))*isoWeight_1", "lepton_sf"))
+                Weight("idWeight_1*(triggerWeight_1*(triggerWeight_1<1.8)+(triggerWeight_1>=1.8))*isoWeight_1", "lepton_sf"),
                 #~ Weight("1.0", "mutau_crosstriggerweight"),
-                #~ Weight("embeddedDecayModeWeight", "decayMode_SF"))
+                Weight("embeddedDecayModeWeight", "decayMode_SF"))
         elif self.channel.name == "tt":
             return Weights(
                 Weight("generatorWeight",
@@ -543,7 +543,8 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                 Weight("muonEffTrgWeight", "scale_factor"),
                 Weight(
                     "crossTriggerDataEfficiencyWeight_tight_MVA_1*crossTriggerDataEfficiencyWeight_tight_MVA_2",
-                    "trg_sf"))
+                    "trg_sf"),
+                Weight("embeddedDecayModeWeight", "decayMode_SF"))
         elif self.channel.name == "em":
             return Weights(
                 Weight("generatorWeight", "simulation_sf"),

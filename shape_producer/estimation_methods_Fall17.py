@@ -377,9 +377,8 @@ class DYJetsToLLEstimation(EstimationMethod):
             Weight("generatorWeight", "generatorWeight"),
             #Weight("numberGeneratedEventsWeight","numberGeneratedEventsWeight"), # to be used only for one inclusive sample
             #Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
-            Weight(
-                "(((genbosonmass >= 50.0 && (npartons == 0 || npartons >= 5))*5.89503542e-05) + ((genbosonmass >= 50.0 && npartons == 1)*1.85903435e-05) + ((genbosonmass >= 50.0 && npartons == 2)*2.14793428e-05) + ((genbosonmass >= 50.0 && npartons == 3)*3.77599269e-05) + ((genbosonmass >= 50.0 && npartons == 4)*9.22022070e-06) + ((genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight))",
-                "z_stitching_weight"),
+            Weight("((genbosonmass >= 50.0)*5.89503542e-05*((npartons == 0 || npartons >= 5)*1.0 + (npartons == 1)*0.32 + (npartons == 2)*0.36 + (npartons == 3)*0.64 + (npartons == 4)*0.21) + (genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight)",
+                "z_stitching_weight"), # xsec_NNLO [pb] = 5765.4, N_inclusive = 97800939,  xsec_NNLO/N_inclusive = 5.89503542e-05 [pb]
 
             # Weights for corrections
             Weight("puweight", "puweight"),

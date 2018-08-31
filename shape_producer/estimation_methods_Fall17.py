@@ -677,7 +677,7 @@ class WEstimation(EstimationMethod):
             Weight("generatorWeight", "generatorWeight"),
             #Weight("numberGeneratedEventsWeight","numberGeneratedEventsWeight"), # to be used only for one inclusive sample
             #Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
-            Weight("(1.35708973e-03*(npartons <= 0 || npartons >= 5)*1.0 + (npartons == 1)*0.87 + (npartons == 2)*0.26 + (npartons == 3)*0.04 + (npartons == 4)*0.04)",
+            Weight("(1.35708973e-03*((npartons <= 0 || npartons >= 5)*1.0 + (npartons == 1)*0.87 + (npartons == 2)*0.26 + (npartons == 3)*0.04 + (npartons == 4)*0.04))",
                 "wj_stitching_weight"), # xsec_NNLO [pb] = 61526.7, N_inclusive = 45337238, xsec_NNLO/N_inclusive = 1.35708973e-03 [pb] weights: [1.0, 0.8691509094676722, 0.2619981132261768, 0.040603231819572184, 0.03938985513682991]
 
             # Weights for corrections

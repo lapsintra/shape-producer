@@ -205,7 +205,7 @@ class TTMSSM2017(Channel):
                 "tau_1_iso"),
             Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5",
                 "tau_2_iso"), Cut("q_1*q_2<0", "os"),
-            Cut("((generatorWeight<=0.8)+(generatorWeight>0.8)*((trg_doubletau_35_tightiso_tightid == 1) || (trg_doubletau_40_mediso_tightid == 1) || (trg_doubletau_40_tightiso == 1)))*(pt_1>40 && pt_2 > 40)",
+            Cut("(isEmbedded && pt_1>40 && pt_2 > 40) || ((trg_doubletau_35_tightiso_tightid == 1) || (trg_doubletau_40_mediso_tightid == 1) || (trg_doubletau_40_tightiso == 1))",
                 "trg_selection")) # workaround to distuinguish embedded events and not apply tau trigger (only embedded events have generatorWeight ~0.0-0.25) Replace with "isEmbedded" in next artus run
 
 

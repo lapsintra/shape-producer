@@ -258,12 +258,18 @@ class VVLEstimation(VVEstimation):
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "vv_emb_veto"))
+        if "mt" in self.channel.name or "et" in self.channel.name:
+            ff_veto = "!(gen_match_2 == 6)"
+        elif "tt" in self.channel.name:
+            ff_veto = "!(gen_match_1 == 6 || gen_match_2 == 6)"
+        elif "em" in self.channel.name:
+            ff_veto = "(1.0)"
+        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"%ff_veto, "vv_emb_and_ff_veto"))
 
-class VVTEstimationLT(VVEstimation):
+class VVTEstimation(VVEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(VVEstimation, self).__init__(
-            name="VVL",
+            name="VVT",
             folder="nominal",
             era=era,
             directory=directory,
@@ -272,12 +278,12 @@ class VVTEstimationLT(VVEstimation):
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(Cut("gen_match_2 == 5", "vv_genuine_tau"))
+        return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "vv_genuine_tau"))
 
-class VVJEstimationLT(VVEstimation):
+class VVJEstimation(VVEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(VVEstimation, self).__init__(
-            name="VVL",
+            name="VVJ",
             folder="nominal",
             era=era,
             directory=directory,
@@ -286,35 +292,14 @@ class VVJEstimationLT(VVEstimation):
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(Cut("gen_match_2 != 5", "vv_fake_tau"))
-
-class VVTEstimationTT(VVEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(VVEstimation, self).__init__(
-            name="VVL",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            mc_campaign="RunIIFall17MiniAODv2")
-
-    def get_cuts(self):
-        return Cuts(Cut("(gen_match_1 == 5 && gen_match_2 == 5)", "vv_genuine_tau"))
-
-class VVJEstimationTT(VVEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(VVEstimation, self).__init__(
-            name="VVL",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            mc_campaign="RunIIFall17MiniAODv2")
-
-    def get_cuts(self):
-        return Cuts(Cut("!(gen_match_1 == 5 && gen_match_2 == 5)", "vv_fake_tau"))
+        ct = ""
+        if "mt" in self.channel.name or "et" in self.channel.name:
+            ct = "(gen_match_2 == 6 && gen_match_2 == 6)"
+        elif "tt" in self.channel.name:
+            ct = "(gen_match_1 == 6 || gen_match_2 == 6)"
+        elif "em" in self.channel.name:
+            ct = "(0.0 == 1.0)"
+        return Cuts(Cut(ct, "vv_fakes"))
         
 class EWKEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -430,23 +415,20 @@ class ZTTEstimation(DYJetsToLLEstimation):
             friend_directory=friend_directory,
             mc_campaign="RunIIFall17MiniAODv2")
 
+#    def get_cuts(self):
+#
+#        ztt_genmatch_cut = Cut("1 == 1", "ztt_genmatch")
+#        if self.channel.name in ["mt", "et"]:
+#            ztt_genmatch_cut = Cut("gen_match_2==5", "ztt_genmatch")
+#        elif self.channel.name == "tt":
+#            ztt_genmatch_cut = Cut("(gen_match_1==5) && (gen_match_2==5)",
+#                                   "ztt_genmatch")
+#        elif self.channel.name == "em":
+#            ztt_genmatch_cut = Cut("(gen_match_1>2) && (gen_match_2>3)",
+#                                   "ztt_genmatch")
+#        return Cuts(ztt_genmatch_cut)
     def get_cuts(self):
-
-        ztt_genmatch_cut = Cut("1 == 1", "ztt_genmatch")
-        if self.channel.name in ["mt", "et"]:
-            ztt_genmatch_cut = Cut("gen_match_2==5", "ztt_genmatch")
-        elif self.channel.name == "tt":
-            ztt_genmatch_cut = Cut("(gen_match_1==5) && (gen_match_2==5)",
-                                   "ztt_genmatch")
-        elif self.channel.name == "em":
-            ztt_genmatch_cut = Cut("(gen_match_1>2) && (gen_match_2>3)",
-                                   "ztt_genmatch")
-        return Cuts(ztt_genmatch_cut)
-
-
-class ZTTEstimationTT(ZTTEstimation):
-    def get_cuts(self):
-        return Cuts(Cut("(gen_match_1==5&&gen_match_2==5)", "ztt_genmatch_tt"))
+        return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "dy_genuine_tau"))
 
 
 class ZLLEstimation(DYJetsToLLEstimation):
@@ -460,33 +442,27 @@ class ZLLEstimation(DYJetsToLLEstimation):
             friend_directory=friend_directory,
             mc_campaign="RunIIFall17MiniAODv2")
 
+#    def get_cuts(self):
+#        zll_genmatch_cut = Cut("1 == 1", "zll_genmatch")
+#        if self.channel.name in ["mt", "et"]:
+#            zll_genmatch_cut = Cut("gen_match_2!=5", "zll_genmatch")
+#        elif self.channel.name == "tt":
+#            zll_genmatch_cut = Cut("(gen_match_1!=5) || (gen_match_2!=5)",
+#                                   "zll_genmatch")
+#        elif self.channel.name == "em":
+#            zll_genmatch_cut = Cut("(gen_match_1<3) || (gen_match_2<4)",
+#                                   "zll_genmatch")
+#        return Cuts(zll_genmatch_cut)
     def get_cuts(self):
-        zll_genmatch_cut = Cut("1 == 1", "zll_genmatch")
-        if self.channel.name in ["mt", "et"]:
-            zll_genmatch_cut = Cut("gen_match_2!=5", "zll_genmatch")
-        elif self.channel.name == "tt":
-            zll_genmatch_cut = Cut("(gen_match_1!=5) || (gen_match_2!=5)",
-                                   "zll_genmatch")
-        elif self.channel.name == "em":
-            zll_genmatch_cut = Cut("(gen_match_1<3) || (gen_match_2<4)",
-                                   "zll_genmatch")
-        return Cuts(zll_genmatch_cut)
+        if "mt" in self.channel.name or "et" in self.channel.name:
+            ff_veto = "!(gen_match_2 == 6)"
+        elif "tt" in self.channel.name:
+            ff_veto = "!(gen_match_1 == 6 || gen_match_2 == 6)"
+        elif "em" in self.channel.name:
+            ff_veto = "(1.0)"
+        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"%ff_veto, "dy_emb_and_ff_veto"))
 
-class ZLEstimationLT(DYJetsToLLEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(DYJetsToLLEstimation, self).__init__(
-            name="ZL",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            channel=channel,
-            friend_directory=friend_directory,
-            mc_campaign="RunIIFall17MiniAODv2")
-
-    def get_cuts(self):
-        return Cuts(Cut("gen_match_2<5", "zl_genmatch_mt"))
-
-class ZJEstimationLT(DYJetsToLLEstimation):
+class ZJEstimation(DYJetsToLLEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(DYJetsToLLEstimation, self).__init__(
             name="ZJ",
@@ -498,22 +474,14 @@ class ZJEstimationLT(DYJetsToLLEstimation):
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(Cut("gen_match_2==6", "zj_genmatch_mt"))
-
-
-
-class ZJEstimationTT(ZJEstimationLT):
-    def get_cuts(self):
-        return Cuts(
-            Cut("(gen_match_2 == 6 || gen_match_1 == 6)", "zj_genmatch_tt"))
-
-
-class ZLEstimationTT(ZLEstimationLT):
-    def get_cuts(self):
-        return Cuts(
-            Cut(
-                "(gen_match_1<6&&gen_match_2<6&&!(gen_match_1==5&&gen_match_2==5))",
-                "zl_genmatch_tt"))
+        ct = ""
+        if "mt" in self.channel.name or "et" in self.channel.name:
+            ct = "(gen_match_2 == 6 && gen_match_2 == 6)"
+        elif "tt" in self.channel.name:
+            ct = "(gen_match_1 == 6 || gen_match_2 == 6)"
+        elif "em" in self.channel.name:
+            ct = "(0.0 == 1.0)"
+        return Cuts(Cut(ct, "dy_fakes"))
 
 
 class ZTTEmbeddedEstimation(EstimationMethod):
@@ -570,18 +538,19 @@ class ZTTEmbeddedEstimation(EstimationMethod):
         log_query(self.name, query, files)
         return self.artus_file_names(files)
 
+#    def get_cuts(self):
+#        ztt_genmatch_cut = Cut("1 == 1", "ztt_genmatch")
+#        if self.channel.name in ["mt", "et"]:
+#            ztt_genmatch_cut = Cut("gen_match_2==5", "ztt_genmatch")
+#        elif self.channel.name == "tt":
+#            ztt_genmatch_cut = Cut("(gen_match_1==5) && (gen_match_2==5)",
+#                                   "ztt_genmatch")
+#        elif self.channel.name == "em":
+#            ztt_genmatch_cut = Cut("(gen_match_1>2) && (gen_match_2>3)",
+#                                   "ztt_genmatch")
+#        return Cuts(ztt_genmatch_cut)
     def get_cuts(self):
-        ztt_genmatch_cut = Cut("1 == 1", "ztt_genmatch")
-        if self.channel.name in ["mt", "et"]:
-            ztt_genmatch_cut = Cut("gen_match_2==5", "ztt_genmatch")
-        elif self.channel.name == "tt":
-            ztt_genmatch_cut = Cut("(gen_match_1==5) && (gen_match_2==5)",
-                                   "ztt_genmatch")
-        elif self.channel.name == "em":
-            ztt_genmatch_cut = Cut("(gen_match_1>2) && (gen_match_2>3)",
-                                   "ztt_genmatch")
-        return Cuts(ztt_genmatch_cut)
-
+        return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "dy_genuine_tau"))
 
 
 class ZttEmbeddingEstimation_ScaledToMC(EstimationMethod):
@@ -762,12 +731,16 @@ class TTLEstimation(TTEstimation):
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "tt_emb_veto"))
+        if "mt" in self.channel.name or "et" in self.channel.name:
+            ff_veto = "!(gen_match_2 == 6)"
+        elif "tt" in self.channel.name:
+            ff_veto = "!(gen_match_1 == 6 || gen_match_2 == 6)"
+        elif "em" in self.channel.name:
+            ff_veto = "(1.0)"
+        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"%ff_veto, "tt_emb_and_ff_veto"))
 
 
-
-
-class TTTEstimationLT(TTEstimation):
+class TTTEstimation(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
             name="TTT",
@@ -779,12 +752,10 @@ class TTTEstimationLT(TTEstimation):
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(
-            Cut("gen_match_2 == 5",
-                "gen_match_genuine_taus"))
+        return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "tt_genuine_tau"))
 
 
-class TTJEstimationLT(TTEstimation):
+class TTJEstimation(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
             name="TTJ",
@@ -796,42 +767,15 @@ class TTJEstimationLT(TTEstimation):
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(
-            Cut("gen_match_2 != 5",
-                "gen_match_genuine_taus"))
+        ct = ""
+        if "mt" in self.channel.name or "et" in self.channel.name:
+            ct = "(gen_match_2 == 6 && gen_match_2 == 6)"
+        elif "tt" in self.channel.name:
+            ct = "(gen_match_1 == 6 || gen_match_2 == 6)"
+        elif "em" in self.channel.name:
+            ct = "(0.0 == 1.0)"
+        return Cuts(Cut(ct, "tt_fakes"))
 
-class TTTEstimationTT(TTEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(TTEstimation, self).__init__(
-            name="TTT",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            channel=channel,
-            friend_directory=friend_directory,
-            mc_campaign="RunIIFall17MiniAODv2")
-
-    def get_cuts(self):
-        return Cuts(
-            Cut("(gen_match_2 == 5 && gen_match_2 == 5)",
-                "gen_match_genuine_taus"))
-
-
-class TTJEstimationTT(TTEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(TTEstimation, self).__init__(
-            name="TTJ",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            channel=channel,
-            friend_directory=friend_directory,
-            mc_campaign="RunIIFall17MiniAODv2")
-
-    def get_cuts(self):
-        return Cuts(
-            Cut("!(gen_match_2 == 5 && gen_match_2 == 5)",
-                "gen_match_genuine_taus"))
 
 class HTTEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):

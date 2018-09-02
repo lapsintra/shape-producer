@@ -298,7 +298,7 @@ class VVJEstimation(VVEstimation):
         elif "tt" in self.channel.name:
             ct = "(gen_match_1 == 6 || gen_match_2 == 6)"
         elif "em" in self.channel.name:
-            ct = "(0.0 == 1.0)"
+            ct = "0.0 == 1.0"
         return Cuts(Cut(ct, "vv_fakes"))
         
 class EWKEstimation(EstimationMethod):
@@ -344,6 +344,47 @@ class EWKEstimation(EstimationMethod):
         files = self.era.datasets_helper.get_nicks_with_query(query)
         log_query(self.name, query, files)
         return self.artus_file_names(files)
+
+class EWKLEstimation(EWKEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(EWKEstimation, self).__init__(
+            name="EWKL",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_cuts(self):
+        if "mt" in self.channel.name or "et" in self.channel.name:
+            ff_veto = "!(gen_match_2 == 6)"
+        elif "tt" in self.channel.name:
+            ff_veto = "!(gen_match_1 == 6 || gen_match_2 == 6)"
+        elif "em" in self.channel.name:
+            ff_veto = "(1.0)"
+        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"%ff_veto, "ewk_emb_and_ff_veto"))
+
+class EWKJEstimation(EWKEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(EWKEstimation, self).__init__(
+            name="EWKJ",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_cuts(self):
+        ct = ""
+        if "mt" in self.channel.name or "et" in self.channel.name:
+            ct = "(gen_match_2 == 6 && gen_match_2 == 6)"
+        elif "tt" in self.channel.name:
+            ct = "(gen_match_1 == 6 || gen_match_2 == 6)"
+        elif "em" in self.channel.name:
+            ct = "0 == 1"
+        return Cuts(Cut(ct, "ewk_fakes"))
 
 class DYJetsToLLEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -480,7 +521,7 @@ class ZJEstimation(DYJetsToLLEstimation):
         elif "tt" in self.channel.name:
             ct = "(gen_match_1 == 6 || gen_match_2 == 6)"
         elif "em" in self.channel.name:
-            ct = "(0.0 == 1.0)"
+            ct = "0 == 1"
         return Cuts(Cut(ct, "dy_fakes"))
 
 
@@ -773,7 +814,7 @@ class TTJEstimation(TTEstimation):
         elif "tt" in self.channel.name:
             ct = "(gen_match_1 == 6 || gen_match_2 == 6)"
         elif "em" in self.channel.name:
-            ct = "(0.0 == 1.0)"
+            ct = "0 == 1"
         return Cuts(Cut(ct, "tt_fakes"))
 
 

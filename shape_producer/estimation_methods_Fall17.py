@@ -345,6 +345,20 @@ class EWKEstimation(EstimationMethod):
         log_query(self.name, query, files)
         return self.artus_file_names(files)
 
+class EWKTEstimation(EWKEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(EWKEstimation, self).__init__(
+            name="EWKT",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_cuts(self):
+        return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "ewk_genuine_tau"))
+
 class EWKLEstimation(EWKEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(EWKEstimation, self).__init__(

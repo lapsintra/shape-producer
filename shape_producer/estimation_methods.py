@@ -179,7 +179,7 @@ class SStoOSEstimationMethod(EstimationMethod):
             s.do_estimation()
 
         # Data shape
-        shape = systematic._qcd_systematics[0].shape
+        shape = copy.deepcopy(systematic._qcd_systematics[0].shape)
 
         # Subtract MC shapes from data shape
         for s in systematic._qcd_systematics[1:]:

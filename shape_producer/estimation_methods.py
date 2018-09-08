@@ -332,7 +332,7 @@ class ABCDEstimationMethod(EstimationMethod):
                      str(extrapolation_factor))
 
         # Derive final shape
-        derived_shape = B_shapes.pop(self._data_process.name)
+        derived_shape = copy.deepcopy(B_shapes.pop(self._data_process.name))
         for s in B_shapes.values():
             derived_shape.result.Add(s.result, -1.0)
         derived_shape.result.Scale(extrapolation_factor)

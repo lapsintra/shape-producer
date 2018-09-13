@@ -300,7 +300,7 @@ class VVJEstimation(VVEstimation):
         elif "em" in self.channel.name:
             ct = "0.0 == 1.0"
         return Cuts(Cut(ct, "vv_fakes"))
-        
+
 class EWKEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(EWKEstimation, self).__init__(
@@ -875,6 +875,53 @@ class HTTEstimation(EstimationMethod):
         files = self.era.datasets_helper.get_nicks_with_query(query)
         log_query(self.name, query, files)
         return self.artus_file_names(files)
+
+
+class ggHEstimation(HTTEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="ggH",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_files(self):
+        query = {
+            "process": "^GluGluHToTauTau.*125.*",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "powheg\-pythia8"
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
+
+class qqHEstimation(HTTEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="qqH",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_files(self):
+        query = {
+            "process": "^VBFHToTauTau.*125.*",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "powheg\-pythia8"
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
 
 class SUSYggHEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, mass, friend_directory=None):

@@ -301,6 +301,50 @@ class VVJEstimation(VVEstimation):
             ct = "0.0 == 1.0"
         return Cuts(Cut(ct, "vv_fakes"))
 
+class EWKZEstimation(EstimationMethod):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(EWKZEstimation, self).__init__(
+            name="EWKZ",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_weights(self):
+        return Weights(
+            # MC related weights
+            Weight("generatorWeight", "generatorWeight"),
+            Weight("numberGeneratedEventsWeight",
+                   "numberGeneratedEventsWeight"),
+            Weight("crossSectionPerEventWeight", "crossSectionPerEventWeight"),
+
+            # Weights for corrections
+            Weight("puweight", "puweight"),
+            Weight("idWeight_1*idWeight_2","idweight"),
+            Weight("isoWeight_1*isoWeight_2","isoweight"),
+            Weight("trackWeight_1*trackWeight_2","trackweight"),
+            get_triggerweight_for_channel(self.channel.name),
+            #get_singlelepton_triggerweight_for_channel(self.channel.name),
+            Weight("eleTauFakeRateWeight*muTauFakeRateWeight", "leptonTauFakeRateWeight"),
+            get_tauByIsoIdWeight_for_channel(self.channel.name),
+            get_eleHLTZvtxWeight_for_channel(self.channel.name),
+
+            # Data related scale-factors
+            self.era.lumi_weight)
+
+    def get_files(self):
+        query = {
+            "process": "^EWKZ2Jets.",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "madgraph\-pythia8",
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
 class EWKEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(EWKEstimation, self).__init__(
@@ -517,6 +561,7 @@ class ZLLEstimation(DYJetsToLLEstimation):
             ff_veto = "(1.0)"
         return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"%ff_veto, "dy_emb_and_ff_veto"))
 
+
 class ZJEstimation(DYJetsToLLEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(DYJetsToLLEstimation, self).__init__(
@@ -531,12 +576,34 @@ class ZJEstimation(DYJetsToLLEstimation):
     def get_cuts(self):
         ct = ""
         if "mt" in self.channel.name or "et" in self.channel.name:
-            ct = "(gen_match_2 == 6 && gen_match_2 == 6)"
+            ct = "gen_match_2 == 6"
         elif "tt" in self.channel.name:
             ct = "(gen_match_1 == 6 || gen_match_2 == 6)"
         elif "em" in self.channel.name:
             ct = "0 == 1"
         return Cuts(Cut(ct, "dy_fakes"))
+
+
+class ZLEstimation(DYJetsToLLEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(DYJetsToLLEstimation, self).__init__(
+            name="ZL",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            channel=channel,
+            friend_directory=friend_directory,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_cuts(self):
+        ct = ""
+        if "mt" in self.channel.name or "et" in self.channel.name:
+            ct = "gen_match_2<5"
+        elif "tt" in self.channel.name:
+            ct = "(gen_match_1<6&&gen_match_2<6&&!(gen_match_1==5&&gen_match_2==5))"
+        elif "em" in self.channel.name:
+            ct = "0 == 1"
+        return Cuts(Cut(ct, "zl_genmatch"))
 
 
 class ZTTEmbeddedEstimation(EstimationMethod):

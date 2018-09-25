@@ -618,30 +618,31 @@ class ZTTEmbeddedEstimation(EstimationMethod):
             mc_campaign=None)
 
     def get_weights(self):
-        if self.channel.name in ["mt","et"]:
+        if self.channel.name in ["mt", "et"]:
             return Weights(
                 Weight("generatorWeight",
                        "simulation_sf"),
-                Weight("muonEffTrgWeight", "scale_factor"),
-                Weight("idWeight_1*(triggerWeight_1*(triggerWeight_1<1.8)+(triggerWeight_1>=1.8))*isoWeight_1", "lepton_sf"),
-                #~ Weight("1.0", "mutau_crosstriggerweight"),
+                Weight("muonEffTrgWeight*muonEffIDWeight_1*muonEffIDWeight_2", "scale_factor"),
+                Weight("idWeight_1*(triggerWeight_1*(triggerWeight_1<1.8)+(triggerWeight_1>=1.8))*isoWeight_1*crossTriggerMCEfficiencyWeight_tight_MVA_1", "lepton_sf"),
+                Weight("(gen_match_2==5)*0.97+(gen_match_2!=5)", "emb_tau_id"),
                 Weight("embeddedDecayModeWeight", "decayMode_SF"))
         elif self.channel.name == "tt":
             return Weights(
                 Weight("generatorWeight",
                        "simulation_sf"),
-                Weight("muonEffTrgWeight", "scale_factor"),
+                Weight("muonEffTrgWeight*muonEffIDWeight_1*muonEffIDWeight_2", "scale_factor"),
                 Weight(
                     "crossTriggerDataEfficiencyWeight_tight_MVA_1*crossTriggerDataEfficiencyWeight_tight_MVA_2",
                     "trg_sf"),
+                Weight("((gen_match_1==5)*0.97+(gen_match_1!=5))*((gen_match_2==5)*0.97+(gen_match_2!=5))", "emb_tau_id"),
                 Weight("embeddedDecayModeWeight", "decayMode_SF"))
         elif self.channel.name == "em":
             return Weights(
                 Weight("generatorWeight", "simulation_sf"),
-                Weight("muonEffTrgWeight", "scale_factor"),
-                # no trigger sf yet
-                Weight("idWeight_1*isoWeight_1*idWeight_2*isoWeight_2",
+                Weight("muonEffTrgWeight*muonEffIDWeight_1*muonEffIDWeight_2", "scale_factor"),
+                Weight("idWeight_1*isoWeight_1*idWeight_2*isoWeight_2*(triggerWeight_2*(triggerWeight_2<1.8)+(triggerWeight_2>=1.8))",
                        "leptopn_sf"))
+
 
     def get_files(self):
         query = {"process": "Embedding2017(B|C|D|E|F)", "embedded": True}

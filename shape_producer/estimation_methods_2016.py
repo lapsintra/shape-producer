@@ -580,6 +580,7 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                        "2016 stitching weight"),
                 Weight("idWeight_1*triggerWeight_1*isoWeight_1", "lepton_sf"),
                 Weight("1.0", "mutau_crosstriggerweight"),
+                Weight("(gen_match_2==5)*1.02+(gen_match_2!=5)", "emb_tau_id"),
                 Weight("embeddedDecayModeWeight", "decayMode_SF"))
         if self.channel.name == "et":
             return Weights(
@@ -589,6 +590,7 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                 Weight(self.embedding_stitchingweight(),
                        "2016 stitching weight"),
                 Weight("idWeight_1*triggerWeight_1*isoWeight_1", "lepton_sf"),
+                Weight("(gen_match_2==5)*1.02+(gen_match_2!=5)", "emb_tau_id"),
                 Weight("embeddedDecayModeWeight", "decayMode_SF"))
         elif self.channel.name == "tt":
             return Weights(
@@ -598,8 +600,9 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                 Weight(self.embedding_stitchingweight(),
                        "2016 stitching weight"),
                 Weight(
-                    "triggerWeight_1*triggerWeight_2*TriggerDataEfficiencyWeight_1*TriggerDataEfficiencyWeight_2*doubleTauTrgWeight",
+                    "TriggerDataEfficiencyWeight_1*TriggerDataEfficiencyWeight_2*doubleTauTrgWeight",
                     "trg_sf"),
+                Weight("((gen_match_1==5)*1.02+(gen_match_1!=5))*((gen_match_2==5)*1.02+(gen_match_2!=5))", "emb_tau_id"),
                 Weight("embeddedDecayModeWeight",
                     "decayMode_SF"))
         elif self.channel.name == "em":

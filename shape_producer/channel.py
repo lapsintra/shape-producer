@@ -17,7 +17,7 @@ class Channel(object):
         return self._name
 
 
-class EMSM(Channel):
+class EMSM2016(Channel):
     def __init__(self):
         self._name = "em"
         self._cuts = Cuts(
@@ -85,7 +85,7 @@ class MTMSSM2017(Channel):
                 "trg_selection"))
 
 
-class MTSM(Channel):
+class MTSM2016(Channel):
     def __init__(self):
         self._name = "mt"
         self._cuts = Cuts(
@@ -171,7 +171,7 @@ class TT(Channel):
             Cut("q_1*q_2<0", "os"), Cut("trg_doubletau==1", "trg_doubletau"))
 
 
-class TTSM(Channel):
+class TTSM2016(Channel):
     def __init__(self):
         self._name = "tt"
         self._cuts = Cuts(

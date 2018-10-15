@@ -85,6 +85,23 @@ class MTMSSM2017(Channel):
                 "trg_selection"))
 
 
+class MTSM2017(Channel):
+    def __init__(self):
+        self._name = "mt"
+        self._cuts = Cuts(
+            Cut("flagMETFilter == 1", "METFilter"),
+            Cut("extraelec_veto<0.5", "extraelec_veto"),
+            Cut("extramuon_veto<0.5", "extramuon_veto"),
+            Cut("dilepton_veto<0.5", "dilepton_veto"),
+            Cut("againstMuonTight3_2>0.5", "againstMuonDiscriminator"),
+            Cut("againstElectronVLooseMVA6_2>0.5",
+                "againstElectronDiscriminator"),
+            Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5", "tau_iso"),
+            Cut("iso_1<0.15", "muon_iso"), Cut("q_1*q_2<0", "os"),
+            Cut("(trg_singlemuon_27 == 1) || (trg_singlemuon_24 == 1) || (trg_crossmuon_mu20tau27 == 1)",
+                "trg_selection"))
+
+
 class MTSM2016(Channel):
     def __init__(self):
         self._name = "mt"
@@ -120,6 +137,24 @@ class ET(Channel):
 
 
 class ETMSSM2017(Channel):
+    def __init__(self):
+        self._name = "et"
+        self._cuts = Cuts(
+            Cut("flagMETFilter == 1", "METFilter"),
+            Cut("extraelec_veto<0.5", "extraelec_veto"),
+            Cut("extramuon_veto<0.5", "extramuon_veto"),
+            Cut("dilepton_veto<0.5", "dilepton_veto"),
+            Cut("againstMuonLoose3_2>0.5", "againstMuonDiscriminator"),
+            Cut("againstElectronTightMVA6_2>0.5",
+                "againstElectronDiscriminator"),
+            Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5", "tau_iso"),
+            Cut("iso_1<0.15", "ele_iso"), Cut("q_1*q_2<0", "os"),
+            Cut("(trg_singleelectron_27 == 1) || (trg_singleelectron_32_fallback == 1) || (trg_crossele_ele24tau30 == 1)",
+            #Cut("(trg_singleelectron_35 == 1) || (trg_crossele_ele24tau30 == 1)", # better agreement, since proper trigger scale-factors are missing for single-ele 27 & 32
+                "trg_selection"))
+
+
+class ETSM2017(Channel):
     def __init__(self):
         self._name = "et"
         self._cuts = Cuts(
@@ -207,6 +242,27 @@ class TTMSSM2017(Channel):
                 "tau_2_iso"), Cut("q_1*q_2<0", "os"),
             Cut("(isEmbedded && pt_1>40 && pt_2 > 40) || (!isEmbedded && ((trg_doubletau_35_tightiso_tightid == 1) || (trg_doubletau_40_mediso_tightid == 1) || (trg_doubletau_40_tightiso == 1)))",
                 "trg_selection")) # workaround to distuinguish embedded events and not apply tau trigger.
+
+
+class TTSM2017(Channel):
+    def __init__(self):
+        self._name = "tt"
+        self._cuts = Cuts(
+            Cut("flagMETFilter == 1", "METFilter"),
+            Cut("extraelec_veto<0.5", "extraelec_veto"),
+            Cut("extramuon_veto<0.5", "extramuon_veto"),
+            Cut("dilepton_veto<0.5", "dilepton_veto"),
+            Cut("againstMuonLoose3_1>0.5 && againstMuonLoose3_2>0.5",
+                "againstMuonDiscriminator"),
+            Cut("againstElectronVLooseMVA6_1>0.5 && againstElectronVLooseMVA6_2>0.5",
+                "againstElectronDiscriminator"),
+            Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5",
+                "tau_1_iso"),
+            Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5",
+                "tau_2_iso"), Cut("q_1*q_2<0", "os"),
+            Cut("(isEmbedded && pt_1>40 && pt_2 > 40) || (!isEmbedded && ((trg_doubletau_35_tightiso_tightid == 1) || (trg_doubletau_40_mediso_tightid == 1) || (trg_doubletau_40_tightiso == 1)))",
+                "trg_selection")) # workaround to distuinguish embedded events and not apply tau trigger.
+
 
 class EM(Channel):
     def __init__(self):

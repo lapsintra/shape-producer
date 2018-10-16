@@ -172,7 +172,7 @@ class ETSM2017(Channel):
                 "trg_selection"))
 
 
-class ETSM(Channel):
+class ETSM2016(Channel):
     def __init__(self):
         self._name = "et"
         self._cuts = Cuts(

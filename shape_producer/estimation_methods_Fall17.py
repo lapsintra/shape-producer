@@ -623,7 +623,7 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                 Weight("generatorWeight",
                        "simulation_sf"),
                 Weight("muonEffTrgWeight*muonEffIDWeight_1*muonEffIDWeight_2", "scale_factor"),
-                Weight("idWeight_1*(triggerWeight_1*(triggerWeight_1<1.8)+(triggerWeight_1>=1.8))*isoWeight_1*crossTriggerMCEfficiencyWeight_tight_MVA_1", "lepton_sf"),
+                Weight("idWeight_1*(triggerWeight_1*(triggerWeight_1<1.8)*(triggerWeight_1>0.5)+(triggerWeight_1>=1.8)+(triggerWeight_1<=0.5))*isoWeight_1*(crossTriggerDataEfficiencyWeight_1*crossTriggerDataEfficiencyWeight_tight_MVA_2*(pt_1>20)*(pt_1<24)+(pt_1>24))", "lepton_sf"),
                 Weight("(gen_match_2==5)*0.97+(gen_match_2!=5)", "emb_tau_id"),
                 Weight("embeddedDecayModeWeight", "decayMode_SF"))
         elif self.channel.name == "tt":

@@ -301,6 +301,50 @@ class VVJEstimation(VVEstimation):
             ct = "0.0 == 1.0"
         return Cuts(Cut(ct, "vv_fakes"))
 
+class EWKZEstimation(EstimationMethod):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(EWKZEstimation, self).__init__(
+            name="EWKZ",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_weights(self):
+        return Weights(
+            # MC related weights
+            Weight("generatorWeight", "generatorWeight"),
+            Weight("numberGeneratedEventsWeight",
+                   "numberGeneratedEventsWeight"),
+            Weight("crossSectionPerEventWeight", "crossSectionPerEventWeight"),
+
+            # Weights for corrections
+            Weight("puweight", "puweight"),
+            Weight("idWeight_1*idWeight_2","idweight"),
+            Weight("isoWeight_1*isoWeight_2","isoweight"),
+            Weight("trackWeight_1*trackWeight_2","trackweight"),
+            get_triggerweight_for_channel(self.channel.name),
+            #get_singlelepton_triggerweight_for_channel(self.channel.name),
+            Weight("eleTauFakeRateWeight*muTauFakeRateWeight", "leptonTauFakeRateWeight"),
+            get_tauByIsoIdWeight_for_channel(self.channel.name),
+            get_eleHLTZvtxWeight_for_channel(self.channel.name),
+
+            # Data related scale-factors
+            self.era.lumi_weight)
+
+    def get_files(self):
+        query = {
+            "process": "^EWKZ2Jets.",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "madgraph\-pythia8",
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
 class DYJetsToLLEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(DYJetsToLLEstimation, self).__init__(

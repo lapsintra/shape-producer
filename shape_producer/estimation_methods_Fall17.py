@@ -301,149 +301,6 @@ class VVJEstimation(VVEstimation):
             ct = "0.0 == 1.0"
         return Cuts(Cut(ct, "vv_fakes"))
 
-class EWKZEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKZEstimation, self).__init__(
-            name="EWKZ",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            mc_campaign="RunIIFall17MiniAODv2")
-
-    def get_weights(self):
-        return Weights(
-            # MC related weights
-            Weight("generatorWeight", "generatorWeight"),
-            Weight("numberGeneratedEventsWeight",
-                   "numberGeneratedEventsWeight"),
-            Weight("crossSectionPerEventWeight", "crossSectionPerEventWeight"),
-
-            # Weights for corrections
-            Weight("puweight", "puweight"),
-            Weight("idWeight_1*idWeight_2","idweight"),
-            Weight("isoWeight_1*isoWeight_2","isoweight"),
-            Weight("trackWeight_1*trackWeight_2","trackweight"),
-            get_triggerweight_for_channel(self.channel.name),
-            #get_singlelepton_triggerweight_for_channel(self.channel.name),
-            Weight("eleTauFakeRateWeight*muTauFakeRateWeight", "leptonTauFakeRateWeight"),
-            get_tauByIsoIdWeight_for_channel(self.channel.name),
-            get_eleHLTZvtxWeight_for_channel(self.channel.name),
-
-            # Data related scale-factors
-            self.era.lumi_weight)
-
-    def get_files(self):
-        query = {
-            "process": "^EWKZ2Jets.",
-            "data": False,
-            "campaign": self._mc_campaign,
-            "generator": "madgraph\-pythia8",
-        }
-        files = self.era.datasets_helper.get_nicks_with_query(query)
-        log_query(self.name, query, files)
-        return self.artus_file_names(files)
-
-class EWKEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKEstimation, self).__init__(
-            name="EWK",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            mc_campaign="RunIIFall17MiniAODv2")
-
-    def get_weights(self):
-        return Weights(
-            # MC related weights
-            Weight("generatorWeight", "generatorWeight"),
-            Weight("numberGeneratedEventsWeight",
-                   "numberGeneratedEventsWeight"),
-            Weight("crossSectionPerEventWeight", "crossSectionPerEventWeight"),
-
-            # Weights for corrections
-            Weight("puweight", "puweight"),
-            Weight("idWeight_1*idWeight_2","idweight"),
-            Weight("isoWeight_1*isoWeight_2","isoweight"),
-            Weight("trackWeight_1*trackWeight_2","trackweight"),
-            get_triggerweight_for_channel(self.channel.name),
-            #get_singlelepton_triggerweight_for_channel(self.channel.name),
-            Weight("eleTauFakeRateWeight*muTauFakeRateWeight", "leptonTauFakeRateWeight"),
-            get_tauByIsoIdWeight_for_channel(self.channel.name),
-            get_eleHLTZvtxWeight_for_channel(self.channel.name),
-
-            # Data related scale-factors
-            self.era.lumi_weight)
-
-    def get_files(self):
-        query = {
-            "process": "^EWK",
-            "data": False,
-            "campaign": self._mc_campaign,
-            "generator": "madgraph\-pythia8",
-        }
-        files = self.era.datasets_helper.get_nicks_with_query(query)
-        log_query(self.name, query, files)
-        return self.artus_file_names(files)
-
-class EWKTEstimation(EWKEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKEstimation, self).__init__(
-            name="EWKT",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            mc_campaign="RunIIFall17MiniAODv2")
-
-    def get_cuts(self):
-        return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "ewk_genuine_tau"))
-
-class EWKLEstimation(EWKEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKEstimation, self).__init__(
-            name="EWKL",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            mc_campaign="RunIIFall17MiniAODv2")
-
-    def get_cuts(self):
-        if "mt" in self.channel.name or "et" in self.channel.name:
-            ff_veto = "!(gen_match_2 == 6)"
-        elif "tt" in self.channel.name:
-            ff_veto = "!(gen_match_1 == 6 || gen_match_2 == 6)"
-        elif "em" in self.channel.name:
-            ff_veto = "(1.0)"
-        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"%ff_veto, "ewk_emb_and_ff_veto"))
-
-class EWKJEstimation(EWKEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKEstimation, self).__init__(
-            name="EWKJ",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            mc_campaign="RunIIFall17MiniAODv2")
-
-    def get_cuts(self):
-        ct = ""
-        if "mt" in self.channel.name or "et" in self.channel.name:
-            ct = "(gen_match_2 == 6 && gen_match_2 == 6)"
-        elif "tt" in self.channel.name:
-            ct = "(gen_match_1 == 6 || gen_match_2 == 6)"
-        elif "em" in self.channel.name:
-            ct = "0 == 1"
-        return Cuts(Cut(ct, "ewk_fakes"))
-
 class DYJetsToLLEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(DYJetsToLLEstimation, self).__init__(
@@ -497,9 +354,16 @@ class DYJetsToLLEstimation(EstimationMethod):
             #"extension": "^$",
             #"version": "v1" # to be used if only one inclusive sample is desired
         }
-        files = self.era.datasets_helper.get_nicks_with_query(queryM50) + self.era.datasets_helper.get_nicks_with_query(queryM10)
+        queryEWKZ = {
+            "process": "^EWKZ",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "madgraph\-pythia8",
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(queryM50) + self.era.datasets_helper.get_nicks_with_query(queryM10) + self.era.datasets_helper.get_nicks_with_query(queryEWKZ)
         log_query(self.name, queryM50, files)
         log_query(self.name, queryM10, files)
+        log_query(self.name, queryEWKZ, files)
         return self.artus_file_names(files)
 
 
@@ -769,7 +633,7 @@ class WEstimation(EstimationMethod):
             Weight("generatorWeight", "generatorWeight"),
             #Weight("numberGeneratedEventsWeight","numberGeneratedEventsWeight"), # to be used only for one inclusive sample
             #Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
-            Weight("(1.35708973e-03*((npartons <= 0 || npartons >= 5)*1.0 + (npartons == 1)*0.8692 + (npartons == 2)*0.2620 + (npartons == 3)*0.0406 + (npartons == 4)*0.0394))",
+            Weight("((1.35708973e-03*((npartons <= 0 || npartons >= 5)*1.0 + (npartons == 1)*0.8692 + (npartons == 2)*0.2620 + (npartons == 3)*0.0406 + (npartons == 4)*0.0394)) * (genbosonmass>=0.0) + numberGeneratedEventsWeight * crossSectionPerEventWeight * (genbosonmass<0.0))",
                 "wj_stitching_weight"), # xsec_NNLO [pb] = 61526.7, N_inclusive = 45337238, xsec_NNLO/N_inclusive = 1.35708973e-03 [pb] weights: [1.0, 0.8691509094676722, 0.2619981132261768, 0.040603231819572184, 0.03938985513682991]
 
             # Weights for corrections
@@ -795,6 +659,13 @@ class WEstimation(EstimationMethod):
             "generator": "madgraph-pythia8"
         }
         files = self.era.datasets_helper.get_nicks_with_query(query)
+        query = {
+            "process": "^EWKW",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "madgraph\-pythia8",
+        }
+        files += self.era.datasets_helper.get_nicks_with_query(query)
         log_query(self.name, query, files)
         return self.artus_file_names(files)
 

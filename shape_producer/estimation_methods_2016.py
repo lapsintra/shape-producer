@@ -600,7 +600,7 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                 Weight(self.embedding_stitchingweight(),
                        "2016 stitching weight"),
                 Weight(
-                    "TriggerDataEfficiencyWeight_1*TriggerDataEfficiencyWeight_2*doubleTauTrgWeight",
+                    "(TriggerDataEfficiencyWeight_1/TriggerEmbeddedEfficiencyWeight_1)*(TriggerDataEfficiencyWeight_2/TriggerEmbeddedEfficiencyWeight_2)",
                     "trg_sf"),
                 Weight("((gen_match_1==5)*1.02+(gen_match_1!=5))*((gen_match_2==5)*1.02+(gen_match_2!=5))", "emb_tau_id"),
                 Weight("embeddedDecayModeWeight",

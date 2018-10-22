@@ -479,6 +479,29 @@ class DYJetsToLLEstimation(EstimationMethod):
         log_query(self.name, query_ewkz, files)
         return self.artus_file_names(files)
 
+
+class EWKZEstimation(DYJetsToLLEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(DYJetsToLLEstimation, self).__init__(
+            name="EWKZ",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIISummer16MiniAODv2")
+            
+    def get_files(self):
+        query_ewkz = {
+            "process": "^EWKZ",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "madgraph\-pythia8"
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query_ewkz)
+        log_query(self.name, query_ewkz, files)
+        return self.artus_file_names(files)
+
 class ZTTEstimation(DYJetsToLLEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(DYJetsToLLEstimation, self).__init__(

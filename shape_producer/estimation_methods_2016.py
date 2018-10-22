@@ -435,51 +435,10 @@ class VHEstimation(HTTEstimation):
         log_query(self.name, query, files)
         return self.artus_file_names(files)
 
-
-class ZTTEstimation(EstimationMethod):
+class DYJetsToLLEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
-        super(ZTTEstimation, self).__init__(
-            name="ZTT",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            mc_campaign="RunIISummer16MiniAODv2")
-
-    def get_weights(self):
-        return Weights(
-            Weight("eventWeight", "eventWeight"),
-            Weight("zPtReweightWeight", "zPtReweightWeight"),
-            Weight(
-                "(((gen_match_1 == 5)*0.95 + (gen_match_1 != 5))*((gen_match_2 == 5)*0.95 + (gen_match_2 != 5)))",
-                "hadronic_tau_sf"),
-            Weight(
-                "((((genbosonmass >= 150.0 && (npartons == 0 || npartons >= 5))*3.95423374e-5) + ((genbosonmass >= 150.0 && npartons == 1)*1.27486147e-5) + ((genbosonmass >= 150.0 && npartons == 2)*1.3012785e-5) + ((genbosonmass >= 150.0 && npartons == 3)*1.33802133e-5) + ((genbosonmass >= 150.0 && npartons == 4)*1.09698723e-5)+((genbosonmass >= 50.0 && genbosonmass < 150.0 && (npartons == 0 || npartons >= 5))*3.95423374e-5) + ((genbosonmass >= 50.0 && genbosonmass < 150.0 && npartons == 1)*1.27486147e-5) + ((genbosonmass >= 50.0 && genbosonmass < 150.0 && npartons == 2)*1.3012785e-5) + ((genbosonmass >= 50.0 && genbosonmass < 150.0 && npartons == 3)*1.33802133e-5) + ((genbosonmass >= 50.0 && genbosonmass < 150.0 && npartons == 4)*1.09698723e-5)+((genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight))/(numberGeneratedEventsWeight*crossSectionPerEventWeight*sampleStitchingWeight))",
-                "z_stitching_weight"), self.era.lumi_weight)
-
-    def get_cuts(self):
-        return Cuts(Cut("gen_match_2==5", "ztt_genmatch_mt"))
-
-    def get_files(self):
-        query = {
-            "process":
-            "(DYJetsToLL_M10to50|DYJetsToLL_M50|DY1JetsToLL_M50|DY2JetsToLL_M50|DY3JetsToLL_M50|DY4JetsToLL_M50)",
-            "data":
-            False,
-            "campaign":
-            self._mc_campaign,
-            "generator":
-            "madgraph\-pythia8"
-        }
-        files = self.era.datasets_helper.get_nicks_with_query(query)
-        log_query(self.name, query, files)
-        return self.artus_file_names(files)
-
-class DYEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(DYEstimation, self).__init__(
-            name="DY",
+        super(DYJetsToLLEstimation, self).__init__(
+            name="DYJetsToLL",
             folder="nominal",
             era=era,
             directory=directory,
@@ -509,14 +468,21 @@ class DYEstimation(EstimationMethod):
             "generator":
             "madgraph\-pythia8"
         }
-        files = self.era.datasets_helper.get_nicks_with_query(query)
+        query_ewkz = {
+            "process": "^EWKZ",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "madgraph\-pythia8"
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query) + self.era.datasets_helper.get_nicks_with_query(query_ewkz)
         log_query(self.name, query, files)
+        log_query(self.name, query_ewkz, files)
         return self.artus_file_names(files)
 
-class DYToZTTEstimation(DYEstimation):
+class ZTTEstimation(DYJetsToLLEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
-        super(DYEstimation, self).__init__(
-            name="DYToZTT",
+        super(DYJetsToLLEstimation, self).__init__(
+            name="ZTT",
             folder="nominal",
             era=era,
             directory=directory,
@@ -527,10 +493,10 @@ class DYToZTTEstimation(DYEstimation):
     def get_cuts(self):
         return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "dy_genuine_tau"))
 
-class DYToZLEstimation(DYEstimation):
+class ZLEstimation(DYJetsToLLEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
-        super(DYEstimation, self).__init__(
-            name="DYToZL",
+        super(DYJetsToLLEstimation, self).__init__(
+            name="ZL",
             folder="nominal",
             era=era,
             directory=directory,
@@ -539,7 +505,7 @@ class DYToZLEstimation(DYEstimation):
             mc_campaign="RunIISummer16MiniAODv2")
             
     def get_weights(self):
-        dy_weights = super(DYEstimation, self).get_weights()
+        dy_weights = super(DYJetsToLLEstimation, self).get_weights()
         if "tt" in self.channel.name:
             return dy_weights + Weights(
                 Weight(
@@ -566,10 +532,10 @@ class DYToZLEstimation(DYEstimation):
             ct = "0 == 1"
         return Cuts(Cut(ct, "zl_genmatch"))
         
-class DYToZJEstimation(DYEstimation):
+class ZJEstimation(DYJetsToLLEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
-        super(DYEstimation, self).__init__(
-            name="DYToZJ",
+        super(DYJetsToLLEstimation, self).__init__(
+            name="ZJ",
             folder="nominal",
             era=era,
             directory=directory,
@@ -586,84 +552,6 @@ class DYToZJEstimation(DYEstimation):
         elif "em" in self.channel.name:
             ct = "0 == 1"
         return Cuts(Cut(ct, "dy_fakes"))
-
-class ZTTEstimation(SumUpEstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(ZTTEstimation, self).__init__(
-            name="ZTT",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            processes=[
-                Process(
-                    "DYToZTT",
-                    DYToZTTEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory)),
-                Process(
-                    "EWKT",
-                    EWKTEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory))
-            ])
-
-class ZLEstimation(SumUpEstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(ZLEstimation, self).__init__(
-            name="ZL",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            processes=[
-                Process(
-                    "DYToZL",
-                    DYToZLEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory)),
-                Process(
-                    "EWKL",
-                    EWKLEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory))
-            ])
-
-class ZJEstimation(SumUpEstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(ZJEstimation, self).__init__(
-            name="ZJ",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            processes=[
-                Process(
-                    "DYToZJ",
-                    DYToZJEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory)),
-                Process(
-                    "EWKJ",
-                    EWKJEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory))
-            ])
             
 class ZTTEmbeddedEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -1065,290 +953,6 @@ class TTJEstimation(TTEstimation):
         elif "em" in self.channel.name:
             ct = "0.0 == 1.0"
         return Cuts(Cut(ct, "tt_fakes"))
-
-class EWKZllEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKZllEstimation, self).__init__(
-            name="EWKZll",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            mc_campaign="RunIISummer16MiniAODv2")
-
-    def get_weights(self):
-        return Weights(
-            Weight(
-                "(((gen_match_1 == 5)*0.95 + (gen_match_1 != 5))*((gen_match_2 == 5)*0.95 + (gen_match_2 != 5)))",
-                "hadronic_tau_sf"),
-            Weight(
-                "(3.989190065346e-6)/(numberGeneratedEventsWeight*crossSectionPerEventWeight)",
-                "EWKZll_stitching_weight"),
-            Weight("eventWeight", "eventWeight"), self.era.lumi_weight)
-
-    def get_files(self):
-        query = {
-            "process": "^EWKZ2Jets.",
-            "data": False,
-            "campaign": self._mc_campaign,
-            "generator": "madgraph\-pythia8"
-        }
-        files = self.era.datasets_helper.get_nicks_with_query(query)
-
-        log_query(self.name, query, files)
-        return self.artus_file_names(files)
-
-
-class EWKZnnEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKZnnEstimation, self).__init__(
-            name="EWKZnn",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            mc_campaign="RunIISummer16MiniAODv2")
-
-    def get_weights(self):
-        return Weights(
-            Weight(
-                "(((gen_match_1 == 5)*0.95 + (gen_match_1 != 5))*((gen_match_2 == 5)*0.95 + (gen_match_2 != 5)))",
-                "hadronic_tau_sf"),
-            Weight(
-                "(3.35561920393e-6)/(numberGeneratedEventsWeight*crossSectionPerEventWeight)",
-                "EWKZnn_stitching_weight"),
-            Weight("eventWeight", "eventWeight"), self.era.lumi_weight)
-
-    def get_files(self):
-        query = {
-            "process": "^EWKZ2Jets$",
-            "data": False,
-            "campaign": self._mc_campaign,
-            "generator": "madgraph\-pythia8"
-        }
-        files = self.era.datasets_helper.get_nicks_with_query(query)
-
-        log_query(self.name, query, files)
-        return self.artus_file_names(files)
-        
-class EWKZEstimation(SumUpEstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKZEstimation, self).__init__(
-            name="EWKZ",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            processes=[
-                Process(
-                    "EWKZll",
-                    EWKZllEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory)),
-                Process(
-                    "EWKZnn",
-                    EWKZnnEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory))
-            ])
-
-
-class EWKZllLEstimation(EWKZllEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKZllEstimation, self).__init__(
-            name="EWKZllL",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            mc_campaign="RunIISummer16MiniAODv2")
-
-    def get_cuts(self):
-        if "mt" in self.channel.name or "et" in self.channel.name:
-            ff_veto = "!(gen_match_2 == 6)"
-        elif "tt" in self.channel.name:
-            ff_veto = "!(gen_match_1 == 6 || gen_match_2 == 6)"
-        elif "em" in self.channel.name:
-            ff_veto = "(1.0)"
-        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"%ff_veto, "ewkzll_emb_and_ff_veto"))
-
-class EWKZllTEstimation(EWKZllEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKZllEstimation, self).__init__(
-            name="EWKZllT",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            mc_campaign="RunIISummer16MiniAODv2")
-
-    def get_cuts(self):
-        return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "ewkzll_genuine_tau"))
-
-class EWKZllJEstimation(EWKZllEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKZllEstimation, self).__init__(
-            name="EWKZllJ",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            mc_campaign="RunIISummer16MiniAODv2")
-
-    def get_cuts(self):
-        ct = ""
-        if "mt" in self.channel.name or "et" in self.channel.name:
-            ct = "(gen_match_2 == 6 && gen_match_2 == 6)"
-        elif "tt" in self.channel.name:
-            ct = "(gen_match_1 == 6 || gen_match_2 == 6)"
-        elif "em" in self.channel.name:
-            ct = "0.0 == 1.0"
-        return Cuts(Cut(ct, "ewkzll_fakes"))
-
-class EWKZnnLEstimation(EWKZnnEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKZnnEstimation, self).__init__(
-            name="EWKZnnL",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            mc_campaign="RunIISummer16MiniAODv2")
-
-    def get_cuts(self):
-        if "mt" in self.channel.name or "et" in self.channel.name:
-            ff_veto = "!(gen_match_2 == 6)"
-        elif "tt" in self.channel.name:
-            ff_veto = "!(gen_match_1 == 6 || gen_match_2 == 6)"
-        elif "em" in self.channel.name:
-            ff_veto = "(1.0)"
-        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"%ff_veto, "ewkznn_emb_and_ff_veto"))
-
-class EWKZnnTEstimation(EWKZnnEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKZnnEstimation, self).__init__(
-            name="EWKZnnT",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            mc_campaign="RunIISummer16MiniAODv2")
-
-    def get_cuts(self):
-        return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "ewkznn_genuine_tau"))
-
-class EWKZnnJEstimation(EWKZnnEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKZnnEstimation, self).__init__(
-            name="EWKZnnJ",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            mc_campaign="RunIISummer16MiniAODv2")
-
-    def get_cuts(self):
-        ct = ""
-        if "mt" in self.channel.name or "et" in self.channel.name:
-            ct = "(gen_match_2 == 6 && gen_match_2 == 6)"
-        elif "tt" in self.channel.name:
-            ct = "(gen_match_1 == 6 || gen_match_2 == 6)"
-        elif "em" in self.channel.name:
-            ct = "0.0 == 1.0"
-        return Cuts(Cut(ct, "ewkznn_fakes"))
-
-
-
-class EWKTEstimation(SumUpEstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKTEstimation, self).__init__(
-            name="EWKT",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            processes=[
-                Process(
-                    "EWKZllT",
-                    EWKZllEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory)),
-                Process(
-                    "EWKZnnT",
-                    EWKZnnEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory))
-            ])
-
-class EWKLEstimation(SumUpEstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKLEstimation, self).__init__(
-            name="EWKL",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            processes=[
-                Process(
-                    "EWKZllL",
-                    EWKZllEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory)),
-                Process(
-                    "EWKZnnL",
-                    EWKZnnEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory))
-            ])
-            
-class EWKJEstimation(SumUpEstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
-        super(EWKJEstimation, self).__init__(
-            name="EWKJ",
-            folder="nominal",
-            era=era,
-            directory=directory,
-            friend_directory=friend_directory,
-            channel=channel,
-            processes=[
-                Process(
-                    "EWKZllJ",
-                    EWKZllEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory)),
-                Process(
-                    "EWKZnnJ",
-                    EWKZnnEstimation(
-                        era,
-                        directory,
-                        channel,
-                        friend_directory=friend_directory))
-            ])      
 
 class VVEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):

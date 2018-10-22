@@ -505,7 +505,7 @@ class ZLEstimation(DYJetsToLLEstimation):
             mc_campaign="RunIISummer16MiniAODv2")
             
     def get_weights(self):
-        dy_weights = super(DYJetsToLLEstimation, self).get_weights()
+        dy_weights = super(ZLEstimation, self).get_weights()
         if "tt" in self.channel.name:
             return dy_weights + Weights(
                 Weight(

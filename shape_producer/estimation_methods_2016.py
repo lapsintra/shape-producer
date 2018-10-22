@@ -435,6 +435,7 @@ class VHEstimation(HTTEstimation):
         log_query(self.name, query, files)
         return self.artus_file_names(files)
 
+
 class DYJetsToLLEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(DYJetsToLLEstimation, self).__init__(
@@ -456,7 +457,7 @@ class DYJetsToLLEstimation(EstimationMethod):
             Weight(
                 "((((genbosonmass >= 150.0 && (npartons == 0 || npartons >= 5))*3.95423374e-5) + ((genbosonmass >= 150.0 && npartons == 1)*1.27486147e-5) + ((genbosonmass >= 150.0 && npartons == 2)*1.3012785e-5) + ((genbosonmass >= 150.0 && npartons == 3)*1.33802133e-5) + ((genbosonmass >= 150.0 && npartons == 4)*1.09698723e-5)+((genbosonmass >= 50.0 && genbosonmass < 150.0 && (npartons == 0 || npartons >= 5))*3.95423374e-5) + ((genbosonmass >= 50.0 && genbosonmass < 150.0 && npartons == 1)*1.27486147e-5) + ((genbosonmass >= 50.0 && genbosonmass < 150.0 && npartons == 2)*1.3012785e-5) + ((genbosonmass >= 50.0 && genbosonmass < 150.0 && npartons == 3)*1.33802133e-5) + ((genbosonmass >= 50.0 && genbosonmass < 150.0 && npartons == 4)*1.09698723e-5)+((genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight))/(numberGeneratedEventsWeight*crossSectionPerEventWeight*sampleStitchingWeight))",
                 "z_stitching_weight"), self.era.lumi_weight)
-                
+
     def get_files(self):
         query = {
             "process":
@@ -474,7 +475,8 @@ class DYJetsToLLEstimation(EstimationMethod):
             "campaign": self._mc_campaign,
             "generator": "madgraph\-pythia8"
         }
-        files = self.era.datasets_helper.get_nicks_with_query(query) + self.era.datasets_helper.get_nicks_with_query(query_ewkz)
+        files = self.era.datasets_helper.get_nicks_with_query(
+            query) + self.era.datasets_helper.get_nicks_with_query(query_ewkz)
         log_query(self.name, query, files)
         log_query(self.name, query_ewkz, files)
         return self.artus_file_names(files)
@@ -490,7 +492,7 @@ class EWKZEstimation(DYJetsToLLEstimation):
             friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
-            
+
     def get_files(self):
         query_ewkz = {
             "process": "^EWKZ",
@@ -502,6 +504,7 @@ class EWKZEstimation(DYJetsToLLEstimation):
         log_query(self.name, query_ewkz, files)
         return self.artus_file_names(files)
 
+
 class ZTTEstimation(DYJetsToLLEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(DYJetsToLLEstimation, self).__init__(
@@ -512,9 +515,13 @@ class ZTTEstimation(DYJetsToLLEstimation):
             friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
-            
+
     def get_cuts(self):
-        return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "dy_genuine_tau"))
+        return Cuts(
+            Cut(
+                "((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))",
+                "dy_genuine_tau"))
+
 
 class ZLEstimation(DYJetsToLLEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -526,7 +533,7 @@ class ZLEstimation(DYJetsToLLEstimation):
             friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
-            
+
     def get_weights(self):
         dy_weights = super(ZLEstimation, self).get_weights()
         if "tt" in self.channel.name:
@@ -554,7 +561,8 @@ class ZLEstimation(DYJetsToLLEstimation):
         elif "em" in self.channel.name:
             ct = "0 == 1"
         return Cuts(Cut(ct, "zl_genmatch"))
-        
+
+
 class ZJEstimation(DYJetsToLLEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(DYJetsToLLEstimation, self).__init__(
@@ -565,7 +573,7 @@ class ZJEstimation(DYJetsToLLEstimation):
             friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
-            
+
     def get_cuts(self):
         ct = ""
         if "mt" in self.channel.name or "et" in self.channel.name:
@@ -575,7 +583,8 @@ class ZJEstimation(DYJetsToLLEstimation):
         elif "em" in self.channel.name:
             ct = "0 == 1"
         return Cuts(Cut(ct, "dy_fakes"))
-            
+
+
 class ZTTEmbeddedEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(ZTTEmbeddedEstimation, self).__init__(
@@ -688,9 +697,10 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                 Weight(
                     "(TriggerDataEfficiencyWeight_1/TriggerEmbeddedEfficiencyWeight_1)*(TriggerDataEfficiencyWeight_2/TriggerEmbeddedEfficiencyWeight_2)",
                     "trg_sf"),
-                Weight("((gen_match_1==5)*1.02+(gen_match_1!=5))*((gen_match_2==5)*1.02+(gen_match_2!=5))", "emb_tau_id"),
-                Weight("embeddedDecayModeWeight",
-                    "decayMode_SF"))
+                Weight(
+                    "((gen_match_1==5)*1.02+(gen_match_1!=5))*((gen_match_2==5)*1.02+(gen_match_2!=5))",
+                    "emb_tau_id"),
+                Weight("embeddedDecayModeWeight", "decayMode_SF"))
         elif self.channel.name == "em":
             return Weights(
                 Weight("generatorWeight", "simulation_sf"),
@@ -940,7 +950,11 @@ class TTLEstimation(TTEstimation):
             ff_veto = "!(gen_match_1 == 6 || gen_match_2 == 6)"
         elif "em" in self.channel.name:
             ff_veto = "(1.0)"
-        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"%ff_veto, "tt_emb_and_ff_veto"))
+        return Cuts(
+            Cut(
+                "!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"
+                % ff_veto, "tt_emb_and_ff_veto"))
+
 
 class TTTEstimation(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -954,7 +968,11 @@ class TTTEstimation(TTEstimation):
             mc_campaign="RunIISummer16MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "tt_genuine_tau"))
+        return Cuts(
+            Cut(
+                "((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))",
+                "tt_genuine_tau"))
+
 
 class TTJEstimation(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -976,6 +994,7 @@ class TTJEstimation(TTEstimation):
         elif "em" in self.channel.name:
             ct = "0.0 == 1.0"
         return Cuts(Cut(ct, "tt_fakes"))
+
 
 class VVEstimation(EstimationMethod):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -1058,7 +1077,11 @@ class VVLEstimation(VVEstimation):
             ff_veto = "!(gen_match_1 == 6 || gen_match_2 == 6)"
         elif "em" in self.channel.name:
             ff_veto = "(1.0)"
-        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"%ff_veto, "vv_emb_and_ff_veto"))
+        return Cuts(
+            Cut(
+                "!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"
+                % ff_veto, "vv_emb_and_ff_veto"))
+
 
 class VVTEstimation(VVEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -1072,7 +1095,11 @@ class VVTEstimation(VVEstimation):
             mc_campaign="RunIISummer16MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "vv_genuine_tau"))
+        return Cuts(
+            Cut(
+                "((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))",
+                "vv_genuine_tau"))
+
 
 class VVJEstimation(VVEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -1094,6 +1121,7 @@ class VVJEstimation(VVEstimation):
         elif "em" in self.channel.name:
             ct = "0.0 == 1.0"
         return Cuts(Cut(ct, "vv_fakes"))
+
 
 class QCDEstimationET(SStoOSEstimationMethod):
     def __init__(self,
@@ -1158,8 +1186,15 @@ class QCDEstimationTT(ABCDEstimationMethod):
 
 
 class WEstimationWithQCD(EstimationMethod):
-    def __init__(self, era, directory, channel, bg_processes, data_process,
-                 w_process, qcd_ss_to_os_extrapolation_factor, friend_directory=None):
+    def __init__(self,
+                 era,
+                 directory,
+                 channel,
+                 bg_processes,
+                 data_process,
+                 w_process,
+                 qcd_ss_to_os_extrapolation_factor,
+                 friend_directory=None):
         super(WEstimationWithQCD, self).__init__(
             name="WJets",
             folder="nominal",
@@ -1396,8 +1431,15 @@ class WEstimationWithQCD(EstimationMethod):
 
 
 class QCDEstimationWithW(EstimationMethod):
-    def __init__(self, era, directory, channel, bg_processes, data_process,
-                 w_process, qcd_ss_to_os_extrapolation_factor, friend_directory=None):
+    def __init__(self,
+                 era,
+                 directory,
+                 channel,
+                 bg_processes,
+                 data_process,
+                 w_process,
+                 qcd_ss_to_os_extrapolation_factor,
+                 friend_directory=None):
         super(QCDEstimationWithW, self).__init__(
             name="QCD",
             folder="nominal",

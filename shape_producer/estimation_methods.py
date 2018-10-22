@@ -402,10 +402,10 @@ class AddHistogramEstimationMethod(EstimationMethod):
         # Rename root object accordingly (hacky part)
         final_shape.name = systematic.name
         if "ZTTpTTTauTauUp" in final_shape.name:
-            final_shape.name = systematic.name.replace("ZTTpTTTauTauUp", "ZTT")
+            final_shape.name = systematic.name.replace("ZTTpTTTauTauUp", "EMB")
         elif "ZTTpTTTauTauDown" in final_shape.name:
             final_shape.name = systematic.name.replace("ZTTpTTTauTauDown",
-                                                       "ZTT")
+                                                       "EMB")
         return final_shape
 
     def get_files(self):

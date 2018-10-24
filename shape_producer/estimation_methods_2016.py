@@ -534,24 +534,6 @@ class ZLEstimation(DYJetsToLLEstimation):
             channel=channel,
             mc_campaign="RunIISummer16MiniAODv2")
 
-    def get_weights(self):
-        dy_weights = super(ZLEstimation, self).get_weights()
-        if "tt" in self.channel.name:
-            return dy_weights + Weights(
-                Weight(
-                    "(((decayMode_2 == 0)*1.0) + ((decayMode_2 == 1 || decayMode_2 == 2)*1.0) + ((decayMode_2 == 10)*1.0))",
-                    "decay_mode_reweight"))
-        elif "mt" in self.channel.name:
-            return dy_weights + Weights(
-                Weight(
-                    "(((decayMode_2 == 0)*0.75) + ((decayMode_2 == 1 || decayMode_2 == 2)*1.0) + ((decayMode_2 == 10)*1.0))",
-                    "decay_mode_reweight"))
-        elif "et" in self.channel.name:
-            return dy_weights + Weights(
-                Weight(
-                    "(((decayMode_2 == 0)*0.98) + ((decayMode_2 == 1 || decayMode_2 == 2)*1.2) + ((decayMode_2 == 10)*1.0))",
-                    "decay_mode_reweight"))
-
     '''def get_cuts(self):
         ct = ""
         if "mt" in self.channel.name or "et" in self.channel.name:

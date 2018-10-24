@@ -552,7 +552,7 @@ class ZLEstimation(DYJetsToLLEstimation):
                     "(((decayMode_2 == 0)*0.98) + ((decayMode_2 == 1 || decayMode_2 == 2)*1.2) + ((decayMode_2 == 10)*1.0))",
                     "decay_mode_reweight"))
 
-    def get_cuts(self):
+    '''def get_cuts(self):
         ct = ""
         if "mt" in self.channel.name or "et" in self.channel.name:
             ct = "gen_match_2<5"
@@ -560,7 +560,15 @@ class ZLEstimation(DYJetsToLLEstimation):
             ct = "(gen_match_1<6&&gen_match_2<6&&!(gen_match_1==5&&gen_match_2==5))"
         elif "em" in self.channel.name:
             ct = "0 == 1"
-        return Cuts(Cut(ct, "zl_genmatch"))
+        return Cuts(Cut(ct, "zl_genmatch"))'''
+    def get_cuts(self):
+        if "mt" in self.channel.name or "et" in self.channel.name:
+            ff_veto = "!(gen_match_2 == 6)"
+        elif "tt" in self.channel.name:
+            ff_veto = "!(gen_match_1 == 6 || gen_match_2 == 6)"
+        elif "em" in self.channel.name:
+            ff_veto = "(1.0)"
+        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"%ff_veto, "dy_emb_and_ff_veto"))
 
 
 class ZJEstimation(DYJetsToLLEstimation):
@@ -726,7 +734,7 @@ class ZTTEmbeddedEstimation(EstimationMethod):
         log_query(self.name, query, files)
         return self.artus_file_names(files)
 
-    def get_cuts(self):
+    '''def get_cuts(self):
         ztt_genmatch_cut = Cut("1 == 1", "ztt_genmatch")
         if self.channel.name in ["mt", "et"]:
             ztt_genmatch_cut = Cut("gen_match_2==5", "ztt_genmatch")
@@ -736,7 +744,9 @@ class ZTTEmbeddedEstimation(EstimationMethod):
         elif self.channel.name == "em":
             ztt_genmatch_cut = Cut("(gen_match_1>2) && (gen_match_2>3)",
                                    "ztt_genmatch")
-        return Cuts(ztt_genmatch_cut)
+        return Cuts(ztt_genmatch_cut)'''
+    def get_cuts(self):
+        return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "dy_genuine_tau"))
 
 
 class EWKWpEstimation(EstimationMethod):

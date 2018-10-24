@@ -503,7 +503,7 @@ class ZLEstimation(DYJetsToLLEstimation):
             friend_directory=friend_directory,
             mc_campaign="RunIIFall17MiniAODv2")
 
-    def get_cuts(self):
+    '''def get_cuts(self):
         ct = ""
         if "mt" in self.channel.name or "et" in self.channel.name:
             ct = "gen_match_2<5"
@@ -511,7 +511,15 @@ class ZLEstimation(DYJetsToLLEstimation):
             ct = "(gen_match_1<6&&gen_match_2<6&&!(gen_match_1==5&&gen_match_2==5))"
         elif "em" in self.channel.name:
             ct = "0 == 1"
-        return Cuts(Cut(ct, "zl_genmatch"))
+        return Cuts(Cut(ct, "zl_genmatch"))'''
+    def get_cuts(self):
+        if "mt" in self.channel.name or "et" in self.channel.name:
+            ff_veto = "!(gen_match_2 == 6)"
+        elif "tt" in self.channel.name:
+            ff_veto = "!(gen_match_1 == 6 || gen_match_2 == 6)"
+        elif "em" in self.channel.name:
+            ff_veto = "(1.0)"
+        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"%ff_veto, "dy_emb_and_ff_veto"))
 
 
 class ZTTEmbeddedEstimation(EstimationMethod):

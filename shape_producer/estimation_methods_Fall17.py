@@ -98,10 +98,12 @@ class QCDEstimation_SStoOS_MTETEM(SStoOSEstimationMethod):
                  bg_processes,
                  data_process,
                  friend_directory=None,
-                 extrapolation_factor=1.0):
+                 extrapolation_factor=1.0,
+                 folder="nominal",
+                 ):
         super(QCDEstimation_SStoOS_MTETEM, self).__init__(
             name="QCD",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -112,10 +114,10 @@ class QCDEstimation_SStoOS_MTETEM(SStoOSEstimationMethod):
 
 
 class QCDEstimation_ABCD_TT_ISO2(ABCDEstimationMethod):
-    def __init__(self, era, directory, channel, bg_processes, data_process, friend_directory=None):
+    def __init__(self, era, directory, channel, bg_processes, data_process, friend_directory=None, folder="nominal"):
         super(QCDEstimation_ABCD_TT_ISO2, self).__init__(
             name="QCD",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -140,10 +142,10 @@ class QCDEstimation_ABCD_TT_ISO2(ABCDEstimationMethod):
 
 
 class QCDEstimation_ABCD_TT_ISO2_TRANSPOSED(ABCDEstimationMethod):
-    def __init__(self, era, directory, channel, bg_processes, data_process, friend_directory=None):
+    def __init__(self, era, directory, channel, bg_processes, data_process, friend_directory=None, folder="nominal"):
         super(QCDEstimation_ABCD_TT_ISO2_TRANSPOSED, self).__init__(
             name="QCD",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -168,10 +170,10 @@ class QCDEstimation_ABCD_TT_ISO2_TRANSPOSED(ABCDEstimationMethod):
 
 
 class QCDEstimation_ABCD_TT_ISO1(ABCDEstimationMethod):
-    def __init__(self, era, directory, channel, bg_processes, data_process, friend_directory=None):
+    def __init__(self, era, directory, channel, bg_processes, data_process, friend_directory=None, folder="nominal"):
         super(QCDEstimation_ABCD_TT_ISO1, self).__init__(
             name="QCD",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -195,10 +197,10 @@ class QCDEstimation_ABCD_TT_ISO1(ABCDEstimationMethod):
         )
 
 class VVEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(VVEstimation, self).__init__(
             name="VV",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -247,10 +249,10 @@ class VVEstimation(EstimationMethod):
         return self.artus_file_names(files)
 
 class VVLEstimation(VVEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(VVEstimation, self).__init__(
             name="VVL",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -267,10 +269,10 @@ class VVLEstimation(VVEstimation):
         return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"%ff_veto, "vv_emb_and_ff_veto"))
 
 class VVTEstimation(VVEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(VVEstimation, self).__init__(
             name="VVT",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -281,10 +283,10 @@ class VVTEstimation(VVEstimation):
         return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "vv_genuine_tau"))
 
 class VVJEstimation(VVEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(VVEstimation, self).__init__(
             name="VVJ",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -302,10 +304,10 @@ class VVJEstimation(VVEstimation):
         return Cuts(Cut(ct, "vv_fakes"))
 
 class EWKZEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(EWKZEstimation, self).__init__(
             name="EWKZ",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -346,10 +348,10 @@ class EWKZEstimation(EstimationMethod):
         return self.artus_file_names(files)
 
 class DYJetsToLLEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(DYJetsToLLEstimation, self).__init__(
             name="DYJetsToLL",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -412,10 +414,10 @@ class DYJetsToLLEstimation(EstimationMethod):
 
 
 class ZTTEstimation(DYJetsToLLEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(DYJetsToLLEstimation, self).__init__(
             name="ZTT",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -439,10 +441,10 @@ class ZTTEstimation(DYJetsToLLEstimation):
 
 
 class ZLLEstimation(DYJetsToLLEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(DYJetsToLLEstimation, self).__init__(
             name="ZLL",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -471,10 +473,10 @@ class ZLLEstimation(DYJetsToLLEstimation):
 
 
 class ZJEstimation(DYJetsToLLEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(DYJetsToLLEstimation, self).__init__(
             name="ZJ",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -493,10 +495,11 @@ class ZJEstimation(DYJetsToLLEstimation):
 
 
 class ZLEstimation(DYJetsToLLEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
+        print '-->ZLEstimation:',
         super(DYJetsToLLEstimation, self).__init__(
             name="ZL",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -523,10 +526,10 @@ class ZLEstimation(DYJetsToLLEstimation):
 
 
 class ZTTEmbeddedEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(ZTTEmbeddedEstimation, self).__init__(
             name="EMB",
-            folder="nominal",
+            folder=folder,
             era=era,
             friend_directory=friend_directory,
             directory=directory,
@@ -594,10 +597,10 @@ class ZTTEmbeddedEstimation(EstimationMethod):
 
 class ZttEmbeddingEstimation_ScaledToMC(EstimationMethod):
     def __init__(self, era, directory, channel, embedding_process,
-                 ttbar_tautau_mc_process, z_tautau_mc_process):
+                 ttbar_tautau_mc_process, z_tautau_mc_process, folder='nominal'):
         super(ZttEmbeddingEstimation_ScaledToMC, self).__init__(
             name="Ztt",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -669,10 +672,10 @@ class ZttEmbeddingEstimation_ScaledToMC(EstimationMethod):
 
 
 class WEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(WEstimation, self).__init__(
             name="W",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -723,10 +726,10 @@ class WEstimation(EstimationMethod):
 
 
 class TTEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(TTEstimation, self).__init__(
             name="TT",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -767,10 +770,10 @@ class TTEstimation(EstimationMethod):
         return self.artus_file_names(files)
 
 class TTLEstimation(TTEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(TTEstimation, self).__init__(
             name="TTL",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -788,10 +791,10 @@ class TTLEstimation(TTEstimation):
 
 
 class TTTEstimation(TTEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(TTEstimation, self).__init__(
             name="TTT",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -803,10 +806,10 @@ class TTTEstimation(TTEstimation):
 
 
 class TTJEstimation(TTEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(TTEstimation, self).__init__(
             name="TTJ",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -825,10 +828,10 @@ class TTJEstimation(TTEstimation):
 
 
 class HTTEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="HTT",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -870,10 +873,10 @@ class HTTEstimation(EstimationMethod):
 
 
 class ggHEstimation(HTTEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="ggH",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -893,10 +896,10 @@ class ggHEstimation(HTTEstimation):
 
 
 class qqHEstimation(HTTEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="qqH",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -916,10 +919,10 @@ class qqHEstimation(HTTEstimation):
 
 
 class ggHEstimation_VBFTOPO_JET3VETO(ggHEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="ggH_VBFTOPO_JET3VETO",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -931,10 +934,10 @@ class ggHEstimation_VBFTOPO_JET3VETO(ggHEstimation):
 
 
 class ggHEstimation_VBFTOPO_JET3(ggHEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="ggH_VBFTOPO_JET3",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -946,10 +949,10 @@ class ggHEstimation_VBFTOPO_JET3(ggHEstimation):
 
 
 class ggHEstimation_0J(ggHEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="ggH_0J",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -961,10 +964,10 @@ class ggHEstimation_0J(ggHEstimation):
 
 
 class ggHEstimation_1J_PTH_0_60(ggHEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="ggH_1J_PTH_0_60",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -976,10 +979,10 @@ class ggHEstimation_1J_PTH_0_60(ggHEstimation):
 
 
 class ggHEstimation_1J_PTH_60_120(ggHEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="ggH_1J_PTH_60_120",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -991,10 +994,10 @@ class ggHEstimation_1J_PTH_60_120(ggHEstimation):
 
 
 class ggHEstimation_1J_PTH_120_200(ggHEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="ggH_1J_PTH_120_200",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -1006,10 +1009,10 @@ class ggHEstimation_1J_PTH_120_200(ggHEstimation):
 
 
 class ggHEstimation_1J_PTH_GT200(ggHEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="ggH_1J_PTH_GT200",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -1021,10 +1024,10 @@ class ggHEstimation_1J_PTH_GT200(ggHEstimation):
 
 
 class ggHEstimation_GE2J_PTH_0_60(ggHEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="ggH_GE2J_PTH_0_60",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -1036,10 +1039,10 @@ class ggHEstimation_GE2J_PTH_0_60(ggHEstimation):
 
 
 class ggHEstimation_GE2J_PTH_60_120(ggHEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="ggH_GE2J_PTH_60_120",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -1051,10 +1054,10 @@ class ggHEstimation_GE2J_PTH_60_120(ggHEstimation):
 
 
 class ggHEstimation_GE2J_PTH_120_200(ggHEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="ggH_GE2J_PTH_120_200",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -1066,10 +1069,10 @@ class ggHEstimation_GE2J_PTH_120_200(ggHEstimation):
 
 
 class ggHEstimation_GE2J_PTH_GT200(ggHEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="ggH_GE2J_PTH_GT200",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -1081,10 +1084,10 @@ class ggHEstimation_GE2J_PTH_GT200(ggHEstimation):
 
 
 class qqHEstimation_VBFTOPO_JET3VETO(qqHEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="qqH_VBFTOPO_JET3VETO",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -1096,10 +1099,10 @@ class qqHEstimation_VBFTOPO_JET3VETO(qqHEstimation):
 
 
 class qqHEstimation_VBFTOPO_JET3(qqHEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="qqH_VBFTOPO_JET3",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -1111,10 +1114,10 @@ class qqHEstimation_VBFTOPO_JET3(qqHEstimation):
 
 
 class qqHEstimation_VH2JET(qqHEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="qqH_VH2JET",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -1126,10 +1129,10 @@ class qqHEstimation_VH2JET(qqHEstimation):
 
 
 class qqHEstimation_REST(qqHEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="qqH_REST",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -1141,10 +1144,10 @@ class qqHEstimation_REST(qqHEstimation):
 
 
 class qqHEstimation_PTJET1_GT200(qqHEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(HTTEstimation, self).__init__(
             name="qqH_PTJET1_GT200",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -1156,10 +1159,10 @@ class qqHEstimation_PTJET1_GT200(qqHEstimation):
 
 
 class SUSYggHEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, mass, friend_directory=None):
+    def __init__(self, era, directory, channel, mass, friend_directory=None, folder="nominal"):
         super(SUSYggHEstimation, self).__init__(
             name="_".join(["ggH",str(mass)]),
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -1200,10 +1203,10 @@ class SUSYggHEstimation(EstimationMethod):
         return self.artus_file_names(files)
 
 class SUSYbbHEstimation(EstimationMethod):
-    def __init__(self, era, directory, channel, mass, friend_directory=None):
+    def __init__(self, era, directory, channel, mass, friend_directory=None, folder="nominal"):
         super(SUSYbbHEstimation, self).__init__(
             name="_".join(["bbH",str(mass)]),
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             channel=channel,
@@ -1244,10 +1247,10 @@ class SUSYbbHEstimation(EstimationMethod):
         return self.artus_file_names(files)
 
 class FakeEstimationLT(DataEstimation2016):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(DataEstimation2016, self).__init__(
             name="fakes",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,
@@ -1270,10 +1273,10 @@ class FakeEstimationLT(DataEstimation2016):
 
 
 class FakeEstimationTT(DataEstimation2016):
-    def __init__(self, era, directory, channel, friend_directory=None):
+    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(DataEstimation2016, self).__init__(
             name="fakes",
-            folder="nominal",
+            folder=folder,
             era=era,
             directory=directory,
             friend_directory=friend_directory,

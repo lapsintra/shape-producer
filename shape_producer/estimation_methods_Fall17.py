@@ -440,38 +440,6 @@ class ZTTEstimation(DYJetsToLLEstimation):
         return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "dy_genuine_tau"))
 
 
-class ZLLEstimation(DYJetsToLLEstimation):
-    def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
-        super(DYJetsToLLEstimation, self).__init__(
-            name="ZLL",
-            folder=folder,
-            era=era,
-            directory=directory,
-            channel=channel,
-            friend_directory=friend_directory,
-            mc_campaign="RunIIFall17MiniAODv2")
-
-#    def get_cuts(self):
-#        zll_genmatch_cut = Cut("1 == 1", "zll_genmatch")
-#        if self.channel.name in ["mt", "et"]:
-#            zll_genmatch_cut = Cut("gen_match_2!=5", "zll_genmatch")
-#        elif self.channel.name == "tt":
-#            zll_genmatch_cut = Cut("(gen_match_1!=5) || (gen_match_2!=5)",
-#                                   "zll_genmatch")
-#        elif self.channel.name == "em":
-#            zll_genmatch_cut = Cut("(gen_match_1<3) || (gen_match_2<4)",
-#                                   "zll_genmatch")
-#        return Cuts(zll_genmatch_cut)
-    def get_cuts(self):
-        if "mt" in self.channel.name or "et" in self.channel.name:
-            ff_veto = "!(gen_match_2 == 6)"
-        elif "tt" in self.channel.name:
-            ff_veto = "!(gen_match_1 == 6 || gen_match_2 == 6)"
-        elif "em" in self.channel.name:
-            ff_veto = "(1.0)"
-        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"%ff_veto, "dy_emb_and_ff_veto"))
-
-
 class ZJEstimation(DYJetsToLLEstimation):
     def __init__(self, era, directory, channel, friend_directory=None, folder="nominal"):
         super(DYJetsToLLEstimation, self).__init__(

@@ -238,6 +238,8 @@ class VVEstimation(EstimationMethod):
         query = {
             "process": "ST",  # Query for Single-Top samples
             "data": False,
+            "scenario": "^PU2017$",
+            "version": "v1",
             "generator": "powheg\-pythia8",
             "campaign": self._mc_campaign
         }
@@ -652,8 +654,8 @@ class WEstimation(EstimationMethod):
             Weight("generatorWeight", "generatorWeight"),
             #Weight("numberGeneratedEventsWeight","numberGeneratedEventsWeight"), # to be used only for one inclusive sample
             #Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
-            Weight("((0.0007918442642*((npartons <= 0 || npartons >= 5)*1.0 + (npartons == 1)*0.8692 + (npartons == 2)*0.2620 + (npartons == 3)*0.0406 + (npartons == 4)*0.0394)) * (genbosonmass>=0.0) + numberGeneratedEventsWeight * crossSectionPerEventWeight * (genbosonmass<0.0))",
-                "wj_stitching_weight"), # xsec_NNLO [pb] = 61526.7, N_inclusive = 77700506, xsec_NNLO/N_inclusive = 0.00079184426418021 [pb] weights: [1.0, 0.8691509094676722, 0.2619981132261768, 0.040603231819572184, 0.03938985513682991]
+            Weight("((0.0007918442642*((npartons <= 0 || npartons >= 5)*1.0 + (npartons == 1)*0.1794 + (npartons == 2)*0.3784 + (npartons == 3)*0.0677 + (npartons == 4)*0.0658)) * (genbosonmass>=0.0) + numberGeneratedEventsWeight * crossSectionPerEventWeight * (genbosonmass<0.0))",
+                "wj_stitching_weight"), # xsec_NNLO [pb] = 61526.7, N_inclusive = 77700506, xsec_NNLO/N_inclusive = 0.00079184426418021 [pb] weights: [1.0, 0.1793723176685218, 0.37840817487565787, 0.0676922455153779, 0.06575618800138912]
 
             # Weights for corrections
             Weight("puweight", "puweight"),
@@ -726,7 +728,9 @@ class TTEstimation(EstimationMethod):
     def get_files(self):
         query = {
             "process": "TTTo.*",
+            "scenario": "^PU2017$",
             "data": False,
+            "version": "v1",
             "campaign": self._mc_campaign,
         }
         files = self.era.datasets_helper.get_nicks_with_query(query)

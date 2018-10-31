@@ -364,8 +364,15 @@ class DYJetsToLLEstimation(EstimationMethod):
             Weight("generatorWeight", "generatorWeight"),
             #Weight("numberGeneratedEventsWeight","numberGeneratedEventsWeight"), # to be used only for one inclusive sample
             #Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
-            Weight("((genbosonmass >= 50.0)*5.89503542e-05*((npartons == 0 || npartons >= 5)*1.0 + (npartons == 1)*0.3152 + (npartons == 2)*0.3634 + (npartons == 3)*0.6384 + (npartons == 4)*0.2097) + (genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight)",
-                "z_stitching_weight"), # xsec_NNLO [pb] = 5765.4, N_inclusive = 97800939,  xsec_NNLO/N_inclusive = 5.89503542e-05 [pb] weights: [1.0, 0.3152264560877219, 0.3634129397952724, 0.6383571409919083, 0.20970400388334687]
+            # Weight("((genbosonmass >= 50.0)*5.89503542e-05*((npartons == 0 || npartons >= 5)*1.0 + (npartons == 1)*0.3152 + (npartons == 2)*0.3634 + (npartons == 3)*0.6384 + (npartons == 4)*0.2097) + (genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight)",
+            Weight("((genbosonmass >= 50.0)*"
+                "((npartons == 0 || npartons >= 5)*6.37371181E-05 + "
+                "(npartons == 1)*1.09751888E-05 + "
+                "(npartons == 2)*2.32234636E-05 + "
+                "(npartons == 3)*1.45928945E-05 + "
+                "(npartons == 4)*9.96890185E-06) "
+                "+ (genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight)",
+                "z_stitching_weight"),  # xsec_NNLO [pb] = 5765.4, N_inclusive = 97800939,  xsec_NNLO/N_inclusive = 5.89503542e-05 [pb] weights: [1.0, 0.3152264560877219, 0.3634129397952724, 0.6383571409919083, 0.20970400388334687]
 
             # Weights for corrections
             Weight("puweight", "puweight"),
@@ -386,19 +393,19 @@ class DYJetsToLLEstimation(EstimationMethod):
         queryM10 = {
             "process": "DYJetsToLL_M10to50",
             "data": False,
-            "campaign": "RunIIFall17MiniAOD$",
+            "campaign": self._mc_campaign,
             "generator": "madgraph\-pythia8",
-            "extension": "^$",
-            "version": "v2"
+            # "extension": "^$",
+            "version": "v1"
         }
         queryM50 = {
             "process": "(DY(|1|2|3|4)JetsToLL_M50)",
-            #"process": "DYJetsToLL_M50",
+            # "process": "DYJetsToLL_M50",
             "data": False,
             "campaign": self._mc_campaign,
             "generator": "madgraph\-pythia8",
-            #"extension": "^$",
-            #"version": "v1" # to be used if only one inclusive sample is desired
+            # "extension": "^$",
+            "version": "v1" # to be used if only one inclusive sample is desired
         }
         queryEWKZ = {
             "process": "^EWKZ",

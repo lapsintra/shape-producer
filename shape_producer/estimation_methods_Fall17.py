@@ -31,7 +31,6 @@ def get_triggerweight_for_channel(channel):
     elif "et" in channel:
         trig_sL = "(trg_singleelectron_32_fallback || trg_singleelectron_27)"
         trig_X = "trg_crossele_ele24tau30"
-        singleMC = "((singleTriggerMCEfficiencyWeightKIT_1 && pt_1 > 33.0) + !(pt_1 > 33.0))"
 
         # Eff = Eff(singleL)*(1 - Eff(xTau)) + Eff(xL)*Eff(xTau)
         ElTauMC = "*".join([trig_sL,singleMC,"(1-"+trig_X+"*"+crossMCL+")"])+"+"+"*".join([trig_X,crossMCL,MCTau_2])
@@ -241,6 +240,8 @@ class VVEstimation(EstimationMethod):
         query = {
             "process": "ST",  # Query for Single-Top samples
             "data": False,
+            "scenario": "^PU2017$",
+            "version": "v1",
             "generator": "powheg\-pythia8",
             "campaign": self._mc_campaign
         }
@@ -364,15 +365,8 @@ class DYJetsToLLEstimation(EstimationMethod):
             Weight("generatorWeight", "generatorWeight"),
             #Weight("numberGeneratedEventsWeight","numberGeneratedEventsWeight"), # to be used only for one inclusive sample
             #Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
-            # Weight("((genbosonmass >= 50.0)*5.89503542e-05*((npartons == 0 || npartons >= 5)*1.0 + (npartons == 1)*0.3152 + (npartons == 2)*0.3634 + (npartons == 3)*0.6384 + (npartons == 4)*0.2097) + (genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight)",
-            Weight("((genbosonmass >= 50.0)*"
-                "((npartons == 0 || npartons >= 5)*6.37371181E-05 + "
-                "(npartons == 1)*1.09751888E-05 + "
-                "(npartons == 2)*2.32234636E-05 + "
-                "(npartons == 3)*1.45928945E-05 + "
-                "(npartons == 4)*9.96890185E-06) "
-                "+ (genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight)",
-                "z_stitching_weight"),  # xsec_NNLO [pb] = 5765.4, N_inclusive = 97800939,  xsec_NNLO/N_inclusive = 5.89503542e-05 [pb] weights: [1.0, 0.3152264560877219, 0.3634129397952724, 0.6383571409919083, 0.20970400388334687]
+            Weight("((genbosonmass >= 50.0)*6.36539901e-05*((npartons == 0 || npartons >= 5)*1.0 + (npartons == 1)*0.1721 + (npartons == 2)*0.3634 + (npartons == 3)*0.2273 + (npartons == 4)*0.2097) + (genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight)",
+                "z_stitching_weight"),  # xsec_NNLO [pb] = 3*2075.14, N_inclusive = 97800939,  xsec_NNLO/N_inclusive = 6.365399007058614e-05 [pb] weights: [1.0, 0.17210914941169414, 0.3634129397952724, 0.22728901609456784, 0.20970400388334687]
 
             # Weights for corrections
             Weight("puweight", "puweight"),
@@ -395,7 +389,7 @@ class DYJetsToLLEstimation(EstimationMethod):
             "data": False,
             "campaign": self._mc_campaign,
             "generator": "madgraph\-pythia8",
-            # "extension": "^$",
+            "extension": "^$",
             "version": "v1"
         }
         queryM50 = {
@@ -663,8 +657,8 @@ class WEstimation(EstimationMethod):
             Weight("generatorWeight", "generatorWeight"),
             #Weight("numberGeneratedEventsWeight","numberGeneratedEventsWeight"), # to be used only for one inclusive sample
             #Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
-            Weight("((1.35708973e-03*((npartons <= 0 || npartons >= 5)*1.0 + (npartons == 1)*0.8692 + (npartons == 2)*0.2620 + (npartons == 3)*0.0406 + (npartons == 4)*0.0394)) * (genbosonmass>=0.0) + numberGeneratedEventsWeight * crossSectionPerEventWeight * (genbosonmass<0.0))",
-                "wj_stitching_weight"), # xsec_NNLO [pb] = 61526.7, N_inclusive = 45337238, xsec_NNLO/N_inclusive = 1.35708973e-03 [pb] weights: [1.0, 0.8691509094676722, 0.2619981132261768, 0.040603231819572184, 0.03938985513682991]
+            Weight("((0.0007918442642*((npartons <= 0 || npartons >= 5)*1.0 + (npartons == 1)*0.1794 + (npartons == 2)*0.3784 + (npartons == 3)*0.0677 + (npartons == 4)*0.0658)) * (genbosonmass>=0.0) + numberGeneratedEventsWeight * crossSectionPerEventWeight * (genbosonmass<0.0))",
+                "wj_stitching_weight"), # xsec_NNLO [pb] = 61526.7, N_inclusive = 77700506, xsec_NNLO/N_inclusive = 0.00079184426418021 [pb] weights: [1.0, 0.1793723176685218, 0.37840817487565787, 0.0676922455153779, 0.06575618800138912]
 
             # Weights for corrections
             Weight("puweight", "puweight"),
@@ -737,7 +731,9 @@ class TTEstimation(EstimationMethod):
     def get_files(self):
         query = {
             "process": "TTTo.*",
+            "scenario": "^PU2017$",
             "data": False,
+            "version": "v1",
             "campaign": self._mc_campaign,
         }
         files = self.era.datasets_helper.get_nicks_with_query(query)

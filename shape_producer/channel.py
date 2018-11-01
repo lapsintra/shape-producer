@@ -172,6 +172,23 @@ class ETSM2017(Channel):
                 "trg_selection"))
 
 
+class ET_ETOTAUFAKE2017(Channel):
+    def __init__(self):
+        self._name = "et"
+        self._cuts = Cuts(
+            Cut("flagMETFilter == 1", "METFilter"),
+            Cut("extraelec_veto<0.5", "extraelec_veto"),
+            Cut("extramuon_veto<0.5", "extramuon_veto"),
+            Cut("againstMuonLoose3_2>0.5", "againstMuonDiscriminator"),
+            Cut("againstElectronTightMVA6_2>0.5",
+                "againstElectronDiscriminator"),
+            Cut("mt_1 < 70", "mt"),
+            Cut("njets == 0", "jetveto"),
+            Cut("byLooseIsolationMVArun2017v2DBoldDMwLT2017_2>0.5", "tau_iso"),
+            Cut("iso_1<0.15", "ele_iso"), Cut("q_1*q_2<0", "os"),
+            Cut("(trg_singleelectron_27 == 1) || (trg_singleelectron_32_fallback == 1) || (trg_crossele_ele24tau30 == 1) || (isEmbedded && pt_1>20 && pt_1<24)",
+                "trg_selection"))
+
 class ETSM2016(Channel):
     def __init__(self):
         self._name = "et"

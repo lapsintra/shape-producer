@@ -663,8 +663,7 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                 Weight("muonEffTrgWeight", "scale_factor"),
                 Weight(self.embedding_stitchingweight(),
                        "2016 stitching weight"),
-                Weight("idWeight_1*(triggerWeight_1*(pt_1>23)+(0.91*(pt_1<=23)))*isoWeight_1", "lepton_sf"), 
-                ## 0.91 is single-lepton trigger weight for pt [23-25] region extrapolated until cross-trigger SF for single lepton leg is available
+                Weight("idWeight_1*(triggerWeight_1*(pt_1>23)+((MuTau_TauLeg_DataEfficiencyWeight_2/MuTau_TauLeg_EmbeddedEfficiencyWeight_2)*(pt_1<=23)))*isoWeight_1", "lepton_sf"), 
                 Weight("1.0", "mutau_crosstriggerweight"),
                 Weight("(gen_match_2==5)*1.02+(gen_match_2!=5)", "emb_tau_id"),
                 Weight("embeddedDecayModeWeight", "decayMode_SF"))

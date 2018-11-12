@@ -98,7 +98,7 @@ class MTSM2017(Channel):
                 "againstElectronDiscriminator"),
             Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5", "tau_iso"),
             Cut("iso_1<0.15", "muon_iso"), Cut("q_1*q_2<0", "os"),
-            Cut("(trg_singlemuon_27 == 1) || (trg_singlemuon_24 == 1) || (trg_crossmuon_mu20tau27 == 1) || (isEmbedded && pt_1>20 && pt_1<24)",
+            Cut("pt_2>23 && ((trg_singlemuon_27 == 1) || (trg_singlemuon_24 == 1) || (pt_1 < 28 && trg_crossmuon_mu20tau27 == 1))",
                 "trg_selection"))
 
 
@@ -167,8 +167,7 @@ class ETSM2017(Channel):
                 "againstElectronDiscriminator"),
             Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5", "tau_iso"),
             Cut("iso_1<0.15", "ele_iso"), Cut("q_1*q_2<0", "os"),
-            Cut("(trg_singleelectron_27 == 1) || (trg_singleelectron_32_fallback == 1) || (trg_crossele_ele24tau30 == 1) || (isEmbedded && pt_1>20 && pt_1<24)",
-            #Cut("(trg_singleelectron_35 == 1) || (trg_crossele_ele24tau30 == 1)", # better agreement, since proper trigger scale-factors are missing for single-ele 27 & 32
+            Cut("pt_2>30 && ((trg_singleelectron_35 == 1) || (trg_singleelectron_32 == 1) || (trg_singleelectron_27 == 1) || (pt_1>25 && pt_1<28 && trg_crossele_ele24tau30 == 1))",
                 "trg_selection"))
 
 
@@ -260,8 +259,8 @@ class TTSM2017(Channel):
                 "tau_1_iso"),
             Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5",
                 "tau_2_iso"), Cut("q_1*q_2<0", "os"),
-            Cut("(isEmbedded && pt_1>40 && pt_2 > 40) || (!isEmbedded && ((trg_doubletau_35_tightiso_tightid == 1) || (trg_doubletau_40_mediso_tightid == 1) || (trg_doubletau_40_tightiso == 1)))",
-                "trg_selection")) # workaround to distuinguish embedded events and not apply tau trigger.
+            Cut("(trg_doubletau_35_tightiso_tightid == 1) || (trg_doubletau_40_mediso_tightid == 1) || (trg_doubletau_40_tightiso == 1)",
+                "trg_selection"))
 
 
 class EM(Channel):

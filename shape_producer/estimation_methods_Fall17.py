@@ -365,6 +365,8 @@ class DYJetsToLLEstimation(EstimationMethod):
             #Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
             Weight("((genbosonmass >= 50.0)*5.895035424966625e-05*((npartons == 0 || npartons >= 5)*1.0 + (npartons == 1)*0.1721 + (npartons == 2)*0.3634 + (npartons == 3)*0.2273 + (npartons == 4)*0.2097) + (genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight)",
                 "z_stitching_weight"),
+              # xsec_NNLO [pb] = 5765.4, N_inclusive = 97800939,  xsec_NNLO/N_inclusive = 5.89503542e-05 [pb] weights: [1.0, 0.3152264560877219, 0.3634129397952724, 0.6383571409919083, 0.20970400388334687]
+
             # Weights for corrections
             Weight("puweight", "puweight"),
             Weight("idWeight_1*idWeight_2","idweight"),
@@ -502,12 +504,23 @@ class ZTTEmbeddedEstimation(EstimationMethod):
             mc_campaign=None)
 
     def get_weights(self):
-        if self.channel.name in ["mt", "et"]:
+        if self.channel.name in ["mt"]:
             return Weights(
                 Weight("generatorWeight",
                        "simulation_sf"),
                 Weight("muonEffTrgWeight*muonEffIDWeight_1*muonEffIDWeight_2", "scale_factor"),
-                Weight("idWeight_1*(triggerWeight_1*(triggerWeight_1<1.8)*(triggerWeight_1>0.5)+(triggerWeight_1>=1.8)+(triggerWeight_1<=0.5))*isoWeight_1*(crossTriggerDataEfficiencyWeight_1*crossTriggerDataEfficiencyWeight_tight_MVA_2*(pt_1>20)*(pt_1<24)+(pt_1>24))", "lepton_sf"),
+                Weight("idWeight_1*(trigger_24_27_Weight_1*(pt_1>=25)*(trigger_24_27_Weight_1<2)+0.84*(pt_1<25))*isoWeight_1", "lepton_sf"),
+                Weight("(pt_1>=25)+(pt_1<25)*((pt_1>=20 && pt_2<25)*0.12714+(pt_1>=20 && pt_2<25)*0.46930+0.71983*(pt_2>=30 && pt_2<35) + 0.75209*(pt_2>=35 && pt_2<40) + 0.78164*(pt_2>=40 && pt_2<45) + 0.83241*(pt_2>=45 && pt_2<50) + 0.86694*(pt_2>=50 && pt_2<60) + 0.89966*(pt_2>=60 && pt_2<80) + 0.88534*(pt_2>=80 && pt_2<100) + 0.90095*(pt_2>=100 && pt_2<150) + 0.84402*(pt_2>=150 && pt_2<200) + (pt_2>=200))","tau_leg_weight"),
+                Weight("(gen_match_2==5)*0.97+(gen_match_2!=5)", "emb_tau_id"),
+                Weight("embeddedDecayModeWeight", "decayMode_SF"))
+        elif self.channel.name in ["et"]:
+            return Weights(
+                Weight("generatorWeight",
+                       "simulation_sf"),
+                Weight("muonEffTrgWeight*muonEffIDWeight_1*muonEffIDWeight_2", "scale_factor"),
+                Weight("(pt_1>=28)+((pt_1>=25 && pt_1<28)*(1.29079*(pt_2>=30 && pt_2<35) + 1.06504*(pt_2>=35 && pt_2<40) + 0.93972*(pt_2>=40 && pt_2<45) + 0.91923*(pt_2>=45 && pt_2<50) + 0.89598*(pt_2>=50 && pt_2<60) + 0.90597*(pt_2>=60 && pt_2<80) + 0.88761*(pt_2>=80 && pt_2<100) + 0.90210*(pt_2>=100 && pt_2<150) + 0.84939*(pt_2>=150 && pt_2<200) + (pt_2>=200)))","tau_leg_weight"),
+                Weight("(pt_1>=28)+(pt_1<28)*0.54","lepton_leg_weight"),
+                Weight("idWeight_1*(trigger_27_32_35_Weight_1*(pt_1>=28)*(trigger_27_32_35_Weight_1<2)+(pt_1<28)+((pt_1>=28)*(trigger_27_32_35_Weight_1>2)))*isoWeight_1", "lepton_sf"),
                 Weight("(gen_match_2==5)*0.97+(gen_match_2!=5)", "emb_tau_id"),
                 Weight("embeddedDecayModeWeight", "decayMode_SF"))
         elif self.channel.name == "tt":
@@ -515,17 +528,21 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                 Weight("generatorWeight",
                        "simulation_sf"),
                 Weight("muonEffTrgWeight*muonEffIDWeight_1*muonEffIDWeight_2", "scale_factor"),
-                Weight(
-                    "crossTriggerDataEfficiencyWeight_tight_MVA_1*crossTriggerDataEfficiencyWeight_tight_MVA_2",
-                    "trg_sf"),
+                #~ Weight(
+                    #~ "doubleTauTrgWeight*crossTriggerDataEfficiencyWeight_tight_MVA_1*crossTriggerDataEfficiencyWeight_tight_MVA_2",
+                        #~ "trg_sf"),
+                Weight("(0.18321*(pt_1>=30 && pt_1<35) + 0.53906*(pt_1>=35 && pt_1<40) + 0.63658*(pt_1>=40 && pt_1<45) + 0.73152*(pt_1>=45 && pt_1<50) + 0.79002*(pt_1>=50 && pt_1<60) + 0.84666*(pt_1>=60 && pt_1<80) + 0.84919*(pt_1>=80 && pt_1<100) + 0.86819*(pt_1>=100 && pt_1<150) + 0.88206*(pt_1>=150 && pt_1<200) + (pt_1>=200))","tau1_leg_weight"),
+                Weight("(0.18321*(pt_2>=30 && pt_2<35) + 0.53906*(pt_2>=35 && pt_2<40) + 0.63658*(pt_2>=40 && pt_2<45) + 0.73152*(pt_2>=45 && pt_2<50) + 0.79002*(pt_2>=50 && pt_2<60) + 0.84666*(pt_2>=60 && pt_2<80) + 0.84919*(pt_2>=80 && pt_2<100) + 0.86819*(pt_2>=100 && pt_2<150) + 0.88206*(pt_2>=150 && pt_2<200) + (pt_2>=200))","tau2_leg_weight"),                 
                 Weight("((gen_match_1==5)*0.97+(gen_match_1!=5))*((gen_match_2==5)*0.97+(gen_match_2!=5))", "emb_tau_id"),
                 Weight("embeddedDecayModeWeight", "decayMode_SF"))
         elif self.channel.name == "em":
             return Weights(
                 Weight("generatorWeight", "simulation_sf"),
                 Weight("muonEffTrgWeight*muonEffIDWeight_1*muonEffIDWeight_2", "scale_factor"),
-                Weight("idWeight_1*isoWeight_1*idWeight_2*isoWeight_2*(triggerWeight_2*(triggerWeight_2<1.8)+(triggerWeight_2>=1.8))",
-                       "leptopn_sf"))
+                Weight("idWeight_1*isoWeight_1*idWeight_2*isoWeight_2",
+                       "idiso_lepton_sf"),
+                Weight("(trigger_23_data_Weight_2/trigger_23_embed_Weight_2)*(pt_2>24)+(trigger_8_data_Weight_2/trigger_8_embed_Weight_2)*(pt_2<24)+(trigger_12_data_Weight_1/trigger_12_embed_Weight_1)*(pt_1<24)+(trigger_23_data_Weight_1/trigger_23_embed_Weight_1)*(pt_1<24)",
+                       "trigger_lepton_sf"))
 
 
     def get_files(self):

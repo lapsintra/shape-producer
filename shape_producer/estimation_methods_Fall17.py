@@ -510,7 +510,7 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                        "simulation_sf"),
                 Weight("muonEffTrgWeight*muonEffIDWeight_1*muonEffIDWeight_2", "scale_factor"),
                 Weight("idWeight_1*(trigger_24_27_Weight_1*(pt_1>=25)*(trigger_24_27_Weight_1<2)+0.84*(pt_1<25))*isoWeight_1", "lepton_sf"),
-                Weight("(pt_1>=25)+(pt_1<25)*((pt_1>=20 && pt_2<25)*0.12714+(pt_1>=20 && pt_2<25)*0.46930+0.71983*(pt_2>=30 && pt_2<35) + 0.75209*(pt_2>=35 && pt_2<40) + 0.78164*(pt_2>=40 && pt_2<45) + 0.83241*(pt_2>=45 && pt_2<50) + 0.86694*(pt_2>=50 && pt_2<60) + 0.89966*(pt_2>=60 && pt_2<80) + 0.88534*(pt_2>=80 && pt_2<100) + 0.90095*(pt_2>=100 && pt_2<150) + 0.84402*(pt_2>=150 && pt_2<200) + (pt_2>=200))","tau_leg_weight"),
+                Weight("(pt_1>=25)+(pt_1<25)*((pt_1>=20 && pt_2<25)*0.12714+(pt_1>=25 && pt_2<30)*0.46930+0.71983*(pt_2>=30 && pt_2<35) + 0.75209*(pt_2>=35 && pt_2<40) + 0.78164*(pt_2>=40 && pt_2<45) + 0.83241*(pt_2>=45 && pt_2<50) + 0.86694*(pt_2>=50 && pt_2<60) + 0.89966*(pt_2>=60 && pt_2<80) + 0.88534*(pt_2>=80 && pt_2<100) + 0.90095*(pt_2>=100 && pt_2<150) + 0.84402*(pt_2>=150 && pt_2<200) + (pt_2>=200))","tau_leg_weight"),
                 Weight("(gen_match_2==5)*0.97+(gen_match_2!=5)", "emb_tau_id"),
                 Weight("embeddedDecayModeWeight", "decayMode_SF"))
         elif self.channel.name in ["et"]:

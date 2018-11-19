@@ -15,27 +15,31 @@ def get_triggerweight_for_channel(channel):
 
     singleMC = "singleTriggerMCEfficiencyWeightKIT_1"
     crossMCL = "crossTriggerMCEfficiencyWeight_1"
-    MCTau_1 = "((byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5 && byMediumIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight_medium_MVA_1 + (byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight_tight_MVA_1)"
+    MCTau_1 = "((byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5 && byVLooseIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight_medium_MVA_1 + (byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight_tight_MVA_1)"
     MCTau_2 = MCTau_1.replace("_1","_2")
 
     if "mt" in channel:
         trig_sL = "(trg_singlemuon_27 || trg_singlemuon_24)"
-        trig_X = "trg_crossmuon_mu20tau27"
+        trig_X = "(pt_1 > 21 && pt_1 < 25 && trg_crossmuon_mu20tau27)"
 
         # Eff = Eff(singleL)*(1 - Eff(xTau)) + Eff(xL)*Eff(xTau)
-        MuTauMC = "*".join([trig_sL,singleMC,"(1-"+trig_X+"*"+crossMCL+")"])+"+"+"*".join([trig_X,crossMCL,MCTau_2])
-        MuTauData = MuTauMC.replace("MC","Data")
-        MuTau = "("+MuTauData+")/("+MuTauMC+")"
+        #MuTauMC = "*".join([trig_sL,singleMC,"(1-"+trig_X+"*"+crossMCL+")"])+"+"+"*".join([trig_X,crossMCL,MCTau_2])
+        #MuTauData = MuTauMC.replace("MC","Data")
+        #MuTau = "("+MuTauData+")/("+MuTauMC+")"
+        
+        MuTau = "*".join(trig_sL, singleMC) + "+" + "*".join(trig_X, crossMCL, MCTau_2)
         weight = Weight(MuTau,"triggerweight")
 
     elif "et" in channel:
         trig_sL = "(trg_singleelectron_32_fallback || trg_singleelectron_27)"
-        trig_X = "trg_crossele_ele24tau30"
+        trig_X = "(pt_1>25 && pt_1<28 && trg_crossele_ele24tau30)"
 
         # Eff = Eff(singleL)*(1 - Eff(xTau)) + Eff(xL)*Eff(xTau)
-        ElTauMC = "*".join([trig_sL,singleMC,"(1-"+trig_X+"*"+crossMCL+")"])+"+"+"*".join([trig_X,crossMCL,MCTau_2])
-        ElTauData = ElTauMC.replace("MC","Data")
-        ElTau = "("+ElTauData+")/("+ElTauMC+")"
+        #ElTauMC = "*".join([trig_sL,singleMC,"(1-"+trig_X+"*"+crossMCL+")"])+"+"+"*".join([trig_X,crossMCL,MCTau_2])
+        #ElTauData = ElTauMC.replace("MC","Data")
+        #ElTau = "("+ElTauData+")/("+ElTauMC+")"
+        
+        ElTau = "*".join(trig_sL, singleMC) + "+" + "*".join(trig_X, crossMCL, MCTau_2)
         weight = Weight(ElTau,"triggerweight")
 
     elif "tt" in channel:

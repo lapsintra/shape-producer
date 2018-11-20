@@ -27,7 +27,9 @@ def get_triggerweight_for_channel(channel):
         #MuTauData = MuTauMC.replace("MC","Data")
         #MuTau = "("+MuTauData+")/("+MuTauMC+")"
         
-        MuTau = "*".join([trig_sL, singleMC]) + "+" + "*".join([trig_X, crossMCL, MCTau_2])
+        MuTauMC = "*".join([trig_sL, singleMC]) + "+" + "*".join([trig_X, crossMCL, MCTau_2])
+        MuTauData = MuTauMC.replace("MC","Data")
+        MuTau = "("+MuTauData+")/("+MuTauMC+")"
         weight = Weight(MuTau,"triggerweight")
 
     elif "et" in channel:
@@ -39,7 +41,9 @@ def get_triggerweight_for_channel(channel):
         #ElTauData = ElTauMC.replace("MC","Data")
         #ElTau = "("+ElTauData+")/("+ElTauMC+")"
         
-        ElTau = "*".join([trig_sL, singleMC]) + "+" + "*".join([trig_X, crossMCL, MCTau_2])
+        ElTauMC = "*".join([trig_sL, singleMC]) + "+" + "*".join([trig_X, crossMCL, MCTau_2])
+        ElTauData = ElTauMC.replace("MC","Data")
+        ElTau = "("+ElTauData+")/("+ElTauMC+")"
         weight = Weight(ElTau,"triggerweight")
 
     elif "tt" in channel:

@@ -85,7 +85,7 @@ class EstimationMethod(object):
             systematic.category.cuts +
             self.get_cuts(),  # TODO: get_cuts() is correct here?
             "weights":
-            self.get_weights
+            systematic._additionalWeights + self.get_weights()
         })
         if systematic.category.variable != None:
             histogram_settings[-1]["variable"] = systematic.category.variable
@@ -497,3 +497,125 @@ class SumUpEstimationMethod(EstimationMethod):
         derived_shape.name = systematic.name
 
         return derived_shape
+
+
+class NewFakeEstimationMethodLT(EstimationMethod):
+    def __init__(self,
+                 name,
+                 folder,
+                 era,
+                 directory,
+                 channel,
+                 nofake_processes,
+                 data_process,
+                 aisoCut,
+                 fakeWeightstring,
+                 friend_directory=None):
+        super(NewFakeEstimationMethodLT, self).__init__(
+            name=name,
+            folder=folder,
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign=None)
+        self._nofake_processes = [copy.deepcopy(p) for p in nofake_processes]
+        self._data_process = copy.deepcopy(data_process)
+        self._cutsToRemove = ["tau_iso"]
+        self._aisoCut = aisoCut
+        self._FFweight = Weight(fakeWeightstring, "fake_factor")
+
+    def create_root_objects(self, systematic):
+        FF_category = copy.deepcopy(systematic.category)
+        for cut in self._cutsToRemove:
+            FF_category.cuts.remove(cut)
+        FF_category.cuts.add(self._aisoCut)
+        FF_category.name = FF_category._name + "_FF"
+
+        '''sdata = Systematic(
+            category=FF_category,
+            process=self._data_process,
+            analysis=systematic.analysis,
+            era=self.era,
+            variation=systematic.variation if "_ff_" in systematic.variation.name else Nominal(), # only apply ff systematics to the data shape
+            mass=125,
+            additionalWeights=Weights(self._FFweight))
+        systematic._ff_systematics = [sdata]
+        sdata.create_root_objects()
+        root_objects = sdata.root_objects'''
+        systematic._ff_systematics = []
+        root_objects = []
+        for process in [self._data_process] + self._nofake_processes:
+            process.estimation_method._friend_directories = self._friend_directories
+            s = Systematic(
+                category=FF_category,
+                process=process,
+                analysis=systematic.analysis,
+                era=self.era,
+                variation=systematic.variation if ("_ff_" in systematic.variation.name or not "data" in process.name) else Nominal(),
+                mass=125,
+                additionalWeights=Weights(self._FFweight))
+            systematic._ff_systematics.append(s)
+            s.create_root_objects()
+            root_objects += s.root_objects
+        return root_objects
+
+    def do_estimation(self, systematic):
+        if not hasattr(systematic, "_ff_systematics"):
+            logger.fatal(
+                "Systematic %s does not have attribute _ff_systematics needed for FF estimation.",
+                systematic.name)
+            raise Exception
+
+        # Create shapes
+        for s in systematic._ff_systematics:
+            s.do_estimation()
+
+        # Data shape
+        shape = copy.deepcopy(systematic._ff_systematics[0].shape)
+
+        # Subtract MC shapes from data shape
+        for s in systematic._ff_systematics[1:]:
+            shape.result.Add(s.shape.result, -1.0)
+
+        # Rename root object accordingly
+        shape.name = systematic.name
+
+        # Replace negative entries by zeros and renormalize shape
+        #shape.replace_negative_entries_and_renormalize(tolerance=100.05)
+
+        return shape
+
+    # Data-driven estimation, no associated files and weights
+    def get_files(self):
+        raise NotImplementedError
+
+    def get_weights(self):
+        raise NotImplementedError
+
+
+class NewFakeEstimationMethodTT(NewFakeEstimationMethodLT):
+    def __init__(self,
+                 name,
+                 folder,
+                 era,
+                 directory,
+                 channel,
+                 nofake_processes,
+                 data_process,
+                 aisoCut,
+                 fakeWeightstring,
+                 friend_directory=None):
+        super(NewFakeEstimationMethodLT, self).__init__(
+            name=name,
+            folder=folder,
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign=None)
+        self._nofake_processes = [copy.deepcopy(p) for p in nofake_processes]
+        self._data_process = copy.deepcopy(data_process)
+        self._cutsToRemove = ["tau_1_iso", "tau_2_iso"]
+        self._aisoCut = aisoCut
+        self._FFweight = Weight(fakeWeightstring, "fake_factor")

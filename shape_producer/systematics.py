@@ -2,6 +2,7 @@
 
 import ROOT
 from histogram import *
+from cutstring import *
 import copy
 
 import logging
@@ -17,7 +18,7 @@ def systematic_create_root_objects(systematic):
 
 
 class Systematic(object):
-    def __init__(self, category, process, analysis, era, variation, mass):
+    def __init__(self, category, process, analysis, era, variation, mass, additionalWeights=Weights()):
         self._category = category
         self._process = process
         self._analysis = analysis
@@ -26,6 +27,7 @@ class Systematic(object):
         self._variation = variation
         self._shape = None
         self._root_objects = None
+        self._additionalWeights = additionalWeights
 
     # TODO: What does this magic?
     def __deepcopy__(self, memo):

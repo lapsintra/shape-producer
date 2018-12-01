@@ -169,7 +169,7 @@ class ETSM2017(Channel):
             Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5", "tau_iso"),
             Cut("iso_1<0.15", "ele_iso"), Cut("q_1*q_2<0", "os"),
             Cut("mt_1<50", "m_t"),
-            Cut("pt_2>23 && ((trg_singleelectron_35 == 1) || (trg_singleelectron_32 == 1) || (trg_singleelectron_27 == 1) || (pt_1>25 && pt_1<28 && trg_crossele_ele24tau30 == 1))",
+            Cut("pt_2>23 && pt_1 > 25 && (((trg_singleelectron_35 == 1) || (trg_singleelectron_32 == 1) || ((trg_singleelectron_27 == 1))) || (abs(eta_1)>1.5 && isEmbedded)) || (pt_1>25 && pt_1<28 && pt_2>35 && ((isEmbedded && (abs(eta_1)>1.5)) || (trg_crossele_ele24tau30 == 1)))",
                 "trg_selection"))
 
 

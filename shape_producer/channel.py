@@ -261,6 +261,7 @@ class TTSM2017(Channel):
                 "tau_1_iso"),
             Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5",
                 "tau_2_iso"), Cut("q_1*q_2<0", "os"),
+            Cut("pt_tt>50", "pt_h"),
             Cut("(trg_doubletau_35_tightiso_tightid == 1) || (trg_doubletau_40_mediso_tightid == 1) || (trg_doubletau_40_tightiso == 1)",
                 "trg_selection"))
 

@@ -1,13 +1,15 @@
+
+
 # -*- coding: utf-8 -*-
 
 from cutstring import *
-from estimation_methods import EstimationMethod, SStoOSEstimationMethod, ABCDEstimationMethod
+from estimation_methods import EstimationMethod, SStoOSEstimationMethod, ABCDEstimationMethod, SumUpEstimationMethod, NewFakeEstimationMethodLT, NewFakeEstimationMethodTT
 from estimation_methods_2016 import DataEstimation as DataEstimation2016
 from estimation_methods_2016 import WEstimationWithQCD as WEstimationWithQCD2016
 from estimation_methods_2016 import QCDEstimationWithW as QCDEstimationWithW2016
 from systematics import *
 from era import log_query
-
+from process import *
 
 
 def get_triggerweight_for_channel(channel):
@@ -15,25 +17,33 @@ def get_triggerweight_for_channel(channel):
 
     singleMC = "singleTriggerMCEfficiencyWeightKIT_1"
     crossMCL = "crossTriggerMCEfficiencyWeight_1"
-    MCTau_1 = "((byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5 && byMediumIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight_medium_MVA_1 + (byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight_tight_MVA_1)"
+    MCTau_1 = "((byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5 && byVLooseIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight_vloose_MVA_1 + (byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)*crossTriggerMCEfficiencyWeight_tight_MVA_1)"
     MCTau_2 = MCTau_1.replace("_1","_2")
 
     if "mt" in channel:
         trig_sL = "(trg_singlemuon_27 || trg_singlemuon_24)"
-        trig_X = "trg_crossmuon_mu20tau27"
+        trig_X = "(pt_1 > 21 && pt_1 < 25 && trg_crossmuon_mu20tau27)"
 
         # Eff = Eff(singleL)*(1 - Eff(xTau)) + Eff(xL)*Eff(xTau)
-        MuTauMC = "*".join([trig_sL,singleMC,"(1-"+trig_X+"*"+crossMCL+")"])+"+"+"*".join([trig_X,crossMCL,MCTau_2])
+        #MuTauMC = "*".join([trig_sL,singleMC,"(1-"+trig_X+"*"+crossMCL+")"])+"+"+"*".join([trig_X,crossMCL,MCTau_2])
+        #MuTauData = MuTauMC.replace("MC","Data")
+        #MuTau = "("+MuTauData+")/("+MuTauMC+")"
+        
+        MuTauMC = "*".join([trig_sL, singleMC]) + "+" + "*".join([trig_X, crossMCL, MCTau_2])
         MuTauData = MuTauMC.replace("MC","Data")
         MuTau = "("+MuTauData+")/("+MuTauMC+")"
         weight = Weight(MuTau,"triggerweight")
 
     elif "et" in channel:
-        trig_sL = "(trg_singleelectron_32_fallback || trg_singleelectron_27)"
-        trig_X = "trg_crossele_ele24tau30"
+        trig_sL = "(trg_singleelectron_35 || trg_singleelectron_32 || trg_singleelectron_27)"
+        trig_X = "(pt_1>25 && pt_1<28 && trg_crossele_ele24tau30)"
 
         # Eff = Eff(singleL)*(1 - Eff(xTau)) + Eff(xL)*Eff(xTau)
-        ElTauMC = "*".join([trig_sL,singleMC,"(1-"+trig_X+"*"+crossMCL+")"])+"+"+"*".join([trig_X,crossMCL,MCTau_2])
+        #ElTauMC = "*".join([trig_sL,singleMC,"(1-"+trig_X+"*"+crossMCL+")"])+"+"+"*".join([trig_X,crossMCL,MCTau_2])
+        #ElTauData = ElTauMC.replace("MC","Data")
+        #ElTau = "("+ElTauData+")/("+ElTauMC+")"
+        
+        ElTauMC = "*".join([trig_sL, singleMC]) + "+" + "*".join([trig_X, crossMCL, MCTau_2])
         ElTauData = ElTauMC.replace("MC","Data")
         ElTau = "("+ElTauData+")/("+ElTauMC+")"
         weight = Weight(ElTau,"triggerweight")
@@ -75,7 +85,7 @@ def get_tauByIsoIdWeight_for_channel(channel):
 def get_eleHLTZvtxWeight_for_channel(channel):
     weight = Weight("1.0","eleHLTZvtxWeight")
     if "et" in channel:
-        weight = Weight("(trg_singleelectron_32_fallback || trg_singleelectron_27 || trg_crossele_ele24tau30)*0.991 + (!(trg_singleelectron_32_fallback || trg_singleelectron_27 || trg_crossele_ele24tau30))*1.0", "eleHLTZvtxWeight")
+        weight = Weight("(trg_singleelectron_35 || trg_singleelectron_32 || trg_singleelectron_27 || trg_crossele_ele24tau30)*0.991 + (!(trg_singleelectron_35 || trg_singleelectron_32 || trg_singleelectron_27 || trg_crossele_ele24tau30))*1.0", "eleHLTZvtxWeight")
     return weight
 
 class DataEstimation(DataEstimation2016):
@@ -181,7 +191,7 @@ class QCDEstimation_ABCD_TT_ISO1(ABCDEstimationMethod):
                 "tau_1_iso"
             ],
             BD_cuts=[      # cuts to be applied instead of cuts removed above
-                Cut("byTightIsolationMVArun2v1DBoldDMwLT_1<0.5", "tau_1_iso"),
+                Cut("byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5", "tau_1_iso"),
                 Cut("byLooseIsolationMVArun2v1DBoldDMwLT_1>0.5",
                     "tau_1_iso_loose")
             ],
@@ -236,10 +246,19 @@ class VVEstimation(EstimationMethod):
         files = self.era.datasets_helper.get_nicks_with_query(query)
 
         query = {
-            "process": "ST",  # Query for Single-Top samples
+            "process": "ST",  # Query for Single-Top samples (newer v2)
             "data": False,
             "scenario": "^PU2017$",
-            "version": "v1",
+            "version": "v2",
+            "generator": "powheg\-pythia8",
+            "campaign": self._mc_campaign
+        }
+        files += self.era.datasets_helper.get_nicks_with_query(query)
+
+        query = {
+            "process": "ST",  # Query for Single-Top samples (newer pileup mixing)
+            "data": False,
+            "scenario": "^PU2017newpmx$",
             "generator": "powheg\-pythia8",
             "campaign": self._mc_campaign
         }
@@ -363,8 +382,10 @@ class DYJetsToLLEstimation(EstimationMethod):
             Weight("generatorWeight", "generatorWeight"),
             #Weight("numberGeneratedEventsWeight","numberGeneratedEventsWeight"), # to be used only for one inclusive sample
             #Weight("crossSectionPerEventWeight","crossSectionPerEventWeight"), # to be used only for one inclusive sample
-            Weight("((genbosonmass >= 50.0)*5.895035424966625e-05*((npartons == 0 || npartons >= 5)*1.0 + (npartons == 1)*0.1721 + (npartons == 2)*0.3634 + (npartons == 3)*0.2273 + (npartons == 4)*0.2097) + (genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight)",
+            Weight("((genbosonmass >= 50.0)*5.8950e-05*((npartons == 0 || npartons >= 5)*1.0 + (npartons == 1)*0.1743 + (npartons == 2)*0.3634 + (npartons == 3)*0.2273 + (npartons == 4)*0.2104) + (genbosonmass < 50.0)*numberGeneratedEventsWeight*crossSectionPerEventWeight)",
                 "z_stitching_weight"),
+              # xsec_NNLO [pb] = 5765.4, N_inclusive = 97800939,  xsec_NNLO/N_inclusive = 5.89503542e-05 [pb] weights: [1.0, 0.1743347690195873, 0.3634129397952724, 0.22728901609456784, 0.21040417678899315]
+
             # Weights for corrections
             Weight("puweight", "puweight"),
             Weight("idWeight_1*idWeight_2","idweight"),
@@ -389,14 +410,35 @@ class DYJetsToLLEstimation(EstimationMethod):
             "extension": "^$",
             "version": "v1"
         }
-        queryM50 = {
-            "process": "(DY(|1|2|3|4)JetsToLL_M50)",
-            # "process": "DYJetsToLL_M50",
+        queryM50_inclusive_2_3jet = {
+            "process": "DY(|2|3)JetsToLL_M50",
             "data": False,
             "campaign": self._mc_campaign,
             "generator": "madgraph\-pythia8",
-            # "extension": "^$",
-            "version": "v1" # to be used if only one inclusive sample is desired
+            "version": "v1"
+        }
+        queryM50_1jet_v1 = {
+            "process": "DY1JetsToLL_M50",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "madgraph\-pythia8",
+            "extension": "^$",
+            "version": "v1"
+        }
+        queryM50_1jet_ext1_v2 = {
+            "process": "DY1JetsToLL_M50",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "madgraph\-pythia8",
+            "extension": "ext1",
+            "version": "v2"
+        }
+        queryM50_4jet = {
+            "process": "DY4JetsToLL_M50",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "madgraph\-pythia8",
+            "version": "v2"
         }
         queryEWKZ = {
             "process": "^EWKZ",
@@ -404,10 +446,13 @@ class DYJetsToLLEstimation(EstimationMethod):
             "campaign": self._mc_campaign,
             "generator": "madgraph\-pythia8",
         }
-        files = self.era.datasets_helper.get_nicks_with_query(queryM50) + self.era.datasets_helper.get_nicks_with_query(queryM10) + self.era.datasets_helper.get_nicks_with_query(queryEWKZ)
-        log_query(self.name, queryM50, files)
+        files = self.era.datasets_helper.get_nicks_with_query(queryM50_inclusive_2_3jet) + \
+                self.era.datasets_helper.get_nicks_with_query(queryM50_1jet_v1) + \
+                self.era.datasets_helper.get_nicks_with_query(queryM50_1jet_ext1_v2) + \
+                self.era.datasets_helper.get_nicks_with_query(queryM50_4jet) + \
+                self.era.datasets_helper.get_nicks_with_query(queryM10) + \
+                self.era.datasets_helper.get_nicks_with_query(queryEWKZ)
         log_query(self.name, queryM10, files)
-        log_query(self.name, queryEWKZ, files)
         return self.artus_file_names(files)
 
 
@@ -502,12 +547,23 @@ class ZTTEmbeddedEstimation(EstimationMethod):
             mc_campaign=None)
 
     def get_weights(self):
-        if self.channel.name in ["mt", "et"]:
+        if self.channel.name in ["mt"]:
             return Weights(
                 Weight("generatorWeight",
                        "simulation_sf"),
                 Weight("muonEffTrgWeight*muonEffIDWeight_1*muonEffIDWeight_2", "scale_factor"),
-                Weight("idWeight_1*(triggerWeight_1*(triggerWeight_1<1.8)*(triggerWeight_1>0.5)+(triggerWeight_1>=1.8)+(triggerWeight_1<=0.5))*isoWeight_1*(crossTriggerDataEfficiencyWeight_1*crossTriggerDataEfficiencyWeight_tight_MVA_2*(pt_1>20)*(pt_1<24)+(pt_1>24))", "lepton_sf"),
+                Weight("idWeight_1*(trigger_24_27_Weight_1*(pt_1>25)+((0.81*(pt_1>=21 && pt_1<22) + 0.82*(pt_1>=22 && pt_1<23) + 0.83*(pt_1>=23))*(pt_1<25)))*isoWeight_1", "lepton_sf"),
+                Weight("(pt_1>25)+(pt_1 >= 21 && pt_1<25)*((pt_2>=20 && pt_2<25)*0.12714+(pt_2>=25 && pt_2<30)*0.46930+0.71983*(pt_2>=30 && pt_2<35) + 0.75209*(pt_2>=35 && pt_2<40) + 0.78164*(pt_2>=40 && pt_2<45) + 0.83241*(pt_2>=45 && pt_2<50) + 0.86694*(pt_2>=50 && pt_2<60) + 0.89966*(pt_2>=60 && pt_2<80) + 0.88534*(pt_2>=80 && pt_2<100) + 0.90095*(pt_2>=100 && pt_2<150) + 0.84402*(pt_2>=150 && pt_2<200) + (pt_2>=200))","tau_leg_weight"),
+                Weight("(gen_match_2==5)*0.97+(gen_match_2!=5)", "emb_tau_id"),
+                Weight("embeddedDecayModeWeight", "decayMode_SF"))
+        elif self.channel.name in ["et"]:
+            return Weights(
+                Weight("generatorWeight",
+                       "simulation_sf"),
+                Weight("muonEffTrgWeight*muonEffIDWeight_1*muonEffIDWeight_2", "scale_factor"),
+                Weight("(pt_1>28)+(pt_1<28)*(crossTriggerDataEfficiencyWeight_tight_MVA_2*(abs(eta_1)>=1.5)+((1.29079*(pt_2>=30 && pt_2<35) + 1.06504*(pt_2>=35 && pt_2<40) + 0.93972*(pt_2>=40 && pt_2<45) + 0.91923*(pt_2>=45 && pt_2<50) + 0.89598*(pt_2>=50 && pt_2<60) + 0.90597*(pt_2>=60 && pt_2<80) + 0.88761*(pt_2>=80 && pt_2<100) + 0.90210*(pt_2>=100 && pt_2<150) + 0.84939*(pt_2>=150 && pt_2<200) + (pt_2>=200))*(abs(eta_1)<1.5)))","tau_leg_weight"),
+                Weight("(pt_1>28)+(pt_1<28)*(crossTriggerDataEfficiencyWeight_1*(abs(eta_1)>=1.5)+((0.39*(pt_1>=25 && pt_1<26) + 0.46*(pt_1>=26 && pt_1<27) + 0.48*(pt_1>=27 && pt_1<28))*(abs(eta_1)<1.5)))","lepton_leg_weight"),
+                Weight("idWeight_1*((pt_1>28)*(trigger_27_32_35_Weight_1*(abs(eta_1) < 1.5) + singleTriggerDataEfficiencyWeightKIT_1*(abs(eta_1)>=1.5))+(pt_1<28))*isoWeight_1", "lepton_sf"),
                 Weight("(gen_match_2==5)*0.97+(gen_match_2!=5)", "emb_tau_id"),
                 Weight("embeddedDecayModeWeight", "decayMode_SF"))
         elif self.channel.name == "tt":
@@ -515,17 +571,18 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                 Weight("generatorWeight",
                        "simulation_sf"),
                 Weight("muonEffTrgWeight*muonEffIDWeight_1*muonEffIDWeight_2", "scale_factor"),
-                Weight(
-                    "crossTriggerDataEfficiencyWeight_tight_MVA_1*crossTriggerDataEfficiencyWeight_tight_MVA_2",
-                    "trg_sf"),
+                Weight("(0.18321*(pt_1>=30 && pt_1<35) + 0.53906*(pt_1>=35 && pt_1<40) + 0.63658*(pt_1>=40 && pt_1<45) + 0.73152*(pt_1>=45 && pt_1<50) + 0.79002*(pt_1>=50 && pt_1<60) + 0.84666*(pt_1>=60 && pt_1<80) + 0.84919*(pt_1>=80 && pt_1<100) + 0.86819*(pt_1>=100 && pt_1<150) + 0.88206*(pt_1>=150 && pt_1<200) + (pt_1>=200))","tau1_leg_weight"),
+                Weight("(0.18321*(pt_2>=30 && pt_2<35) + 0.53906*(pt_2>=35 && pt_2<40) + 0.63658*(pt_2>=40 && pt_2<45) + 0.73152*(pt_2>=45 && pt_2<50) + 0.79002*(pt_2>=50 && pt_2<60) + 0.84666*(pt_2>=60 && pt_2<80) + 0.84919*(pt_2>=80 && pt_2<100) + 0.86819*(pt_2>=100 && pt_2<150) + 0.88206*(pt_2>=150 && pt_2<200) + (pt_2>=200))","tau2_leg_weight"),                 
                 Weight("((gen_match_1==5)*0.97+(gen_match_1!=5))*((gen_match_2==5)*0.97+(gen_match_2!=5))", "emb_tau_id"),
                 Weight("embeddedDecayModeWeight", "decayMode_SF"))
         elif self.channel.name == "em":
             return Weights(
                 Weight("generatorWeight", "simulation_sf"),
                 Weight("muonEffTrgWeight*muonEffIDWeight_1*muonEffIDWeight_2", "scale_factor"),
-                Weight("idWeight_1*isoWeight_1*idWeight_2*isoWeight_2*(triggerWeight_2*(triggerWeight_2<1.8)+(triggerWeight_2>=1.8))",
-                       "leptopn_sf"))
+                Weight("idWeight_1*isoWeight_1*idWeight_2*isoWeight_2",
+                       "idiso_lepton_sf"),
+                Weight("(trigger_23_data_Weight_2/trigger_23_embed_Weight_2)*(pt_2>24)+(trigger_8_data_Weight_2/trigger_8_embed_Weight_2)*(pt_2<24)+(trigger_12_data_Weight_1/trigger_12_embed_Weight_1)*(pt_1<24)+(trigger_23_data_Weight_1/trigger_23_embed_Weight_1)*(pt_1<24)",
+                       "trigger_lepton_sf"))
 
 
     def get_files(self):
@@ -707,7 +764,8 @@ class TTEstimation(EstimationMethod):
             Weight("generatorWeight", "generatorWeight"),
             Weight("numberGeneratedEventsWeight",
                    "numberGeneratedEventsWeight"),
-            Weight("crossSectionPerEventWeight", "crossSectionPerEventWeight"),
+            Weight("(abs(crossSectionPerEventWeight - 380.1) < 0.1)*377.96 + (abs(crossSectionPerEventWeight - 87.31) < 0.1)*88.29 + (abs(crossSectionPerEventWeight - 364.4) < 0.1)*365.35", "crossSectionPerEventWeight"),
+            #Weight("crossSectionPerEventWeight", "crossSectionPerEventWeight"),
 
             # Weights for corrections
             Weight("puweight", "puweight"),
@@ -727,9 +785,9 @@ class TTEstimation(EstimationMethod):
     def get_files(self):
         query = {
             "process": "TTTo.*",
-            "scenario": "^PU2017$",
+            "scenario": "PU2017",
+            "dbs" : ".*new_pmx.*",
             "data": False,
-            "version": "v1",
             "campaign": self._mc_campaign,
         }
         files = self.era.datasets_helper.get_nicks_with_query(query)
@@ -850,6 +908,12 @@ class ggHEstimation(HTTEstimation):
             channel=channel,
             mc_campaign="RunIIFall17MiniAODv2")
 
+    def get_weights(self):
+        weights = super(ggHEstimation, self).get_weights()
+        weights.remove("numberGeneratedEventsWeight")
+        weights.add(Weight("8.22976e-8", "numberGeneratedEventsWeight"))
+        return weights
+
     def get_files(self):
         query = {
             "process": "^GluGluHToTauTau.*125.*",
@@ -872,6 +936,11 @@ class qqHEstimation(HTTEstimation):
             friend_directory=friend_directory,
             channel=channel,
             mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_weights(self):
+        weights = super(qqHEstimation, self).get_weights()
+        weights.add(Weight("(0.95+0.02*(jpt_1>0)*(jpt_1<200)*(njets<2||((jdeta<2.8||mjj<400)&&(mjj<60||mjj>=120)))-0.1*(jpt_1>=200))", "prefireWeight"))
+        return weights
 
     def get_files(self):
         query = {
@@ -1239,6 +1308,83 @@ class FakeEstimationLT(DataEstimation2016):
                      self).create_root_objects(aiso_systematic)
 
 
+'''class AntiFakeEstimationLT(DataEstimation2016):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(DataEstimation2016, self).__init__(
+            name="antifakes",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign=None)
+        self._channel = channel
+
+    def get_weights(self):
+        return Weights(Weight("(1.0-ff2_nom)", "anti_fake_factor"))
+
+    def create_root_objects(self, systematic):
+        aiso_systematic = copy.deepcopy(systematic)
+        aiso_systematic.category.cuts.remove("tau_iso")
+        aiso_systematic.category.cuts.add(
+            Cut(
+                "byTightIsolationMVArun2017v2DBoldDMwLT2017_2<0.5&&byVLooseIsolationMVArun2017v2DBoldDMwLT2017_2>0.5",
+                "tau_aiso"))
+        return super(AntiFakeEstimationLT,
+                     self).create_root_objects(aiso_systematic)
+
+
+class DataFakeEstimationLT(DataEstimation2016):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(DataEstimation2016, self).__init__(
+            name="datafakes",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign=None)
+        self._channel = channel
+
+    def create_root_objects(self, systematic):
+        aiso_systematic = copy.deepcopy(systematic)
+        aiso_systematic.category.cuts.remove("tau_iso")
+        aiso_systematic.category.cuts.add(
+            Cut(
+                "byTightIsolationMVArun2017v2DBoldDMwLT2017_2<0.5&&byVLooseIsolationMVArun2017v2DBoldDMwLT2017_2>0.5",
+                "tau_aiso"))
+        return super(DataFakeEstimationLT,
+                     self).create_root_objects(aiso_systematic)
+
+
+class NewFakeEstimationLT(SumUpEstimationMethod):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(NewFakeEstimationLT, self).__init__(
+            name="fakes",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            factors=[1.0,-1.0],
+            processes=[
+                Process(
+                    "dataFakes",
+                    DataFakeEstimationLT(
+                        era,
+                        directory,
+                        channel,
+                        friend_directory=friend_directory)),
+                Process(
+                    "antiFakes",
+                    AntiFakeEstimationLT(
+                        era,
+                        directory,
+                        channel,
+                        friend_directory=friend_directory))
+            ])'''
+
+
 class FakeEstimationTT(DataEstimation2016):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(DataEstimation2016, self).__init__(
@@ -1268,3 +1414,48 @@ class FakeEstimationTT(DataEstimation2016):
         return super(FakeEstimationTT,
                      self).create_root_objects(aiso_systematic)
 
+
+class NewFakeEstimationLT(NewFakeEstimationMethodLT):
+    def __init__(self, 
+                 era,
+                 directory,
+                 channel,
+                 nofake_processes,
+                 data_process,
+                 friend_directory=None):
+        super(NewFakeEstimationLT, self).__init__(
+            name="jetFakes",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            nofake_processes=nofake_processes,
+            data_process=data_process,
+            aisoCut=Cut(
+                "byTightIsolationMVArun2017v2DBoldDMwLT2017_2<0.5&&byVLooseIsolationMVArun2017v2DBoldDMwLT2017_2>0.5",
+                "tau_aiso"),
+            fakeWeightstring="ff2_nom")
+
+
+class NewFakeEstimationTT(NewFakeEstimationMethodTT):
+    def __init__(self,
+                 era,
+                 directory,
+                 channel,
+                 nofake_processes,
+                 data_process,
+                 friend_directory=None):
+        super(NewFakeEstimationTT, self).__init__(
+            name="jetFakes",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            nofake_processes=nofake_processes,
+            data_process=data_process,
+            aisoCut=Cut(
+                "(byTightIsolationMVArun2017v2DBoldDMwLT2017_2>0.5&&byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5&&byVLooseIsolationMVArun2017v2DBoldDMwLT2017_1>0.5)||(byTightIsolationMVArun2017v2DBoldDMwLT2017_1>0.5&&byTightIsolationMVArun2017v2DBoldDMwLT2017_2<0.5&&byVLooseIsolationMVArun2017v2DBoldDMwLT2017_2>0.5)",
+                "tau_aiso"),
+            fakeWeightstring="(0.5*ff1_nom*(byTightIsolationMVArun2017v2DBoldDMwLT2017_1<0.5)+0.5*ff2_nom*(byTightIsolationMVArun2017v2DBoldDMwLT2017_2<0.5))")

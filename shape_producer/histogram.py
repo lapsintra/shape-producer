@@ -125,9 +125,14 @@ class Histogram(TTreeContent):
             if self._friend_inputfiles_collection != None:
                 for friend_inputfiles in self._friend_inputfiles_collection:
                     friend_tree = ROOT.TChain()
-                    for friend_inputfile in friend_inputfiles:
-                        friend_tree.Add(friend_inputfile + "/" + self._folder)
-                    tree.AddFriend(friend_tree)
+                    for ffile, falias in friend_inputfiles.iteritems():
+                        friend_tree.Add(ffile + "/" + self._folder)
+                    if falias != "":
+                        tree.AddFriend(friend_tree, falias)
+                    else:
+                        tree.AddFriend(friend_tree)
+                    for friend_file in friend_inputfiles:
+                        friend_tree.Add(friend_file + "/" + self._folder)
                     friend_trees.append(friend_tree)
 
             # create unfilled template histogram
@@ -251,9 +256,14 @@ class Count(TTreeContent):
             if self._friend_inputfiles_collection != None:
                 for friend_inputfiles in self._friend_inputfiles_collection:
                     friend_tree = ROOT.TChain()
-                    for friend_inputfile in friend_inputfiles:
-                        friend_tree.Add(friend_inputfile + "/" + self._folder)
-                    tree.AddFriend(friend_tree)
+                    for ffile, falias in friend_inputfiles.iteritems():
+                        friend_tree.Add(ffile + "/" + self._folder)
+                    if falias != "":
+                        tree.AddFriend(friend_tree, falias)
+                    else:
+                        tree.AddFriend(friend_tree)
+                    for friend_file in friend_inputfiles:
+                        friend_tree.Add(friend_file + "/" + self._folder)
                     friend_trees.append(friend_tree)
 
             tree.Draw("1>>" + self._name + "(1)",

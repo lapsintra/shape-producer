@@ -6,6 +6,7 @@ from histogram import *
 from cutstring import *
 from systematics import *
 from systematic_variations import *
+from collections import OrderedDict
 
 import logging
 logger = logging.getLogger(__name__)
@@ -26,8 +27,18 @@ class EstimationMethod(object):
         self._mc_campaign = mc_campaign
         self._channel = channel
         self._era = era
-        self._friend_directories = [friend_directory] if isinstance(
-            friend_directory, str) else friend_directory
+        if isinstance(friend_directory, str):
+            self._friend_directories = {friend_directory: ""}
+        elif isinstance(friend_directory, list):
+            self._friend_directories = dict()
+            for fdir in friend_directory:
+                if isinstance(fdir, str):
+                    self._friend_directories[fdir] = ""
+                elif isinstance(fdir, dict):
+                    self._friend_directories.update(fdir)
+        else:
+            self._friend_directories = friend_directory
+        # self._friend_directories = [friend_directory] if isinstance(friend_directory, str) else friend_directory # DEBUG
 
     def get_path(self, systematic, folder):
         return systematic.category.channel.name + "_" + folder + "/ntuple"
@@ -61,10 +72,17 @@ class EstimationMethod(object):
         raise NotImplementedError
 
     def get_friend_files(self):
-        return [[
-            filename.replace(self._directory, friend_directory)
-            for filename in self.get_files()
-        ] for friend_directory in self._friend_directories]
+        friend_files = list()
+        for fdir, falias in self._friend_directories.iteritems():
+            d = OrderedDict()
+            for filename in self.get_files():
+                d[filename.replace(self._directory, fdir)] = falias
+            friend_files.append(d)
+        return friend_files
+        # return [[
+        #     filename.replace(self._directory, friend_directory)
+        #     for filename in self.get_files()
+        # ] for friend_directory in self._friend_directories] # DEBUG
 
     def artus_file_names(self, files):
         return [os.path.join(self._directory, f, "%s.root" % f) for f in files]

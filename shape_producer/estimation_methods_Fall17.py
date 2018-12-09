@@ -938,7 +938,7 @@ class VHEstimation(HTTEstimation):
             directory=directory,
             friend_directory=friend_directory,
             channel=channel,
-            mc_campaign="RunIISummer16MiniAODv2")
+            mc_campaign="RunIIFall17MiniAODv2")
 
     def get_files(self):
         query = {
@@ -961,7 +961,7 @@ class WHEstimation(HTTEstimation):
             directory=directory,
             friend_directory=friend_directory,
             channel=channel,
-            mc_campaign="RunIISummer16MiniAODv2")
+            mc_campaign="RunIIFall17MiniAODv2")
 
     def get_files(self):
         query = {
@@ -984,7 +984,7 @@ class ZHEstimation(HTTEstimation):
             directory=directory,
             friend_directory=friend_directory,
             channel=channel,
-            mc_campaign="RunIISummer16MiniAODv2")
+            mc_campaign="RunIIFall17MiniAODv2")
 
     def get_files(self):
         query = {

@@ -278,13 +278,19 @@ class VVLEstimation(VVEstimation):
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
-        if "mt" in self.channel.name or "et" in self.channel.name:
+        if "mt" in self.channel.name:
+            emb_veto = "!(gen_match_1==4 && gen_match_2==5)"
+            ff_veto = "!(gen_match_2 == 6)"
+        elif "et" in self.channel.name:
+            emb_veto = "!(gen_match_1==3 && gen_match_2==5)"
             ff_veto = "!(gen_match_2 == 6)"
         elif "tt" in self.channel.name:
+            emb_veto = "!(gen_match_1==5 && gen_match_2==5)"
             ff_veto = "!(gen_match_1 == 6 || gen_match_2 == 6)"
         elif "em" in self.channel.name:
+            emb_veto = "!(gen_match_1==3 && gen_match_2==4)"
             ff_veto = "(1.0)"
-        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"%ff_veto, "vv_emb_and_ff_veto"))
+        return Cuts(Cut("%s && %s"%(emb_veto,ff_veto), "vv_emb_and_ff_veto"))
 
 class VVTEstimation(VVEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -298,7 +304,15 @@ class VVTEstimation(VVEstimation):
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "vv_genuine_tau"))
+        if "mt" in self.channel.name:
+            tt_cut = "gen_match_1==4 && gen_match_2==5"
+        elif "et" in self.channel.name:
+            tt_cut = "gen_match_1==3 && gen_match_2==5"
+        elif "tt" in self.channel.name:
+            tt_cut = "gen_match_1==5 && gen_match_2==5"
+        elif "em" in self.channel.name:
+            tt_cut = "gen_match_1==3 && gen_match_2==4"
+        return Cuts(Cut(tt_cut, "vvt_cut"))
 
 class VVJEstimation(VVEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -467,21 +481,16 @@ class ZTTEstimation(DYJetsToLLEstimation):
             friend_directory=friend_directory,
             mc_campaign="RunIIFall17MiniAODv2")
 
-#    def get_cuts(self):
-#
-#        ztt_genmatch_cut = Cut("1 == 1", "ztt_genmatch")
-#        if self.channel.name in ["mt", "et"]:
-#            ztt_genmatch_cut = Cut("gen_match_2==5", "ztt_genmatch")
-#        elif self.channel.name == "tt":
-#            ztt_genmatch_cut = Cut("(gen_match_1==5) && (gen_match_2==5)",
-#                                   "ztt_genmatch")
-#        elif self.channel.name == "em":
-#            ztt_genmatch_cut = Cut("(gen_match_1>2) && (gen_match_2>3)",
-#                                   "ztt_genmatch")
-#        return Cuts(ztt_genmatch_cut)
     def get_cuts(self):
-        return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "dy_genuine_tau"))
-
+        if "mt" in self.channel.name:
+            tt_cut = "gen_match_1==4 && gen_match_2==5"
+        elif "et" in self.channel.name:
+            tt_cut = "gen_match_1==3 && gen_match_2==5"
+        elif "tt" in self.channel.name:
+            tt_cut = "gen_match_1==5 && gen_match_2==5"
+        elif "em" in self.channel.name:
+            tt_cut = "gen_match_1==3 && gen_match_2==4"
+        return Cuts(Cut(tt_cut, "ztt_cut"))
 
 class ZJEstimation(DYJetsToLLEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
@@ -526,13 +535,19 @@ class ZLEstimation(DYJetsToLLEstimation):
             ct = "0 == 1"
         return Cuts(Cut(ct, "zl_genmatch"))'''
     def get_cuts(self):
-        if "mt" in self.channel.name or "et" in self.channel.name:
+        if "mt" in self.channel.name:
+            emb_veto = "!(gen_match_1==4 && gen_match_2==5)"
+            ff_veto = "!(gen_match_2 == 6)"
+        elif "et" in self.channel.name:
+            emb_veto = "!(gen_match_1==3 && gen_match_2==5)"
             ff_veto = "!(gen_match_2 == 6)"
         elif "tt" in self.channel.name:
+            emb_veto = "!(gen_match_1==5 && gen_match_2==5)"
             ff_veto = "!(gen_match_1 == 6 || gen_match_2 == 6)"
         elif "em" in self.channel.name:
+            emb_veto = "!(gen_match_1==3 && gen_match_2==4)"
             ff_veto = "(1.0)"
-        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"%ff_veto, "dy_emb_and_ff_veto"))
+        return Cuts(Cut("%s && %s"%(emb_veto,ff_veto), "dy_emb_and_ff_veto"))
 
 
 class ZTTEmbeddedEstimation(EstimationMethod):
@@ -555,6 +570,7 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                 Weight("idWeight_1*(trigger_24_27_Weight_1*(pt_1>25)+((0.81*(pt_1>=21 && pt_1<22) + 0.82*(pt_1>=22 && pt_1<23) + 0.83*(pt_1>=23))*(pt_1<25)))*isoWeight_1", "lepton_sf"),
                 Weight("(pt_1>25)+(pt_1 >= 21 && pt_1<25)*((pt_2>=20 && pt_2<25)*0.12714+(pt_2>=25 && pt_2<30)*0.46930+0.71983*(pt_2>=30 && pt_2<35) + 0.75209*(pt_2>=35 && pt_2<40) + 0.78164*(pt_2>=40 && pt_2<45) + 0.83241*(pt_2>=45 && pt_2<50) + 0.86694*(pt_2>=50 && pt_2<60) + 0.89966*(pt_2>=60 && pt_2<80) + 0.88534*(pt_2>=80 && pt_2<100) + 0.90095*(pt_2>=100 && pt_2<150) + 0.84402*(pt_2>=150 && pt_2<200) + (pt_2>=200))","tau_leg_weight"),
                 Weight("(gen_match_2==5)*0.97+(gen_match_2!=5)", "emb_tau_id"),
+                Weight("gen_match_1==4 && gen_match_2==5","emb_veto"),
                 Weight("embeddedDecayModeWeight", "decayMode_SF"))
         elif self.channel.name in ["et"]:
             return Weights(
@@ -565,6 +581,7 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                 Weight("(pt_1>28)+(pt_1<28)*(crossTriggerDataEfficiencyWeight_1*(abs(eta_1)>=1.5)+((0.39*(pt_1>=25 && pt_1<26) + 0.46*(pt_1>=26 && pt_1<27) + 0.48*(pt_1>=27 && pt_1<28))*(abs(eta_1)<1.5)))","lepton_leg_weight"),
                 Weight("idWeight_1*((pt_1>28)*(trigger_27_32_35_Weight_1*(abs(eta_1) < 1.5) + singleTriggerDataEfficiencyWeightKIT_1*(abs(eta_1)>=1.5))+(pt_1<28))*isoWeight_1", "lepton_sf"),
                 Weight("(gen_match_2==5)*0.97+(gen_match_2!=5)", "emb_tau_id"),
+                Weight("gen_match_1==3 && gen_match_2==5","emb_veto"),
                 Weight("embeddedDecayModeWeight", "decayMode_SF"))
         elif self.channel.name == "tt":
             return Weights(
@@ -574,6 +591,7 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                 Weight("(0.18321*(pt_1>=30 && pt_1<35) + 0.53906*(pt_1>=35 && pt_1<40) + 0.63658*(pt_1>=40 && pt_1<45) + 0.73152*(pt_1>=45 && pt_1<50) + 0.79002*(pt_1>=50 && pt_1<60) + 0.84666*(pt_1>=60 && pt_1<80) + 0.84919*(pt_1>=80 && pt_1<100) + 0.86819*(pt_1>=100 && pt_1<150) + 0.88206*(pt_1>=150 && pt_1<200) + (pt_1>=200))","tau1_leg_weight"),
                 Weight("(0.18321*(pt_2>=30 && pt_2<35) + 0.53906*(pt_2>=35 && pt_2<40) + 0.63658*(pt_2>=40 && pt_2<45) + 0.73152*(pt_2>=45 && pt_2<50) + 0.79002*(pt_2>=50 && pt_2<60) + 0.84666*(pt_2>=60 && pt_2<80) + 0.84919*(pt_2>=80 && pt_2<100) + 0.86819*(pt_2>=100 && pt_2<150) + 0.88206*(pt_2>=150 && pt_2<200) + (pt_2>=200))","tau2_leg_weight"),                 
                 Weight("((gen_match_1==5)*0.97+(gen_match_1!=5))*((gen_match_2==5)*0.97+(gen_match_2!=5))", "emb_tau_id"),
+                Weight("gen_match_1==5 && gen_match_2==5","emb_veto"),
                 Weight("embeddedDecayModeWeight", "decayMode_SF"))
         elif self.channel.name == "em":
             return Weights(
@@ -581,6 +599,7 @@ class ZTTEmbeddedEstimation(EstimationMethod):
                 Weight("muonEffTrgWeight*muonEffIDWeight_1*muonEffIDWeight_2", "scale_factor"),
                 Weight("idWeight_1*isoWeight_1*idWeight_2*isoWeight_2",
                        "idiso_lepton_sf"),
+                Weight("gen_match_1==3 && gen_match_2==4","emb_veto"),
                 Weight("(trigger_23_data_Weight_2/trigger_23_embed_Weight_2)*(pt_2>24)+(trigger_8_data_Weight_2/trigger_8_embed_Weight_2)*(pt_2<24)+(trigger_12_data_Weight_1/trigger_12_embed_Weight_1)*(pt_1<24)+(trigger_23_data_Weight_1/trigger_23_embed_Weight_1)*(pt_1<24)",
                        "trigger_lepton_sf"))
 
@@ -806,13 +825,19 @@ class TTLEstimation(TTEstimation):
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
-        if "mt" in self.channel.name or "et" in self.channel.name:
+        if "mt" in self.channel.name:
+            emb_veto = "!(gen_match_1==4 && gen_match_2==5)"
+            ff_veto = "!(gen_match_2 == 6)"
+        elif "et" in self.channel.name:
+            emb_veto = "!(gen_match_1==3 && gen_match_2==5)"
             ff_veto = "!(gen_match_2 == 6)"
         elif "tt" in self.channel.name:
+            emb_veto = "!(gen_match_1==5 && gen_match_2==5)"
             ff_veto = "!(gen_match_1 == 6 || gen_match_2 == 6)"
         elif "em" in self.channel.name:
+            emb_veto = "!(gen_match_1==3 && gen_match_2==4)"
             ff_veto = "(1.0)"
-        return Cuts(Cut("!((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6)) && %s"%ff_veto, "tt_emb_and_ff_veto"))
+        return Cuts(Cut("%s && %s"%(emb_veto,ff_veto), "tt_emb_and_ff_veto"))
 
 
 class TTTEstimation(TTEstimation):
@@ -827,9 +852,16 @@ class TTTEstimation(TTEstimation):
             mc_campaign="RunIIFall17MiniAODv2")
 
     def get_cuts(self):
-        return Cuts(Cut("((gen_match_1>2 && gen_match_1<6) &&  (gen_match_2>2 && gen_match_2<6))", "tt_genuine_tau"))
-
-
+        if "mt" in self.channel.name:
+            tt_cut = "gen_match_1==4 && gen_match_2==5"
+        elif "et" in self.channel.name:
+            tt_cut = "gen_match_1==3 && gen_match_2==5"
+        elif "tt" in self.channel.name:
+            tt_cut = "gen_match_1==5 && gen_match_2==5"
+        elif "em" in self.channel.name:
+            tt_cut = "gen_match_1==3 && gen_match_2==4"
+        return Cuts(Cut(tt_cut, "ttt_cut"))
+        
 class TTJEstimation(TTEstimation):
     def __init__(self, era, directory, channel, friend_directory=None):
         super(TTEstimation, self).__init__(
@@ -888,6 +920,75 @@ class HTTEstimation(EstimationMethod):
     def get_files(self):
         query = {
             "process": "(VBF|GluGlu|Z|W).*HToTauTau_M125",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "powheg\-pythia8"
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
+
+class VHEstimation(HTTEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="VH",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_files(self):
+        query = {
+            "process": "(^W(minus|plus)HToTauTau.*125.*|^ZHToTauTau.*125.*)",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "powheg\-pythia8"
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+    
+    
+class WHEstimation(HTTEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="WH",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_files(self):
+        query = {
+            "process": "(^W(minus|plus)HToTauTau.*125.*)",
+            "data": False,
+            "campaign": self._mc_campaign,
+            "generator": "powheg\-pythia8"
+        }
+        files = self.era.datasets_helper.get_nicks_with_query(query)
+        log_query(self.name, query, files)
+        return self.artus_file_names(files)
+
+
+class ZHEstimation(HTTEstimation):
+    def __init__(self, era, directory, channel, friend_directory=None):
+        super(HTTEstimation, self).__init__(
+            name="ZH",
+            folder="nominal",
+            era=era,
+            directory=directory,
+            friend_directory=friend_directory,
+            channel=channel,
+            mc_campaign="RunIIFall17MiniAODv2")
+
+    def get_files(self):
+        query = {
+            "process": "(^ZHToTauTau.*125.*)",
             "data": False,
             "campaign": self._mc_campaign,
             "generator": "powheg\-pythia8"
